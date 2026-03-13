@@ -677,3 +677,161 @@ registerGame('shooter', () => {
   document.getElementById('shooterStart').addEventListener('click',()=>{if(shRunning)return;shRunning=true;shScore=0;shLives=5;shEnemies=[];shBullets=[];document.getElementById('shooterScore').textContent=0;document.getElementById('shooterLives').textContent=5;document.getElementById('shooterStart').textContent='⏸ MOVE MOUSE — CLICK TO SHOOT';clearInterval(shSpawnInt);shSpawnInt=setInterval(shSpawn,1200);requestAnimationFrame(shFrame);});
   shctx.fillStyle='#08080f';shctx.fillRect(0,0,SHW,SHH);shctx.fillStyle='rgba(255,229,0,0.35)';shctx.font='18px Boogaloo';shctx.textAlign='center';shctx.textBaseline='middle';shctx.fillText('MOVE MOUSE TO AIM — CLICK TO SHOOT',SHW/2,SHH/2);
 });
+// ===================== 21 NEON COBRA =====================
+registerGame('neon-cobra', () => {
+  const canvas = document.getElementById('cobraCanvas');
+  const ctx = canvas.getContext('2d');
+  const flash = document.getElementById('cobraFlash');
+  const TILE = 20;
+  const COLS = canvas.width / TILE;
+  const ROWS = canvas.height / TILE;
+
+  let snake, dir, nextDir, food, powerUp;
+  let score, combo, highscore = 0, running = false;
+  let particles = [], lastTime = 0, speed = 120;
+
+  function init() {
+    snake = [{x:10, y:10}, {x:9, y:10}, {x:8, y:10}];
+    dir = {x:1, y:0};
+    nextDir = {x:1, y:0};
+    score = 0;
+    combo = 1.0;
+    speed = 120;
+    updateUI();
+    spawnFood();
+  }
+
+  function spawnFood() {
+    food = {
+      x: Math.floor(Math.random() * COLS),
+      y: Math.floor(Math.random() * ROWS),
+      type: Math.random() > 0.9 ? 'gold' : 'normal'
+    };
+  }
+
+  function createParticles(x, y, color, count=10) {
+    for(let i=0; i<count; i++) {
+      particles.push({
+        x: x * TILE + TILE/2,
+        y: y * TILE + TILE/2,
+        vx: (Math.random()-0.5) * 8,
+        vy: (Math.random()-0.5) * 8,
+        life: 1.0,
+        color: color
+      });
+    }
+  }
+
+  function updateUI() {
+    document.getElementById('cobraScore').textContent = Math.floor(score);
+    document.getElementById('cobraCombo').textContent = combo.toFixed(1);
+    document.getElementById('cobraBest').textContent = highscore;
+  }
+
+  function step() {
+    dir = {...nextDir};
+    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+
+    // Wall & Self Collision
+    if(head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS || 
+       snake.some(s => s.x === head.x && s.y === head.y)) {
+      return gameOver();
+    }
+
+    snake.unshift(head);
+
+    if(head.x === food.x && head.y === food.y) {
+      const points = food.type === 'gold' ? 50 : 10;
+      score += points * combo;
+      combo = Math.min(5.0, combo + 0.2);
+      speed = Math.max(60, speed - 1.5); // Increase speed
+      
+      createParticles(food.x, food.y, food.type === 'gold' ? '#FFE500' : '#00F0FF');
+      addScore(Math.floor(points * combo));
+      spawnFood();
+      updateUI();
+    } else {
+      snake.pop();
+      combo = Math.max(1.0, combo - 0.005); // Slow combo decay
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = '#08080f';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Grid (Subtle)
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    for(let i=0; i<canvas.width; i+=TILE) {
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); ctx.stroke();
+    }
+
+    // Draw Food
+    const pulse = Math.sin(Date.now()/150) * 4;
+    ctx.shadowBlur = 15 + pulse;
+    ctx.shadowColor = food.type === 'gold' ? '#FFE500' : '#00F0FF';
+    ctx.fillStyle = ctx.shadowColor;
+    ctx.beginPath();
+    ctx.arc(food.x*TILE + TILE/2, food.y*TILE + TILE/2, 6 + pulse/2, 0, Math.PI*2);
+    ctx.fill();
+
+    // Draw Snake
+    snake.forEach((seg, i) => {
+      const alpha = 1 - (i / snake.length) * 0.6;
+      ctx.shadowBlur = i === 0 ? 20 : 5;
+      ctx.fillStyle = i === 0 ? '#00F0FF' : `rgba(0, 240, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.roundRect(seg.x*TILE+1, seg.y*TILE+1, TILE-2, TILE-2, 4);
+      ctx.fill();
+    });
+
+    // Draw Particles
+    particles.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life;
+      ctx.fillRect(p.x, p.y, 3, 3);
+    });
+    particles = particles.filter(p => p.life > 0);
+    ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
+  }
+
+  function gameOver() {
+    running = false;
+    flash.style.opacity = '0.5';
+    setTimeout(() => flash.style.opacity = '0', 100);
+    if(score > highscore) {
+      highscore = Math.floor(score);
+      showPopup('👑', `NEW COBRA BEST: ${highscore}`);
+    }
+    document.getElementById('cobraStart').textContent = '▶ TRY AGAIN';
+  }
+
+  function loop(ts) {
+    if(!running) return;
+    if(ts - lastTime > speed) {
+      step();
+      lastTime = ts;
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  document.getElementById('cobraStart').addEventListener('click', () => {
+    if(running) return;
+    init();
+    running = true;
+    document.getElementById('cobraStart').textContent = '⚡ HUNTING';
+    requestAnimationFrame(loop);
+  });
+
+  window.addEventListener('keydown', e => {
+    const keys = {ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0}};
+    if(keys[e.key]) {
+      const move = keys[e.key];
+      if(move.x !== -dir.x || move.y !== -dir.y) nextDir = move;
+      e.preventDefault();
+    }
+  });
+});
