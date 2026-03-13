@@ -159,7 +159,7 @@
         <span class="line2">VIBE.</span>
         <span class="line3">WIN.</span>
       </h1>
-      <p class="hero-sub">22 games. Zero rules. Pure chaos. 🎉</p>
+      <p class="hero-sub">23 games. Zero rules. Pure chaos. 🎉</p>
       <a href="#games" class="hero-btn">LET'S GOOO →</a>
       <a href="casino.html" style="display:inline-block;margin-left:16px;background:rgba(0,255,135,0.1);border:2px solid rgba(0,255,135,0.35);color:#00FF87;padding:16px 38px;border-radius:100px;font-family:'Boogaloo',cursive;font-size:20px;letter-spacing:2px;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;animation:fadeUp 0.6s 0.6s ease both;">🎰 CASINO →</a>
     </div>
@@ -339,22 +339,27 @@
           <div class="gsc-play">▶ PLAY</div>
         </div>
 
-        <a href="Wilapple_command.html" class="game-select-card gsc-pink" style="animation-delay:.70s;text-decoration:none">
+        <a href="Wilapple-command.html" class="game-select-card gsc-pink" style="animation-delay:.70s;text-decoration:none">
           <span class="gsc-num">22</span>
           <div class="gsc-emoji">⚔️</div>
           <div class="gsc-title">WILAPPLE COMMAND</div>
           <div class="gsc-tag">REAL-TIME STRATEGY</div>
           <div class="gsc-play" style="color:var(--pink)">▶ PLAY</div>
         </a>
-        <div class="game-select-card gsc-cyan" data-game="neon-cobra">
-        <span class="gsc-num">06</span>
-          <span class="gsc-emoji">🐍</span>
-          <span class="gsc-title">NEON<br>COBRA</span>
-          <span class="gsc-tag">FAST-PACED REMIX</span>
-          <div class="gsc-play">PLAY NOW</div>
-      </div>
-
-      </div>
+        <a href="wilapple-run.html" class="game-select-card gsc-green" style="animation-delay:.73s;text-decoration:none">
+          <span class="gsc-num">23</span>
+          <div class="gsc-emoji">⚡</div>
+          <div class="gsc-title">WILAPPLE RUN</div>
+          <div class="gsc-tag">PLATFORMER</div>
+          <div class="gsc-play" style="color:var(--green)">▶ PLAY</div>
+        </a>
+        <div class="game-select-card gsc-cyan" data-game="neon-cobra" style="animation-delay:.63s">
+          <span class="gsc-num">21</span>
+          <div class="gsc-emoji">🐍</div>
+          <div class="gsc-title">NEON COBRA</div>
+          <div class="gsc-tag">FAST-PACED REMIX</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
 
       </div>
     </div>
@@ -674,22 +679,20 @@
       </div></div>
     </div>
     <div id="neon-cobra" class="game-card card-cyan">
-  <div class="game-header">
-    <div class="game-info">
-      <div class="game-title">NEON COBRA</div>
-      <div class="game-stats">
-        SCORE: <span id="cobraScore">0</span> | 
-        COMBO: x<span id="cobraCombo">1.0</span> | 
-        BEST: <span id="cobraBest">0</span>
-      </div>
+      <div class="game-header"><span class="game-num">21</span><h2>NEON COBRA</h2><span class="game-tag">FAST-PACED REMIX</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="cobraScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="cobraCombo">1.0</div><div class="stat-label">COMBO</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="cobraBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div style="position:relative">
+          <canvas id="cobraCanvas" width="600" height="400"></canvas>
+          <div id="cobraFlash" style="position:absolute;inset:0;pointer-events:none;background:white;opacity:0;transition:opacity 0.1s;"></div>
+        </div>
+        <button class="ctrl-btn cyan" id="cobraStart">▶ START MISSION</button>
+      </div></div>
     </div>
-    <button id="cobraStart" class="game-btn btn-cyan">▶ START MISSION</button>
-  </div>
-  <div class="game-body" style="position:relative; background:#050508; display:flex; justify-content:center; align-items:center; padding:20px; overflow:hidden;">
-    <canvas id="cobraCanvas" width="600" height="400" style="background:#08080f; border:2px solid rgba(0,240,255,0.2); border-radius:8px; box-shadow:0 0 30px rgba(0,240,255,0.1); max-width:100%; height:auto;"></canvas>
-    <div id="cobraFlash" style="position:absolute; inset:0; pointer-events:none; background:white; opacity:0; transition:opacity 0.1s;"></div>
-  </div>
-</div>
 
   </section>
 
