@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WILAPPLE COMMAND ⚔️</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FFE500;--p:#FF3CAC;--c:#00F0FF;--g:#00FF87;--o:#FF6B35;--v:#c084fc;--dk:#0e0e16;--dr:#08080f}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-family:'Nunito',sans-serif;color:#fff;cursor:default}
+#wrap{display:flex;flex-direction:column;height:100vh}
+
+/* TOP BAR */
+#topbar{
+  background:rgba(8,8,15,0.95);border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:6px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;z-index:100;
+  backdrop-filter:blur(12px);
+}
+.logo{font-family:'Boogaloo',cursive;font-size:18px;color:var(--y);text-shadow:0 0 14px rgba(255,229,0,0.4);white-space:nowrap}
+.res-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.res-pill span{font-family:'Boogaloo',cursive;font-size:15px;min-width:32px;text-align:right}
+#res-gold{border-color:rgba(255,229,0,0.3);color:var(--y)}
+#res-wood{border-color:rgba(0,255,135,0.3);color:var(--g)}
+#res-food{border-color:rgba(255,107,53,0.3);color:var(--o)}
+#res-pop {border-color:rgba(0,240,255,0.3);color:var(--c)}
+.wave-info{margin-left:auto;font-family:'Boogaloo',cursive;font-size:13px;color:var(--p);letter-spacing:1px}
+#wave-timer{font-size:15px;color:var(--y)}
+#btn-wave{font-family:'Boogaloo',cursive;font-size:13px;padding:5px 16px;border-radius:100px;border:1px solid rgba(255,60,172,0.4);background:rgba(255,60,172,0.1);color:var(--p);cursor:pointer;transition:all 0.15s;letter-spacing:1px}
+#btn-wave:hover{background:rgba(255,60,172,0.2);transform:scale(1.04)}
+#btn-wave.disabled{opacity:0.4;pointer-events:none}
+#btn-pause{font-family:'Boogaloo',cursive;font-size:13px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s}
+#btn-pause:hover{background:rgba(255,255,255,0.1);color:#fff}
+#btn-pause.paused{border-color:rgba(255,229,0,0.4);color:var(--y)}
+#spd-btn{font-family:'Boogaloo',cursive;font-size:12px;padding:4px 12px;border-radius:100px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.5);cursor:pointer}
+#spd-btn:hover{background:rgba(255,255,255,0.08)}
+#spd-btn.x2{color:var(--c);border-color:rgba(0,240,255,0.3)}
+
+/* MAIN AREA */
+#main{display:flex;flex:1;overflow:hidden;min-height:0}
+#canvas-wrap{flex:1;position:relative;overflow:hidden}
+#gc{display:block;cursor:crosshair}
+#gc.select-mode{cursor:crosshair}
+#gc.build-mode{cursor:cell}
+#gc.attack-mode{cursor:crosshair}
+
+/* SELECTION BOX */
+#sel-box{position:absolute;border:1px solid rgba(0,255,135,0.7);background:rgba(0,255,135,0.06);pointer-events:none;display:none}
+
+/* RIGHT PANEL */
+#rpanel{
+  width:240px;flex-shrink:0;background:rgba(8,8,15,0.9);
+  border-left:1px solid rgba(255,255,255,0.07);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* MINIMAP */
+#minimap-wrap{
+  height:180px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.07);
+  position:relative;overflow:hidden;background:#050508;
+}
+#minimap{display:block}
+#minimap-viewport{position:absolute;border:1px solid rgba(255,255,255,0.5);pointer-events:none}
+
+/* SELECTION INFO */
+#sel-info{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px}
+#sel-info::-webkit-scrollbar{width:3px}
+#sel-info::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
+
+/* TECH TREE BTN */
+#tech-btn{font-family:'Boogaloo',cursive;font-size:12px;letter-spacing:1px;padding:6px;text-align:center;border-top:1px solid rgba(255,255,255,0.07);cursor:pointer;color:var(--v);background:rgba(192,132,252,0.05);flex-shrink:0;transition:all 0.15s}
+#tech-btn:hover{background:rgba(192,132,252,0.12)}
+
+/* BOTTOM BAR - BUILD PALETTE */
+#bottombar{
+  background:rgba(8,8,15,0.95);border-top:1px solid rgba(255,255,255,0.07);
+  padding:6px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+  flex-wrap:wrap;
+}
+.build-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.09);
+  background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.15s;min-width:58px;
+}
+.build-btn:hover{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);transform:translateY(-2px)}
+.build-btn.active{border-color:var(--y);background:rgba(255,229,0,0.1)}
+.build-btn.cant-afford{opacity:0.35}
+.bb-emoji{font-size:20px;line-height:1}
+.bb-name{font-size:9px;font-weight:700;letter-spacing:1px;opacity:0.7;white-space:nowrap}
+.bb-cost{font-size:9px;color:var(--y);opacity:0.8}
+
+/* UI COMPONENTS */
+.panel-title{font-family:'Boogaloo',cursive;font-size:14px;letter-spacing:1px;color:var(--y);margin-bottom:8px}
+.stat-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;opacity:0.7}
+.stat-row span{color:#fff;opacity:1;font-weight:700}
+.hpbar-wrap{background:rgba(0,0,0,0.4);border-radius:100px;height:5px;margin:4px 0 8px;overflow:hidden}
+.hpbar{height:100%;border-radius:100px;background:#00FF87;transition:width 0.2s}
+.action-btn{
+  font-family:'Boogaloo',cursive;font-size:12px;letter-spacing:1px;
+  padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);cursor:pointer;
+  transition:all 0.15s;width:100%;text-align:left;margin-bottom:4px;display:flex;align-items:center;gap:6px;
+}
+.action-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25)}
+.action-btn.green{border-color:rgba(0,255,135,0.3);color:var(--g)}
+.action-btn.yellow{border-color:rgba(255,229,0,0.3);color:var(--y)}
+.action-btn.red{border-color:rgba(255,85,85,0.3);color:#ff7777}
+.action-btn.cant-afford{opacity:0.35;pointer-events:none}
+.multi-info{font-size:10px;opacity:0.5;letter-spacing:1px;font-weight:700;margin-bottom:8px}
+.queue-bar{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
+.q-pip{width:16px;height:16px;border-radius:4px;background:rgba(255,229,0,0.2);border:1px solid rgba(255,229,0,0.4);font-size:10px;display:flex;align-items:center;justify-content:center}
+
+/* OVERLAYS */
+#overlay{position:absolute;inset:0;background:rgba(5,5,12,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:200;text-align:center}
+#overlay.hidden{display:none}
+#ov-title{font-family:'Boogaloo',cursive;font-size:clamp(40px,6vw,80px);line-height:1}
+#ov-sub{font-size:14px;opacity:0.5;letter-spacing:2px;font-weight:700;max-width:500px}
+#ov-stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.ov-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:10px 18px}
+.ov-sv{font-family:'Boogaloo',cursive;font-size:28px}
+.ov-sl{font-size:9px;letter-spacing:2px;opacity:0.35;font-weight:700}
+#btn-play{font-family:'Boogaloo',cursive;font-size:20px;letter-spacing:2px;padding:13px 40px;border-radius:100px;border:none;background:var(--g);color:var(--dr);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 24px rgba(0,255,135,0.3)}
+#btn-play:hover{transform:scale(1.06);box-shadow:0 8px 32px rgba(0,255,135,0.4)}
+#btn-back{font-family:'Boogaloo',cursive;font-size:14px;padding:8px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.15s}
+#btn-back:hover{background:rgba(255,255,255,0.1);color:#fff}
+
+/* TECH TREE MODAL */
+#tech-modal{position:absolute;inset:0;background:rgba(5,5,12,0.95);z-index:150;display:none;flex-direction:column;align-items:center;padding:20px;overflow-y:auto}
+#tech-modal.open{display:flex}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;max-width:800px;width:100%;margin-top:16px}
+.tech-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:12px;cursor:pointer;transition:all 0.18s}
+.tech-card:hover{border-color:rgba(192,132,252,0.4);background:rgba(192,132,252,0.06);transform:translateY(-2px)}
+.tech-card.researched{border-color:rgba(0,255,135,0.4);background:rgba(0,255,135,0.05)}
+.tech-card.researched:hover{transform:none;cursor:default}
+.tech-card.cant-afford{opacity:0.4}
+.tc-em{font-size:28px;margin-bottom:6px}
+.tc-name{font-family:'Boogaloo',cursive;font-size:14px;color:var(--v)}
+.tc-desc{font-size:10px;opacity:0.5;margin:3px 0}
+.tc-cost{font-size:10px;color:var(--y);font-weight:700}
+.tc-done{font-size:10px;color:var(--g);font-weight:700}
+
+/* FLOATING DAMAGE NUMBERS */
+.float-num{position:absolute;font-family:'Boogaloo',cursive;font-size:14px;font-weight:700;pointer-events:none;animation:floatUp 1.2s ease forwards;white-space:nowrap}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(0.8)}}
+
+/* NOTIFICATION TOASTS */
+#toast-wrap{position:absolute;top:50px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:180;display:flex;flex-direction:column;gap:6px;align-items:center}
+.toast{font-family:'Boogaloo',cursive;font-size:14px;letter-spacing:1px;padding:7px 20px;border-radius:100px;border:1px solid;background:rgba(8,8,15,0.95);animation:toastIn 0.3s ease,toastOut 0.4s 2.2s ease forwards;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:scale(0.9)}}
+.toast.warn{color:var(--p);border-color:rgba(255,60,172,0.4)}
+.toast.info{color:var(--c);border-color:rgba(0,240,255,0.4)}
+.toast.good{color:var(--g);border-color:rgba(0,255,135,0.4)}
+.toast.gold{color:var(--y);border-color:rgba(255,229,0,0.4)}
+
+/* ATTACK RANGE RING */
+#range-ring{position:absolute;border-radius:50%;border:1px dashed rgba(255,60,172,0.4);pointer-events:none;display:none}
+
+/* Blobs */
+.blob{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.04;pointer-events:none;z-index:0;animation:bF 16s ease-in-out infinite alternate}
+.b1{width:700px;height:700px;background:var(--p);top:-200px;left:-200px}
+.b2{width:500px;height:500px;background:var(--c);bottom:-100px;right:-100px;animation-delay:6s}
+@keyframes bF{from{transform:translate(0,0)}to{transform:translate(40px,30px)}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div id="wrap">
+  <div id="topbar">
+    <div class="logo">⚔️ WILAPPLE COMMAND</div>
+    <div class="res-pill" id="res-gold">💰 <span id="v-gold">200</span></div>
+    <div class="res-pill" id="res-wood">🪵 <span id="v-wood">150</span></div>
+    <div class="res-pill" id="res-food">🌾 <span id="v-food">100</span></div>
+    <div class="res-pill" id="res-pop">👥 <span id="v-pop">0</span>/<span id="v-popcap">10</span></div>
+    <div class="wave-info">🌊 Wave <span id="v-wave">0</span>&nbsp;&nbsp;<span id="wave-timer"></span></div>
+    <button id="btn-wave">CALL WAVE</button>
+    <button id="btn-pause">⏸ PAUSE</button>
+    <button id="spd-btn">1×</button>
+    <a href="games.html" style="font-family:'Boogaloo',cursive;font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);text-decoration:none;transition:all 0.15s;white-space:nowrap">← BACK</a>
+  </div>
+
+  <div id="main">
+    <div id="canvas-wrap">
+      <canvas id="gc"></canvas>
+      <div id="sel-box"></div>
+      <div id="toast-wrap"></div>
+
+      <!-- Game overlay (title + game over) -->
+      <div id="overlay">
+        <div id="ov-title" style="color:#00FF87">⚔️ WILAPPLE<br>COMMAND</div>
+        <div id="ov-sub">Build your base. Train armies. Survive endless waves.<br>Real-time strategy — solo, full depth.</div>
+        <div id="ov-stats" style="display:none">
+          <div class="ov-stat"><div class="ov-sv" id="ov-w">0</div><div class="ov-sl">WAVES</div></div>
+          <div class="ov-stat"><div class="ov-sv" id="ov-k">0</div><div class="ov-sl">KILLS</div></div>
+          <div class="ov-stat"><div class="ov-sv" id="ov-t">0</div><div class="ov-sl">MINUTES</div></div>
+          <div class="ov-stat"><div class="ov-sv" id="ov-g">0</div><div class="ov-sl">GOLD EARNED</div></div>
+        </div>
+        <button id="btn-play">▶ START CAMPAIGN</button>
+        <a href="games.html" id="btn-back">← Back to Games</a>
+      </div>
+    </div>
+
+    <div id="rpanel">
+      <div id="minimap-wrap">
+        <canvas id="minimap"></canvas>
+        <div id="minimap-viewport"></div>
+      </div>
+      <div id="sel-info">
+        <div style="opacity:0.25;font-size:11px;letter-spacing:2px;font-weight:700;text-align:center;padding-top:20px">SELECT UNITS OR BUILDINGS</div>
+      </div>
+      <div id="tech-btn">📚 TECH TREE [T]</div>
+    </div>
+  </div>
+
+  <div id="bottombar">
+    <div style="font-size:10px;opacity:0.3;letter-spacing:1px;font-weight:700;margin-right:4px">BUILD:</div>
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- TECH TREE MODAL -->
+<div id="tech-modal">
+  <div style="font-family:'Boogaloo',cursive;font-size:24px;color:var(--v)">📚 RESEARCH LAB</div>
+  <div style="font-size:12px;opacity:0.4;letter-spacing:2px;margin-top:4px">Click to research. Requires Lab building.</div>
+  <div class="tech-grid" id="tech-grid"></div>
+  <button onclick="closeTechModal()" style="margin-top:20px;font-family:'Boogaloo',cursive;font-size:14px;padding:8px 28px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;cursor:pointer">CLOSE [T]</button>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  WILAPPLE COMMAND — Full Real-Time Strategy Engine
+//  ~2800 lines of pure game logic. No libraries.
+//  Features: Isometric terrain · Resource economy · Unit AI FSM
+//  Building system · Fog of war · A* pathfinding · Tech tree
+//  Enemy waves with escalating AI · Minimap · Particle FX
+// ════════════════════════════════════════════════════════════════════
+
+'use strict';
+
+// ── CONSTANTS ─────────────────────────────────────────────────────
+const TW = 64, TH = 32;          // isometric tile size
+const MAP_W = 64, MAP_H = 64;    // map dimensions in tiles
+const TICK = 1/60;                // simulation step
+const FOG = { HIDDEN:0, SEEN:1, VISIBLE:2 };
+const UID = (()=>{ let n=0; return ()=>++n; })();
+const RNG  = (a,b)=>a+Math.random()*(b-a);
+const IRNG = (a,b)=>Math.floor(a+Math.random()*(b-a+1));
+const CLAMP= (v,a,b)=>Math.max(a,Math.min(b,v));
+
+// ── TILE TYPES ────────────────────────────────────────────────────
+const T = {
+  GRASS:0, FOREST:1, ROCK:2, WATER:3,
+  ROAD:4,  DIRT:5,   SNOW:6, LAVA:7,
+};
+
+// ── TERRAIN COLOURS (top face, left face, right face) ─────────────
+const TERRAIN_COLS = {
+  [T.GRASS]:  ['#1a3a1a','#0f2210','#132b12'],
+  [T.FOREST]: ['#1a3a1a','#0f2210','#132b12'],
+  [T.ROCK]:   ['#3a3a3a','#222','#2a2a2a'],
+  [T.WATER]:  ['#0a1a3a','#071228','#091630'],
+  [T.ROAD]:   ['#2a2518','#1a1810','#201e14'],
+  [T.DIRT]:   ['#3a2a1a','#251a10','#2e2015'],
+  [T.SNOW]:   ['#cce0ee','#99bbd0','#aacadd'],
+  [T.LAVA]:   ['#3a0a00','#220600','#2e0800'],
+};
+const TERRAIN_PASSABLE = {[T.WATER]:false,[T.ROCK]:false};
+const TERRAIN_SLOW = {[T.FOREST]:0.6,[T.DIRT]:0.8,[T.SNOW]:0.7};
+
+// ── BUILDING DEFINITIONS ──────────────────────────────────────────
+const BDEF = {
+  town_hall:{
+    name:'Town Hall',emoji:'🏰',cost:{gold:0,wood:0},hp:800,size:2,
+    popCap:5,produces:'gold',rate:5,interval:10,
+    desc:'Your base. Produces gold.',color:'#FFE500',trainable:[]
+  },
+  barracks:{
+    name:'Barracks',emoji:'⚔️',cost:{gold:80,wood:60},hp:300,size:2,
+    popCap:0,desc:'Trains soldiers.',color:'#FF6B35',
+    trainable:['soldier','archer','knight']
+  },
+  farm:{
+    name:'Farm',emoji:'🌾',cost:{gold:50,wood:40},hp:120,size:2,
+    popCap:10,produces:'food',rate:3,interval:8,
+    desc:'Raises pop cap by 10. Produces food.',color:'#00FF87',trainable:[]
+  },
+  lumber_mill:{
+    name:'Lumber Mill',emoji:'🪓',cost:{gold:60,wood:20},hp:200,size:2,
+    popCap:0,produces:'wood',rate:4,interval:8,
+    desc:'Produces wood.',color:'#8B4513',trainable:[]
+  },
+  tower:{
+    name:'Guard Tower',emoji:'🗼',cost:{gold:100,wood:80},hp:400,size:1,
+    popCap:0,attack:{dmg:[12,20],range:5,rate:1.2},
+    desc:'Ranged defense.',color:'#c084fc',trainable:[]
+  },
+  wall:{
+    name:'Stone Wall',emoji:'🧱',cost:{gold:20,wood:30},hp:600,size:1,
+    popCap:0,desc:'Blocks enemy path.',color:'#888',trainable:[]
+  },
+  lab:{
+    name:'Research Lab',emoji:'🔬',cost:{gold:120,wood:100},hp:200,size:2,
+    popCap:0,desc:'Enables research.',color:'#00F0FF',trainable:[]
+  },
+  blacksmith:{
+    name:'Blacksmith',emoji:'⚒️',cost:{gold:100,wood:60},hp:200,size:2,
+    popCap:0,desc:'Upgrades units.',color:'#FF6B35',trainable:[]
+  },
+  market:{
+    name:'Market',emoji:'🏪',cost:{gold:80,wood:50},hp:150,size:2,
+    popCap:0,produces:'gold',rate:8,interval:12,
+    desc:'Converts resources. Produces gold.',color:'#FFD700',trainable:[]
+  },
+  mage_tower:{
+    name:'Mage Tower',emoji:'🔮',cost:{gold:200,wood:120},hp:300,size:2,
+    popCap:0,attack:{dmg:[25,45],range:7,rate:0.5,aoe:1.5},
+    desc:'Powerful AoE magic attacks.',color:'#c084fc',trainable:['mage','paladin']
+  },
+};
+
+// ── UNIT DEFINITIONS ──────────────────────────────────────────────
+const UDEF = {
+  // Player units
+  worker:{
+    name:'Worker',emoji:'👷',hp:50,atk:[3,6],def:1,spd:70,range:1.2,
+    cost:{gold:30,food:1},trainTime:8,popCost:1,
+    canBuild:true,canGather:true,
+    desc:'Builds and gathers resources.'
+  },
+  soldier:{
+    name:'Soldier',emoji:'🛡️',hp:100,atk:[10,18],def:4,spd:65,range:1.2,
+    cost:{gold:50,food:2},trainTime:12,popCost:1,
+    desc:'Sturdy frontline fighter.'
+  },
+  archer:{
+    name:'Archer',emoji:'🏹',hp:70,atk:[15,22],def:2,spd:75,range:5.5,
+    cost:{gold:60,food:2},trainTime:14,popCost:1,
+    desc:'Long-range attacker.'
+  },
+  knight:{
+    name:'Knight',emoji:'🗡️',hp:180,atk:[20,32],def:7,spd:80,range:1.2,
+    cost:{gold:120,food:3},trainTime:20,popCost:2,
+    desc:'Heavy cavalry. Charges for bonus damage.'
+  },
+  mage:{
+    name:'Mage',emoji:'🧙',hp:60,atk:[30,50],def:1,spd:55,range:6,
+    cost:{gold:150,food:3},trainTime:22,popCost:2,
+    aoe:2.0,
+    desc:'Devastating AoE spells.'
+  },
+  paladin:{
+    name:'Paladin',emoji:'⚡',hp:220,atk:[25,40],def:8,spd:60,range:1.5,
+    cost:{gold:180,food:4},trainTime:28,popCost:2,
+    healAura:true,
+    desc:'Heals nearby allies. Very tough.'
+  },
+  // Enemy units
+  goblin:{
+    name:'Goblin',emoji:'👺',hp:40,atk:[5,10],def:0,spd:80,range:1.2,
+    gold:8,score:10
+  },
+  orc:{
+    name:'Orc',emoji:'👹',hp:120,atk:[14,22],def:3,spd:55,range:1.2,
+    gold:18,score:25
+  },
+  troll:{
+    name:'Troll',emoji:'🧌',hp:280,atk:[22,38],def:6,spd:40,range:1.2,
+    gold:35,score:50,regen:2
+  },
+  dark_mage:{
+    name:'Dark Mage',emoji:'🔮',hp:80,atk:[25,45],def:1,spd:60,range:6,
+    gold:30,score:45,aoe:2.0
+  },
+  siege_ram:{
+    name:'Siege Ram',emoji:'🐏',hp:450,atk:[60,90],def:10,spd:30,range:1.5,
+    gold:50,score:80,antiBuilding:3
+  },
+  demon:{
+    name:'Demon',emoji:'😈',hp:350,atk:[40,60],def:8,spd:65,range:1.5,
+    gold:60,score:100
+  },
+  dragon:{
+    name:'Dragon',emoji:'🐲',hp:800,atk:[80,120],def:15,spd:70,range:6,
+    gold:150,score:300,aoe:3.0,boss:true
+  },
+  necromancer:{
+    name:'Necromancer',emoji:'💀',hp:200,atk:[40,65],def:3,spd:50,range:6,
+    gold:100,score:200,summon:'skeleton_warrior',boss:true
+  },
+  skeleton_warrior:{
+    name:'Skeleton',emoji:'🦴',hp:60,atk:[12,20],def:2,spd:60,range:1.2,
+    gold:5,score:8
+  },
+};
+
+// ── TECH DEFINITIONS ─────────────────────────────────────────────
+const TECHS = {
+  sharpened_blades: {name:'Sharpened Blades',emoji:'⚔️',cost:{gold:80},desc:'Soldiers & Knights +25% attack',effect:'unit_atk_+0.25_soldier_knight',requires:[]},
+  heavy_armor:      {name:'Heavy Armor',      emoji:'🛡️',cost:{gold:100},desc:'Soldiers & Knights +30% defense',effect:'unit_def_+0.30_soldier_knight',requires:[]},
+  fletching:        {name:'Fletching',        emoji:'🏹',cost:{gold:70},desc:'Archers +40% range & +20% attack',effect:'archer_range',requires:[]},
+  mana_mastery:     {name:'Mana Mastery',     emoji:'🔮',cost:{gold:120},desc:'Mages AoE radius +50%',effect:'mage_aoe',requires:['fletching']},
+  holy_blessing:    {name:'Holy Blessing',    emoji:'✨',cost:{gold:150},desc:'Paladins heal aura doubles',effect:'paladin_heal',requires:['heavy_armor']},
+  stone_walls_2:    {name:'Reinforced Walls', emoji:'🧱',cost:{gold:80,wood:60},desc:'Walls +100% HP',effect:'wall_hp',requires:[]},
+  tower_range:      {name:'Ballista Bolts',   emoji:'🎯',cost:{gold:90},desc:'Towers +50% range & damage',effect:'tower_boost',requires:[]},
+  advanced_farming: {name:'Advanced Farming', emoji:'🌾',cost:{gold:60,wood:40},desc:'Farms produce 2× food & gold',effect:'farm_rate_2',requires:[]},
+  siege_training:   {name:'Siege Training',   emoji:'💣',cost:{gold:200,wood:100},desc:'Unlocks Catapult unit',effect:'unlock_catapult',requires:['heavy_armor','sharpened_blades']},
+  dragon_slaying:   {name:'Dragon Slaying',   emoji:'🐉',cost:{gold:250},desc:'All units +50% vs bosses',effect:'boss_bonus',requires:['sharpened_blades','mana_mastery']},
+};
+
+// ── GAME STATE ────────────────────────────────────────────────────
+let G = null;  // main game object — initialised in startGame()
+
+function createGameState(){
+  return {
+    // Time
+    tick: 0, dt: TICK, time: 0, paused: false, speed: 1,
+    running: false,
+    // Resources
+    gold: 200, wood: 150, food: 100,
+    totalGoldEarned: 200,
+    popCap: 10,  // raised by farms & town hall
+    // Entities
+    units: [], buildings: [], projectiles: [], particles: [],
+    effects: [],   // visual-only
+    // Map
+    map: null, fog: null,
+    // Wave system
+    waveNum: 0, wavePending: false, waveTimer: 0, waveActive: false,
+    betweenWaveTime: 30,
+    enemySpawnQueue: [], spawnTimer: 0, spawnInterval: 1.2,
+    // Selection
+    selected: [],  // unit/building UIDs
+    buildMode: null,   // type string or null
+    attackMoveMode: false,
+    selBox: null,  // {sx,sy,ex,ey} screen coords
+    // Camera
+    camX: 0, camY: 0,
+    // Stats
+    totalKills: 0, totalLosses: 0, startTime: 0,
+    // Tech
+    researched: new Set(),
+    // Misc
+    nextResourceTick: {},  // buildingUID -> nextTime
+    rallyPoints: {},         // buildingUID -> {tx,ty}
+  };
+}
+
+// ── MAP GENERATION ─────────────────────────────────────────────────
+function generateMap(){
+  const map = Array.from({length:MAP_H},()=>new Array(MAP_W).fill(T.GRASS));
+  const fog = Array.from({length:MAP_H},()=>new Array(MAP_W).fill(FOG.HIDDEN));
+
+  // Noise-based terrain
+  function noise(x,y,scale,offset=0){
+    const ix=Math.floor(x/scale), iy=Math.floor(y/scale);
+    const fx=(x/scale)-ix, fy=(y/scale)-iy;
+    const h=s=>Math.sin(s*127.1+offset)*43758.5453%1;
+    const a=h(ix+iy*57), b=h(ix+1+iy*57), c=h(ix+(iy+1)*57), d=h(ix+1+(iy+1)*57);
+    return Math.abs(a*(1-fx)*(1-fy)+b*fx*(1-fy)+c*(1-fx)*fy+d*fx*fy);
+  }
+
+  for(let y=0;y<MAP_H;y++){
+    for(let x=0;x<MAP_W;x++){
+      const n1=noise(x,y,8,0), n2=noise(x,y,4,100), n3=noise(x,y,16,200);
+      const v=n1*0.5+n2*0.3+n3*0.2;
+      // Water border and rivers
+      const edgeDist=Math.min(x,y,MAP_W-1-x,MAP_H-1-y);
+      if(edgeDist<3) { map[y][x]=T.WATER; continue; }
+      if(v>0.78) map[y][x]=T.ROCK;
+      else if(v>0.66) map[y][x]=T.FOREST;
+      else if(v<0.2) map[y][x]=T.WATER;
+      else if(v<0.3) map[y][x]=T.DIRT;
+      else map[y][x]=T.GRASS;
+    }
+  }
+
+  // Carve a road from player base toward map centre
+  const base = {x:6,y:6};
+  let rx=base.x, ry=base.y;
+  while(rx<MAP_W/2 || ry<MAP_H/2){
+    map[ry][rx]=T.ROAD;
+    if(rx<MAP_W/2) rx++;
+    else if(ry<MAP_H/2) ry++;
+    else break;
+  }
+
+  // Clear spawn zone for player
+  for(let y=base.y-2;y<=base.y+8;y++) for(let x=base.x-2;x<=base.x+8;x++)
+    if(y>=0&&x>=0&&y<MAP_H&&x<MAP_W) map[y][x]=T.GRASS;
+
+  return {map, fog};
+}
+
+// ── ISO COORDINATE HELPERS ─────────────────────────────────────────
+// Map (tx,ty) tile → screen (sx,sy) from camera
+function tileToScreen(tx,ty){
+  const sx=(tx-ty)*TW/2 - G.camX;
+  const sy=(tx+ty)*TH/2 - G.camY;
+  return {sx,sy};
+}
+function screenToTile(sx,sy){
+  const wx=sx+G.camX, wy=sy+G.camY;
+  const tx=(wx/(TW/2)+wy/(TH/2))/2;
+  const ty=(wy/(TH/2)-wx/(TW/2))/2;
+  return {tx:Math.floor(tx),ty:Math.floor(ty)};
+}
+function worldToScreen(wx,wy){
+  const sx=(wx-wy)*TW/2 - G.camX;
+  const sy=(wx+wy)*TH/2 - G.camY;
+  return {sx,sy};
+}
+
+function isPassable(tx,ty,size=1){
+  for(let dy=0;dy<size;dy++) for(let dx=0;dx<size;dx++){
+    const x=Math.floor(tx)+dx, y=Math.floor(ty)+dy;
+    if(x<0||y<0||x>=MAP_W||y>=MAP_H) return false;
+    if(TERRAIN_PASSABLE[G.map[y][x]]===false) return false;
+    // Check buildings
+    for(const b of G.buildings) if(b.hp>0&&b.type!=='wall'&&Math.floor(b.tx)===x&&Math.floor(b.ty)===y) return false;
+  }
+  return true;
+}
+
+// ── A* PATHFINDING (tile-space, cached) ──────────────────────────
+const PATH_CACHE = new Map();
+const PATH_CACHE_MAX = 500;
+
+function findPath(sx,sy,ex,ey){
+  const key=`${Math.floor(sx)},${Math.floor(sy)},${Math.floor(ex)},${Math.floor(ey)}`;
+  if(PATH_CACHE.has(key)) return PATH_CACHE.get(key);
+
+  const W=MAP_W,H=MAP_H;
+  const start={x:Math.floor(sx),y:Math.floor(sy)};
+  const goal ={x:Math.floor(ex),y:Math.floor(ey)};
+  if(start.x===goal.x&&start.y===goal.y) return [];
+
+  const h=(x,y)=>Math.abs(x-goal.x)+Math.abs(y-goal.y);
+  const iKey=(x,y)=>y*W+x;
+  const open=new Map(), closed=new Set();
+  const g=new Map(), f=new Map(), par=new Map();
+  const sk=iKey(start.x,start.y);
+  g.set(sk,0); f.set(sk,h(start.x,start.y)); open.set(sk,start);
+
+  let iters=0;
+  while(open.size&&iters++<400){
+    let cur=null,cf=Infinity;
+    for(const [k,v] of open){ const fv=f.get(k)||Infinity; if(fv<cf){cf=fv;cur=k;} }
+    const cv=open.get(cur);
+    if(cv.x===goal.x&&cv.y===goal.y){
+      // Reconstruct
+      const path=[];
+      let c=cur;
+      while(par.has(c)){
+        const p=par.get(c);
+        path.unshift({x:c%W,y:Math.floor(c/W)});
+        c=p;
+      }
+      if(PATH_CACHE.size>PATH_CACHE_MAX) PATH_CACHE.clear();
+      PATH_CACHE.set(key,path);
+      return path;
+    }
+    open.delete(cur); closed.add(cur);
+    const dirs=[[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]];
+    for(const [dx,dy] of dirs){
+      const nx=cv.x+dx,ny=cv.y+dy;
+      if(nx<0||ny<0||nx>=W||ny>=H) continue;
+      const t=G.map[ny][nx];
+      if(TERRAIN_PASSABLE[t]===false) continue;
+      const nk=iKey(nx,ny);
+      if(closed.has(nk)) continue;
+      const cost=(dx!==0&&dy!==0)?1.41:1;
+      const slow=TERRAIN_SLOW[t]||1;
+      const ng=(g.get(cur)||0)+cost/slow;
+      if(!open.has(nk)) open.set(nk,{x:nx,y:ny});
+      else if(ng>=(g.get(nk)||Infinity)) continue;
+      par.set(nk,cur); g.set(nk,ng); f.set(nk,ng+h(nx,ny));
+    }
+  }
+  // No path — walk straight (simplified fallback)
+  PATH_CACHE.set(key,null);
+  return null;
+}
+
+// ── UNIT FACTORY ──────────────────────────────────────────────────
+function createUnit(type, tx, ty, team){
+  const def=UDEF[type];
+  return {
+    uid: UID(), type, team, tx:+tx, ty:+ty,
+    hp: def.hp, maxHp: def.hp,
+    atk: [...def.atk], def: def.def, spd: def.spd,
+    range: def.range, aoe: def.aoe||0,
+    state: 'idle',   // idle,move,attack,gather,build,dead
+    path: [], pathTarget: null,
+    target: null,     // enemy uid
+    attackCd: 0,
+    gatherTarget: null,
+    buildTarget: null,
+    rallyTarget: null,
+    holdPos: false,
+    healAura: def.healAura||false,
+    regen: def.regen||0,
+    summon: def.summon||null,
+    antiBuilding: def.antiBuilding||1,
+    boss: def.boss||false,
+    canBuild: def.canBuild||false,
+    gold: def.gold||0, score: def.score||0,
+    animation: {frame:0, state:'idle', t:0},
+    statusEffects: {},
+    facing: 1,  // 1=right, -1=left
+  };
+}
+
+function createBuilding(type, tx, ty){
+  const def=BDEF[type];
+  return {
+    uid: UID(), type, tx, ty,
+    hp: def.hp, maxHp: def.hp,
+    team: 'player',
+    constructing: type!=='town_hall',
+    buildProgress: type==='town_hall'?1:0,
+    popCap: def.popCap||0,
+    attackCd: 0,
+    trainQueue: [],
+    trainProgress: 0,
+    active: type==='town_hall',
+    flashTimer: 0,
+  };
+}
+
+// ── WAVE COMPOSITION ──────────────────────────────────────────────
+function makeWaveComposition(n){
+  const q=[];
+  const add=(t,c)=>{ for(let i=0;i<c;i++) q.push(t); };
+  if(n===1)  { add('goblin',8); }
+  else if(n===2) { add('goblin',10); add('orc',2); }
+  else if(n===3) { add('goblin',8); add('orc',4); add('dark_mage',1); }
+  else if(n===4) { add('orc',8); add('goblin',6); add('troll',2); }
+  else if(n===5) { add('orc',8); add('troll',3); add('dark_mage',2); add('siege_ram',1); }
+  else if(n===6) { add('orc',10); add('troll',4); add('dark_mage',3); add('siege_ram',2); }
+  else if(n===7) { add('demon',4); add('orc',8); add('troll',4); add('siege_ram',2); }
+  else if(n===8) { add('demon',6); add('orc',10); add('troll',5); add('necromancer',1); }
+  else if(n===9) { add('demon',8); add('dragon',1); add('orc',8); add('troll',4); }
+  else if(n===10){ add('demon',10); add('dragon',2); add('necromancer',2); add('troll',6); add('siege_ram',4); }
+  else {
+    const extra=n-10;
+    add('demon',8+extra*2); add('dragon',1+Math.floor(extra/2)); add('necromancer',1+Math.floor(extra/3));
+    add('troll',6+extra); add('siege_ram',3+extra); add('orc',10+extra*2);
+  }
+  // Shuffle
+  for(let i=q.length-1;i>0;i--){ const j=IRNG(0,i); [q[i],q[j]]=[q[j],q[i]]; }
+  return q;
+}
+
+function getEnemySpawnTile(){
+  // Enemies spawn from map edges (random non-water tile)
+  const edges=[];
+  for(let x=3;x<MAP_W-3;x+=3){
+    if(G.map[3][x]!==T.WATER&&G.map[3][x]!==T.ROCK) edges.push({x,y:3});
+    if(G.map[MAP_H-4][x]!==T.WATER&&G.map[MAP_H-4][x]!==T.ROCK) edges.push({x,y:MAP_H-4});
+  }
+  for(let y=3;y<MAP_H-3;y+=3){
+    if(G.map[y][3]!==T.WATER&&G.map[y][3]!==T.ROCK) edges.push({x:3,y});
+    if(G.map[y][MAP_W-4]!==T.WATER&&G.map[y][MAP_W-4]!==T.ROCK) edges.push({x:MAP_W-4,y});
+  }
+  return edges[IRNG(0,edges.length-1)]||{x:MAP_W-5,y:5};
+}
+
+// ── RESOURCE SYSTEM ───────────────────────────────────────────────
+function tickResources(dt){
+  for(const b of G.buildings){
+    if(b.hp<=0||b.constructing) continue;
+    const def=BDEF[b.type];
+    if(!def.produces) continue;
+    if(!G.nextResourceTick[b.uid]) G.nextResourceTick[b.uid]=G.time+def.interval;
+    if(G.time>=G.nextResourceTick[b.uid]){
+      G.nextResourceTick[b.uid]=G.time+def.interval;
+      let rate=def.rate;
+      if(G.researched.has('advanced_farming')&&(b.type==='farm'||b.type==='market')) rate*=2;
+      G[def.produces]=Math.min(G[def.produces]+rate,9999);
+      if(def.produces==='gold') G.totalGoldEarned+=rate;
+      spawnFloatText(b.tx,b.ty,'+'+rate+(def.produces==='gold'?'💰':def.produces==='wood'?'🪵':'🌾'),'#FFE500');
+    }
+  }
+  // Recalculate pop cap
+  G.popCap=10;
+  for(const b of G.buildings){ if(b.hp>0&&!b.constructing) G.popCap+=BDEF[b.type].popCap||0; }
+  G.popCap=Math.min(G.popCap,80);
+}
+
+function playerPop(){
+  return G.units.filter(u=>u.team==='player').length;
+}
+
+// ── UNIT AI (Finite State Machine) ────────────────────────────────
+function tickUnit(u, dt){
+  if(u.hp<=0) return;
+  const def=UDEF[u.type];
+  if(!def) return;
+
+  // Apply status effects
+  if(u.statusEffects.slow){ u.statusEffects.slow-=dt; }
+  if(u.statusEffects.burn){ u.statusEffects.burn.t-=dt; u.hp-=u.statusEffects.burn.dmg*dt; if(u.statusEffects.burn.t<=0) delete u.statusEffects.burn; }
+  if(u.regen&&u.team==='enemy') u.hp=Math.min(u.maxHp,u.hp+u.regen*dt);
+
+  // Heal aura
+  if(u.healAura){
+    for(const ally of G.units){
+      if(ally.uid===u.uid||ally.team!==u.team||ally.hp<=0) continue;
+      const dx=ally.tx-u.tx, dy=ally.ty-u.ty;
+      if(Math.sqrt(dx*dx+dy*dy)<3) ally.hp=Math.min(ally.maxHp,ally.hp+8*dt);
+    }
+  }
+
+  // Cooldown
+  if(u.attackCd>0) u.attackCd-=dt;
+
+  // FSM
+  switch(u.state){
+    case 'idle': tickIdle(u,dt); break;
+    case 'move': tickMove(u,dt); break;
+    case 'attack': tickAttack(u,dt); break;
+    case 'patrol': tickPatrol(u,dt); break;
+  }
+
+  // Die check
+  if(u.hp<=0) unitDie(u);
+}
+
+function tickIdle(u,dt){
+  // Auto-attack nearby enemies
+  if(!u.holdPos||u.team==='enemy'){
+    const enemy=findNearestEnemy(u,8);
+    if(enemy){ u.target=enemy.uid; u.state='attack'; return; }
+  }
+  // Enemy: walk toward town hall
+  if(u.team==='enemy'){
+    const th=G.buildings.find(b=>b.type==='town_hall'&&b.hp>0);
+    if(th){
+      const path=findPath(u.tx,u.ty,th.tx+0.5,th.ty+0.5);
+      if(path){ u.path=path; u.state='move'; u.pathTarget={tx:th.tx,ty:th.ty}; }
+      else { // Walk directly
+        u.tx+=((th.tx+0.5)-u.tx)*0.01;
+        u.ty+=((th.ty+0.5)-u.ty)*0.01;
+      }
+    }
+  }
+}
+
+function tickMove(u,dt){
+  if(!u.path||u.path.length===0){ u.state='idle'; return; }
+  const spd=(UDEF[u.type].spd/32)*(u.statusEffects.slow?0.4:1)*dt;
+  const next=u.path[0];
+  const dx=next.x+0.5-u.tx, dy=next.y+0.5-u.ty;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  if(dist<0.15){ u.path.shift(); if(u.path.length===0){ u.state='idle'; } return; }
+  const step=Math.min(spd,dist);
+  u.tx+=dx/dist*step; u.ty+=dy/dist*step;
+  u.facing=dx>0?1:-1;
+
+  // Check for enemies while moving
+  if(!u.holdPos&&u.team==='player'){
+    const e=findNearestEnemy(u,3);
+    if(e){ u.target=e.uid; u.path=[]; u.state='attack'; }
+  }
+}
+
+function tickAttack(u,dt){
+  const enemy=G.units.find(e=>e.uid===u.target&&e.hp>0)||
+               G.buildings.find(b=>b.uid===u.target&&b.hp>0);
+  if(!enemy){ u.state='idle'; u.target=null; return; }
+
+  const ex='tx' in enemy?enemy.tx:enemy.tx, ey='ty' in enemy?enemy.ty:enemy.ty;
+  const dx=ex-u.tx, dy=ey-u.ty, dist=Math.sqrt(dx*dx+dy*dy);
+  u.facing=dx>0?1:-1;
+
+  const atkRange=u.range+(UDEF[u.type]?.range||1.2);
+  if(dist>atkRange){
+    // Chase
+    const path=findPath(u.tx,u.ty,ex,ey);
+    if(path){ u.path=path; u.state='move'; return; }
+    // No path — step directly
+    const spd=(UDEF[u.type].spd/32)*dt;
+    u.tx+=dx/dist*spd; u.ty+=dy/dist*spd;
+  } else {
+    u.path=[];
+    if(u.attackCd<=0){
+      doAttack(u,enemy);
+      u.attackCd=1/1.5;
+    }
+  }
+}
+
+function tickPatrol(u,dt){
+  // Patrol between two points — simplified: just idle + auto-attack
+  const e=findNearestEnemy(u,6);
+  if(e){ u.target=e.uid; u.state='attack'; } else { u.state='idle'; }
+}
+
+function findNearestEnemy(u,range){
+  let best=null,bd=range*range;
+  const enemyTeam=u.team==='player'?'enemy':'player';
+  for(const e of G.units){
+    if(e.team!==enemyTeam||e.hp<=0) continue;
+    const dx=e.tx-u.tx,dy=e.ty-u.ty,d2=dx*dx+dy*dy;
+    if(d2<bd){ bd=d2; best=e; }
+  }
+  // Also target enemy buildings if we're enemy
+  if(u.team==='enemy'){
+    for(const b of G.buildings){
+      if(b.team!=='player'||b.hp<=0) continue;
+      const dx=b.tx+0.5-u.tx,dy=b.ty+0.5-u.ty,d2=dx*dx+dy*dy;
+      if(d2<bd){ bd=d2; best=b; }
+    }
+  }
+  return best;
+}
+
+function doAttack(attacker, target){
+  const def=UDEF[attacker.type];
+  if(!def) return;
+  const baseDmg=RNG(attacker.atk[0],attacker.atk[1]);
+  const def2=(target.def||0);
+  let dmg=Math.max(1,baseDmg-def2+RNG(-2,2));
+
+  // Tech bonuses
+  if(G.researched.has('sharpened_blades')&&(attacker.type==='soldier'||attacker.type==='knight')) dmg*=1.25;
+  if(G.researched.has('boss_bonus')&&target.boss) dmg*=1.5;
+  if(target.type&&BDEF[target.type]) dmg*=(attacker.antiBuilding||1);
+
+  dmg=Math.floor(dmg);
+  target.hp-=dmg;
+  target.flashTimer=(target.flashTimer||0)+0.12;
+
+  // AoE
+  if(attacker.aoe>0){
+    const r=attacker.aoe;
+    const list=attacker.team==='player'?G.units.filter(u=>u.team==='enemy'):G.units.filter(u=>u.team==='player').concat(G.buildings.filter(b=>b.team==='player'));
+    for(const e of list){
+      if(e.uid===target.uid||e.hp<=0) continue;
+      const dx=(e.tx||e.tx)-attacker.tx,dy=(e.ty||e.ty)-attacker.ty;
+      if(Math.sqrt(dx*dx+dy*dy)<r){ const splash=Math.floor(dmg*0.6); e.hp-=splash; spawnFloatText(e.tx,e.ty,'-'+splash,'#FF6B35'); }
+    }
+    spawnParticleBurst(target.tx,target.ty,'#FF6B35',10,40);
+  }
+
+  spawnFloatText(target.tx||target.tx, target.ty||target.ty, '-'+dmg, attacker.team==='player'?'#FF6B35':'#ff5555');
+  spawnParticleBurst(target.tx,target.ty,attacker.team==='player'?'#FF6B35':'#ff5555',5,30);
+
+  // Projectile FX for ranged units
+  if(def.range>2){
+    G.projectiles.push({
+      uid:UID(), x:attacker.tx,y:attacker.ty,
+      tx:target.tx,ty:target.ty,
+      spd:8, life:1, alive:true,
+      color:attacker.team==='player'?'#FFE500':'#FF3CAC',
+    });
+  }
+
+  if(target.hp<=0){
+    if(target.uid) {
+      if(G.units.find(u=>u.uid===target.uid)) unitDie(target);
+      else buildingDie(target);
+    }
+  }
+}
+
+function unitDie(u){
+  if(u.state==='dead') return;
+  u.state='dead'; u.hp=0;
+  if(u.team==='enemy'){
+    G.totalKills++;
+    G.gold=Math.min(G.gold+u.gold,9999);
+    G.totalGoldEarned+=u.gold;
+    spawnFloatText(u.tx,u.ty,'+'+u.gold+'💰','#FFE500');
+  } else {
+    G.totalLosses++;
+  }
+  spawnParticleBurst(u.tx,u.ty,u.team==='player'?'#00F0FF':'#FF3CAC',14,60);
+  setTimeout(()=>{ G.units=G.units.filter(x=>x.uid!==u.uid); },500);
+}
+
+function buildingDie(b){
+  if(b.hp>0) b.hp=0;
+  spawnParticleBurst(b.tx,b.ty,'#FF6B35',20,80);
+  showToast('⚠️ Building destroyed!','warn');
+  if(b.type==='town_hall'){
+    // GAME OVER
+    triggerGameOver();
+  }
+  setTimeout(()=>{ G.buildings=G.buildings.filter(x=>x.uid!==b.uid); },800);
+}
+
+// ── BUILDING AI (towers etc) ──────────────────────────────────────
+function tickBuildings(dt){
+  PATH_CACHE.clear(); // Clear path cache each tick to avoid stale paths
+  for(const b of G.buildings){
+    if(b.hp<=0) continue;
+    if(b.flashTimer>0) b.flashTimer-=dt;
+
+    // Construction
+    if(b.constructing){
+      const workers=G.units.filter(u=>u.buildTarget===b.uid&&u.hp>0);
+      const rate=(0.05+workers.length*0.12)*dt;
+      b.buildProgress=Math.min(1,b.buildProgress+rate);
+      if(b.buildProgress>=1){ b.constructing=false; b.active=true; showToast('🏗️ '+BDEF[b.type].name+' complete!','good'); }
+      continue;
+    }
+
+    // Tower attack
+    const def=BDEF[b.type];
+    if(def.attack&&b.active){
+      if(b.attackCd>0){ b.attackCd-=dt; continue; }
+      let boost=1;
+      if(G.researched.has('tower_range')&&b.type==='tower') boost=1.5;
+      const range=def.attack.range*boost;
+      const enemy=G.units.find(u=>u.team==='enemy'&&u.hp>0&&Math.sqrt((u.tx-b.tx-0.5)**2+(u.ty-b.ty-0.5)**2)<range);
+      if(enemy){
+        let dmg=Math.floor(RNG(def.attack.dmg[0],def.attack.dmg[1])*boost);
+        enemy.hp-=dmg; enemy.flashTimer=(enemy.flashTimer||0)+0.12;
+        spawnFloatText(enemy.tx,enemy.ty,'-'+dmg,'#c084fc');
+        G.projectiles.push({uid:UID(),x:b.tx+0.5,y:b.ty+0.5,tx:enemy.tx,ty:enemy.ty,spd:10,life:1,alive:true,color:def.color||'#c084fc'});
+        if(def.attack.aoe){
+          for(const e of G.units){ if(e.team==='enemy'&&e.hp>0&&e.uid!==enemy.uid){ const d=Math.sqrt((e.tx-enemy.tx)**2+(e.ty-enemy.ty)**2); if(d<def.attack.aoe){ e.hp-=Math.floor(dmg*0.5); } } }
+        }
+        if(enemy.hp<=0) unitDie(enemy);
+        b.attackCd=1/def.attack.rate;
+      }
+    }
+
+    // Training queue
+    if(b.trainQueue.length>0&&b.active){
+      const def2=UDEF[b.trainQueue[0]];
+      if(!def2) { b.trainQueue.shift(); continue; }
+      b.trainProgress+=(1/def2.trainTime)*dt;
+      if(b.trainProgress>=1){
+        b.trainProgress=0;
+        const type=b.trainQueue.shift();
+        if(playerPop()<G.popCap){
+          const rally=G.rallyPoints[b.uid];
+          const spawnX=b.tx+(rally?rally.tx-b.tx>0?2:-2:2);
+          const spawnY=b.ty+(rally?rally.ty-b.ty>0?2:-2:2);
+          const u=createUnit(type,spawnX,spawnY,'player');
+          applyTechBonuses(u);
+          G.units.push(u);
+          // Walk to rally
+          if(rally){ const path=findPath(u.tx,u.ty,rally.tx,rally.ty); if(path){ u.path=path; u.state='move'; } }
+          showToast(UDEF[type].emoji+' '+UDEF[type].name+' trained!','info');
+        } else {
+          b.trainQueue.unshift(type);
+          showToast('⚠️ Population cap reached!','warn');
+        }
+      }
+    }
+  }
+}
+
+function applyTechBonuses(u){
+  if(G.researched.has('heavy_armor')&&(u.type==='soldier'||u.type==='knight')) u.def=Math.floor(u.def*1.3);
+  if(G.researched.has('fletching')&&u.type==='archer'){ u.range*=1.4; u.atk=[Math.floor(u.atk[0]*1.2),Math.floor(u.atk[1]*1.2)]; }
+  if(G.researched.has('mana_mastery')&&u.type==='mage') u.aoe*=1.5;
+  if(G.researched.has('holy_blessing')&&u.type==='paladin') u.healAura=true;
+}
+
+// ── WAVE SYSTEM ──────────────────────────────────────────────────
+function callWave(){
+  if(G.waveActive||!G.running) return;
+  G.waveNum++;
+  G.waveActive=true;
+  G.wavePending=false;
+  G.waveTimer=0;
+  G.enemySpawnQueue=makeWaveComposition(G.waveNum);
+  G.spawnTimer=0;
+  showToast(`🌊 WAVE ${G.waveNum} INCOMING!`,'warn');
+  document.getElementById('btn-wave').classList.add('disabled');
+}
+
+function tickWaveSystem(dt){
+  if(G.waveActive){
+    if(G.enemySpawnQueue.length>0){
+      G.spawnTimer-=dt;
+      if(G.spawnTimer<=0){
+        const type=G.enemySpawnQueue.shift();
+        const sp=getEnemySpawnTile();
+        const u=createUnit(type,sp.x,sp.y,'enemy');
+        G.units.push(u);
+        G.spawnTimer=G.spawnInterval*(0.6+Math.random()*0.8);
+      }
+    }
+    // Wave ends when all enemies dead
+    if(G.enemySpawnQueue.length===0&&!G.units.some(u=>u.team==='enemy'&&u.hp>0)){
+      G.waveActive=false;
+      G.wavePending=true;
+      G.waveTimer=G.betweenWaveTime;
+      const bonus=50+G.waveNum*30;
+      G.gold=Math.min(G.gold+bonus,9999);
+      G.totalGoldEarned+=bonus;
+      showToast(`✅ Wave ${G.waveNum} cleared! +${bonus}💰`,'good');
+      document.getElementById('btn-wave').classList.remove('disabled');
+    }
+  } else if(G.wavePending){
+    G.waveTimer-=dt;
+    if(G.waveTimer<=0){ callWave(); }  // Auto-call next wave
+  }
+}
+
+// ── TECH TREE ─────────────────────────────────────────────────────
+function researchTech(id){
+  if(G.researched.has(id)) return;
+  const tech=TECHS[id];
+  if(!tech) return;
+  const hasLab=G.buildings.some(b=>b.type==='lab'&&b.hp>0&&!b.constructing);
+  if(!hasLab){ showToast('⚠️ Requires Research Lab!','warn'); return; }
+  if(tech.requires.some(r=>!G.researched.has(r))){ showToast('⚠️ Prerequisites not met!','warn'); return; }
+  const cost=tech.cost||{};
+  if((cost.gold||0)>G.gold||(cost.wood||0)>G.wood){ showToast('⚠️ Not enough resources!','warn'); return; }
+  G.gold-=cost.gold||0; G.wood-=cost.wood||0;
+  G.researched.add(id);
+  // Apply to existing units
+  for(const u of G.units) if(u.team==='player') applyTechBonuses(u);
+  // Apply wall bonus
+  if(id==='stone_walls_2') for(const b of G.buildings) if(b.type==='wall') b.maxHp*=2;
+  showToast('🔬 Researched: '+tech.name,'good');
+  renderTechModal();
+  renderSelInfo();
+}
+
+// ── PARTICLE SYSTEM ───────────────────────────────────────────────
+function spawnParticleBurst(wx,wy,color,count=8,speed=40){
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2, sp=speed*0.5+Math.random()*speed;
+    G.particles.push({wx,wy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.5+Math.random()*0.4,maxLife:0.9,color,size:2+Math.random()*3});
+  }
+}
+
+function spawnFloatText(wx,wy,text,color='#FFE500'){
+  const {sx,sy}=worldToScreen(wx,wy);
+  const div=document.createElement('div');
+  div.className='float-num';
+  div.textContent=text;
+  div.style.cssText=`left:${sx}px;top:${sy-20}px;color:${color}`;
+  canvasWrap.appendChild(div);
+  setTimeout(()=>div.remove(),1200);
+}
+
+function tickParticles(dt){
+  G.particles=G.particles.filter(p=>{
+    p.wx+=p.vx/32*dt; p.wy+=p.vy/32*dt;
+    p.vy+=80*dt;
+    p.life-=dt;
+    return p.life>0;
+  });
+}
+
+// ── PROJECTILE SYSTEM ─────────────────────────────────────────────
+function tickProjectiles(dt){
+  G.projectiles=G.projectiles.filter(p=>{
+    const dx=p.tx-p.x, dy=p.ty-p.y, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<0.3){ p.alive=false; return false; }
+    const step=p.spd*dt; const t=Math.min(step/dist,1);
+    p.x+=dx*t; p.y+=dy*t; p.life-=dt;
+    return p.alive&&p.life>0;
+  });
+}
+
+// ── GAME OVER ────────────────────────────────────────────────────
+function triggerGameOver(){
+  G.running=false; G.paused=true;
+  const elapsed=Math.floor((Date.now()-G.startTime)/60000);
+  document.getElementById('ov-title').textContent='💀 BASE DESTROYED';
+  document.getElementById('ov-title').style.color='#FF3CAC';
+  document.getElementById('ov-sub').textContent='Your town hall has fallen. The darkness consumes all.';
+  document.getElementById('ov-w').textContent=G.waveNum;
+  document.getElementById('ov-k').textContent=G.totalKills;
+  document.getElementById('ov-t').textContent=elapsed;
+  document.getElementById('ov-g').textContent=G.totalGoldEarned;
+  document.getElementById('ov-stats').style.display='flex';
+  document.getElementById('btn-play').textContent='↺ TRY AGAIN';
+  document.getElementById('overlay').classList.remove('hidden');
+}
+
+// ── RENDERER ─────────────────────────────────────────────────────
+const canvas=document.getElementById('gc');
+const ctx=canvas.getContext('2d');
+const mmCanvas=document.getElementById('minimap');
+const mmCtx=mmCanvas.getContext('2d');
+const canvasWrap=document.getElementById('canvas-wrap');
+
+function resizeCanvas(){
+  canvas.width=canvasWrap.clientWidth;
+  canvas.height=canvasWrap.clientHeight;
+  if(G) G.renderer={w:canvas.width,h:canvas.height};
+}
+
+// ── DRAWING ──────────────────────────────────────────────────────
+function render(){
+  if(!G||!G.running) return;
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#050510'; ctx.fillRect(0,0,W,H);
+
+  // --- TERRAIN ---
+  // Visible tile range
+  const startTile=screenToTile(0,0), endTile=screenToTile(W,H);
+  const x0=Math.max(0,startTile.tx-4), y0=Math.max(0,startTile.ty-4);
+  const x1=Math.min(MAP_W-1,endTile.tx+4), y1=Math.min(MAP_H-1,endTile.ty+4);
+
+  // Draw tiles sorted by depth (y then x)
+  for(let sum=x0+y0;sum<=x1+y1+2;sum++){
+    for(let tx2=x0;tx2<=x1;tx2++){
+      const ty2=sum-tx2;
+      if(ty2<y0||ty2>y1) continue;
+      drawTile(tx2,ty2);
+    }
+  }
+
+  // --- BUILDINGS ---
+  // Sort by ty+tx for depth
+  const bSorted=[...G.buildings].sort((a,b)=>(a.tx+a.ty)-(b.tx+b.ty));
+  for(const b of bSorted) if(b.hp>0) drawBuilding(b);
+
+  // --- UNITS ---
+  const uSorted=[...G.units].sort((a,b)=>(a.tx+a.ty)-(b.tx+b.ty));
+  for(const u of uSorted) if(u.hp>0) drawUnit(u);
+
+  // --- PROJECTILES ---
+  for(const p of G.projectiles) drawProjectile(p);
+
+  // --- PARTICLES ---
+  for(const p of G.particles){
+    const {sx,sy}=worldToScreen(p.wx,p.wy);
+    const alpha=p.life/p.maxLife;
+    ctx.save(); ctx.globalAlpha=alpha;
+    ctx.beginPath(); ctx.arc(sx,sy,p.size*alpha,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.shadowBlur=4; ctx.shadowColor=p.color; ctx.fill();
+    ctx.restore();
+  }
+
+  // --- SELECTION INDICATOR ---
+  for(const uid of G.selected){
+    const u=G.units.find(x=>x.uid===uid);
+    const b=G.buildings.find(x=>x.uid===uid);
+    if(u&&u.hp>0){
+      const {sx,sy}=worldToScreen(u.tx,u.ty);
+      ctx.save(); ctx.strokeStyle=u.team==='player'?'#00FF87':'#ff5555';
+      ctx.lineWidth=1.5; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.ellipse(sx,sy+TH*0.5,TW*0.35,TH*0.2,0,0,Math.PI*2);
+      ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    }
+    if(b&&b.hp>0){
+      const {sx,sy}=worldToScreen(b.tx,b.ty);
+      ctx.save(); ctx.strokeStyle='#FFE500'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+      ctx.strokeRect(sx-TW*0.6,sy-TH*0.2,TW*1.2,TH*1.2); ctx.setLineDash([]); ctx.restore();
+    }
+  }
+
+  // --- FOG OF WAR ---
+  drawFog(x0,y0,x1,y1);
+
+  // --- SELECTION BOX ---
+  if(G.selBox){
+    const sb=G.selBox;
+    const selEl=document.getElementById('sel-box');
+    selEl.style.display='block';
+    selEl.style.left=Math.min(sb.sx,sb.ex)+'px';
+    selEl.style.top=Math.min(sb.sy,sb.ey)+'px';
+    selEl.style.width=Math.abs(sb.ex-sb.sx)+'px';
+    selEl.style.height=Math.abs(sb.ey-sb.sy)+'px';
+  } else {
+    document.getElementById('sel-box').style.display='none';
+  }
+
+  // --- BUILD GHOST ---
+  if(G.buildMode&&lastMouseTile){
+    const {tx,ty}=lastMouseTile;
+    const {sx,sy}=tileToScreen(tx,ty);
+    const def=BDEF[G.buildMode];
+    const canPlace=canPlaceBuilding(G.buildMode,tx,ty);
+    ctx.save(); ctx.globalAlpha=0.55;
+    ctx.font=`${TH*1.8}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(def.emoji,sx+TW/2,sy+TH*0.6);
+    ctx.strokeStyle=canPlace?'#00FF87':'#ff5555'; ctx.lineWidth=2;
+    drawIsoRect(sx,sy+TH/2,def.size||1,def.size||1,canPlace?'rgba(0,255,135,0.12)':'rgba(255,85,85,0.12)',canPlace?'#00FF87':'#ff5555');
+    ctx.restore();
+  }
+
+  // HUD update
+  updateHUD();
+  renderMinimap();
+}
+
+function drawTile(tx,ty){
+  const fogVal=G.fog[ty]?.[tx]??FOG.HIDDEN;
+  if(fogVal===FOG.HIDDEN) return;
+  const t=G.map[ty][tx];
+  const cols=TERRAIN_COLS[t]||TERRAIN_COLS[T.GRASS];
+  const {sx,sy}=tileToScreen(tx,ty);
+  const dim=fogVal===FOG.SEEN;
+
+  ctx.save();
+  if(dim){ ctx.globalAlpha=0.4; }
+
+  // Top face
+  ctx.beginPath();
+  ctx.moveTo(sx+TW/2,sy);
+  ctx.lineTo(sx+TW,sy+TH/2);
+  ctx.lineTo(sx+TW/2,sy+TH);
+  ctx.lineTo(sx,sy+TH/2);
+  ctx.closePath();
+  ctx.fillStyle=cols[0]; ctx.fill();
+
+  // Left face
+  ctx.beginPath();
+  ctx.moveTo(sx,sy+TH/2);
+  ctx.lineTo(sx+TW/2,sy+TH);
+  ctx.lineTo(sx+TW/2,sy+TH+8);
+  ctx.lineTo(sx,sy+TH/2+8);
+  ctx.closePath();
+  ctx.fillStyle=cols[1]; ctx.fill();
+
+  // Right face
+  ctx.beginPath();
+  ctx.moveTo(sx+TW/2,sy+TH);
+  ctx.lineTo(sx+TW,sy+TH/2);
+  ctx.lineTo(sx+TW,sy+TH/2+8);
+  ctx.lineTo(sx+TW/2,sy+TH+8);
+  ctx.closePath();
+  ctx.fillStyle=cols[2]; ctx.fill();
+
+  // Forest trees
+  if(t===T.FOREST&&!dim){
+    ctx.font=`${TH*0.9}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🌲',sx+TW/2,sy+TH/2);
+  }
+  // Water shimmer
+  if(t===T.WATER){
+    const shimmer=0.05+Math.sin(Date.now()/1200+tx*0.3+ty*0.2)*0.03;
+    ctx.fillStyle=`rgba(0,150,255,${shimmer})`; ctx.beginPath();
+    ctx.moveTo(sx+TW/2,sy); ctx.lineTo(sx+TW,sy+TH/2); ctx.lineTo(sx+TW/2,sy+TH); ctx.lineTo(sx,sy+TH/2); ctx.closePath(); ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawBuilding(b){
+  const fogVal=G.fog[Math.floor(b.ty)]?.[Math.floor(b.tx)]??FOG.HIDDEN;
+  if(fogVal===FOG.HIDDEN) return;
+  const def=BDEF[b.type];
+  const {sx,sy}=tileToScreen(b.tx,b.ty);
+  const sz=def.size||1;
+  const dim=fogVal===FOG.SEEN;
+  const flash=b.flashTimer>0;
+
+  ctx.save();
+  if(dim) ctx.globalAlpha=0.5;
+  if(flash){ ctx.globalAlpha=0.7+Math.sin(Date.now()/50)*0.3; }
+
+  // Platform shadow
+  drawIsoRect(sx,sy+TH/2,sz,sz,'rgba(0,0,0,0.3)',null);
+
+  // Building body
+  const h=TH*(sz*1.5);
+  const bx=sx-TW*sz*0.08, bw=TW*(sz+0.1);
+  ctx.fillStyle=def.color+'22';
+  ctx.strokeStyle=def.color+'88';
+  ctx.lineWidth=1.5;
+  ctx.fillRect(bx,sy-h/2,bw,h);
+  ctx.strokeRect(bx,sy-h/2,bw,h);
+
+  // Emoji
+  ctx.font=`${TH*sz*1.1}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.shadowBlur=b.active?8:0; ctx.shadowColor=def.color;
+  ctx.fillText(def.emoji,sx+TW*sz*0.5,sy);
+  ctx.shadowBlur=0;
+
+  // HP bar
+  if(b.hp<b.maxHp){
+    const pct=b.hp/b.maxHp;
+    const bw2=TW*sz;
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(sx+TW*sz*0.1,sy+TH*(sz*0.5)+4,bw2*0.8,4);
+    ctx.fillStyle=pct>0.5?'#00FF87':pct>0.25?'#FFE500':'#ff5555';
+    ctx.fillRect(sx+TW*sz*0.1,sy+TH*(sz*0.5)+4,bw2*0.8*pct,4);
+  }
+
+  // Construction progress
+  if(b.constructing){
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(sx,sy+TH/2+6,TW*sz,8);
+    ctx.fillStyle='#FFE500'; ctx.fillRect(sx,sy+TH/2+6,TW*sz*b.buildProgress,8);
+    ctx.font='9px Nunito'; ctx.fillStyle='#fff'; ctx.textAlign='center';
+    ctx.fillText('BUILDING '+Math.floor(b.buildProgress*100)+'%',sx+TW*sz/2,sy+TH/2+13);
+  }
+
+  // Train queue progress
+  if(b.trainQueue.length>0&&b.active){
+    const type=b.trainQueue[0];
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(sx,sy+TH*sz+4,TW*sz,4);
+    ctx.fillStyle='#00F0FF'; ctx.fillRect(sx,sy+TH*sz+4,TW*sz*b.trainProgress,4);
+    ctx.font='10px serif'; ctx.textAlign='left';
+    ctx.fillText(UDEF[type]?.emoji||'?',sx,sy+TH*sz-2);
+  }
+
+  ctx.restore();
+}
+
+function drawUnit(u){
+  const fogVal=G.fog[Math.floor(u.ty)]?.[Math.floor(u.tx)]??FOG.HIDDEN;
+  if(fogVal===FOG.HIDDEN) return;
+  const {sx,sy}=worldToScreen(u.tx,u.ty);
+  const dim=fogVal===FOG.SEEN&&u.team==='player';
+  const flash=u.flashTimer>0;
+  const t=Date.now()/1000;
+
+  ctx.save();
+  if(dim) ctx.globalAlpha=0.5;
+  if(flash){ ctx.globalAlpha=0.7; }
+
+  // Shadow
+  ctx.beginPath(); ctx.ellipse(sx,sy+TH*0.45,TH*0.38,TH*0.14,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.fill();
+
+  // Glow for boss
+  if(u.boss){
+    ctx.save(); ctx.shadowBlur=20+Math.sin(t*2)*8; ctx.shadowColor='#FF3CAC';
+    ctx.font=`${TH*1.1}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(UDEF[u.type]?.emoji||'?',sx,sy+Math.sin(t*2)*2);
+    ctx.restore();
+  } else {
+    const bob=u.state==='move'?Math.sin(t*8)*2:0;
+    ctx.font=`${TH*0.92}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(u.facing<0){ ctx.scale(-1,1); ctx.fillText(UDEF[u.type]?.emoji||'?',-sx,sy+bob); }
+    else ctx.fillText(UDEF[u.type]?.emoji||'?',sx,sy+bob);
+  }
+
+  // HP bar
+  const pct=u.hp/u.maxHp;
+  if(pct<1){
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(sx-16,sy-TH*0.6,32,4);
+    ctx.fillStyle=pct>0.5?'#00FF87':pct>0.25?'#FFE500':'#ff5555';
+    ctx.fillRect(sx-16,sy-TH*0.6,32*pct,4);
+  }
+
+  // Status indicators
+  if(u.statusEffects?.burn) ctx.fillText('🔥',sx+14,sy-8);
+  if(u.statusEffects?.slow) ctx.fillText('❄️',sx+14,sy-8);
+
+  ctx.restore();
+  if(u.flashTimer>0) u.flashTimer-=G.dt;
+}
+
+function drawProjectile(p){
+  const {sx,sy}=worldToScreen(p.x,p.y);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(sx,sy,3,0,Math.PI*2);
+  ctx.fillStyle=p.color; ctx.shadowBlur=6; ctx.shadowColor=p.color; ctx.fill();
+  ctx.restore();
+}
+
+function drawIsoRect(sx,sy,w,h,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(sx+TW*w/2,sy-TH*h/2);
+  ctx.lineTo(sx+TW*w,sy);
+  ctx.lineTo(sx+TW*w/2,sy+TH*h/2);
+  ctx.lineTo(sx,sy);
+  ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=1.5; ctx.stroke(); }
+}
+
+function drawFog(x0,y0,x1,y1){
+  for(let sum=x0+y0;sum<=x1+y1+2;sum++){
+    for(let tx2=x0;tx2<=x1;tx2++){
+      const ty2=sum-tx2;
+      if(ty2<y0||ty2>y1) continue;
+      const fogVal=G.fog[ty2]?.[tx2]??FOG.HIDDEN;
+      if(fogVal===FOG.HIDDEN){
+        const {sx,sy}=tileToScreen(tx2,ty2);
+        ctx.fillStyle='rgba(5,5,12,0.96)';
+        ctx.beginPath();
+        ctx.moveTo(sx+TW/2,sy); ctx.lineTo(sx+TW,sy+TH/2);
+        ctx.lineTo(sx+TW/2,sy+TH+8); ctx.lineTo(sx,sy+TH/2);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+  }
+}
+
+// ── MINIMAP ──────────────────────────────────────────────────────
+function renderMinimap(){
+  const W=mmCanvas.width, H=mmCanvas.height;
+  const sc=Math.min(W/MAP_W,H/MAP_H);
+  mmCtx.fillStyle='#050510'; mmCtx.fillRect(0,0,W,H);
+  for(let y=0;y<MAP_H;y++){
+    for(let x=0;x<MAP_W;x++){
+      const f=G.fog[y][x];
+      if(f===FOG.HIDDEN){ mmCtx.fillStyle='rgba(5,5,12,0.8)'; }
+      else {
+        const t=G.map[y][x];
+        const col=TERRAIN_COLS[t]?.[0]||'#1a3a1a';
+        mmCtx.fillStyle=f===FOG.SEEN?col+'88':col;
+      }
+      mmCtx.fillRect(x*sc,y*sc,sc+0.5,sc+0.5);
+    }
+  }
+  // Buildings
+  for(const b of G.buildings){
+    if(b.hp<=0) continue;
+    const def=BDEF[b.type];
+    mmCtx.fillStyle=b.team==='player'?def.color||'#FFE500':'#ff5555';
+    mmCtx.fillRect(b.tx*sc,b.ty*sc,(def.size||1)*sc+1,(def.size||1)*sc+1);
+  }
+  // Units
+  for(const u of G.units){
+    if(u.hp<=0) continue;
+    mmCtx.fillStyle=u.team==='player'?'#00F0FF':'#FF3CAC';
+    mmCtx.fillRect(u.tx*sc-1,u.ty*sc-1,3,3);
+  }
+  // Viewport
+  const vx=(G.camX/(TW/2)+G.camY/(TH/2))/2*sc;
+  const vy=(G.camY/(TH/2)-G.camX/(TW/2))/2*sc;
+  const vw=canvas.width/TW*sc*2, vh=canvas.height/TH*sc*2;
+  const mv=document.getElementById('minimap-viewport');
+  mv.style.left=Math.max(0,vx)+'px'; mv.style.top=Math.max(0,vy)+'px';
+  mv.style.width=vw+'px'; mv.style.height=vh+'px';
+}
+
+// ── FOG UPDATE ─────────────────────────────────────────────────────
+function updateFog(){
+  if(!G) return;
+  const SIGHT=6;
+  // Reveal around player units & buildings
+  function reveal(wx,wy,r){
+    const tx2=Math.floor(wx),ty2=Math.floor(wy);
+    for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){
+      const x=tx2+dx,y=ty2+dy;
+      if(x<0||y<0||x>=MAP_W||y>=MAP_H) continue;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<=r){
+        G.fog[y][x]=FOG.VISIBLE;
+      }
+    }
+  }
+  // First mark all visible as seen
+  for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++) if(G.fog[y][x]===FOG.VISIBLE) G.fog[y][x]=FOG.SEEN;
+  for(const u of G.units) if(u.team==='player'&&u.hp>0) reveal(u.tx,u.ty,SIGHT);
+  for(const b of G.buildings) if(b.team==='player'&&b.hp>0) reveal(b.tx+(BDEF[b.type].size||1)/2,b.ty+(BDEF[b.type].size||1)/2,SIGHT+2);
+}
+
+// ── HUD ───────────────────────────────────────────────────────────
+function updateHUD(){
+  document.getElementById('v-gold').textContent=Math.floor(G.gold);
+  document.getElementById('v-wood').textContent=Math.floor(G.wood);
+  document.getElementById('v-food').textContent=Math.floor(G.food);
+  document.getElementById('v-pop').textContent=playerPop();
+  document.getElementById('v-popcap').textContent=G.popCap;
+  document.getElementById('v-wave').textContent=G.waveNum;
+  if(G.wavePending) document.getElementById('wave-timer').textContent=`(next: ${Math.ceil(G.waveTimer)}s)`;
+  else document.getElementById('wave-timer').textContent='';
+  updateBuildButtons();
+}
+
+let _selInfoDirty=true;
+
+function buildTrainBtn(buid, ut, ud, afford2) {
+  return '<button class="action-btn yellow'+afford2+'" onclick="trainUnit(\''+buid+'\',\''+ut+'\')">'+ 
+    (ud.emoji||'?')+' '+(ud.name||ut)+' <span style="font-size:9px;opacity:0.6;margin-left:auto">💰'+(ud.cost&&ud.cost.gold||0)+' 🌾'+(ud.cost&&ud.cost.food||0)+'</span></button>';
+}
+function renderSelInfo(){
+  const si=document.getElementById('sel-info');
+  if(!G.selected.length){ si.innerHTML='<div style="opacity:0.2;font-size:11px;letter-spacing:2px;font-weight:700;text-align:center;padding-top:20px">SELECT UNITS OR BUILDINGS</div>'; return; }
+
+  const allUnits=G.selected.map(uid=>G.units.find(u=>u.uid===uid)).filter(Boolean);
+  const allBuildings=G.selected.map(uid=>G.buildings.find(b=>b.uid===uid)).filter(Boolean);
+
+  if(allBuildings.length===1&&allUnits.length===0){
+    const b=allBuildings[0];
+    const def=BDEF[b.type];
+    let html=`<div class="panel-title">${def.emoji} ${def.name}</div>`;
+    html+=`<div class="hpbar-wrap"><div class="hpbar" style="width:${b.hp/b.maxHp*100}%;background:${b.hp/b.maxHp>0.5?'#00FF87':b.hp/b.maxHp>0.25?'#FFE500':'#ff5555'}"></div></div>`;
+    html+=`<div class="stat-row">HP: <span>${Math.ceil(b.hp)}/${b.maxHp}</span></div>`;
+    if(b.constructing) html+=`<div class="stat-row">Building: <span>${Math.floor(b.buildProgress*100)}%</span></div>`;
+    else html+=`<div class="stat-row">Status: <span style="color:#00FF87">ACTIVE</span></div>`;
+    if(def.produces) html+=`<div class="stat-row">Produces: <span>${def.rate} ${def.produces}/tick</span></div>`;
+
+    // Train buttons
+    if(def.trainable?.length&&!b.constructing){
+      html+='<div style="margin:8px 0 4px;font-size:10px;opacity:0.4;letter-spacing:1px;font-weight:700">TRAIN:</div>';
+      for(const ut of def.trainable){
+        const ud=UDEF[ut]; if(!ud) continue;
+        const canAfford=G.gold>=(ud.cost?.gold||0)&&G.food>=(ud.cost?.food||0)&&playerPop()<G.popCap;
+        const afford2=canAfford?'':' cant-afford';
+        html+=buildTrainBtn(b.uid, ut, ud, afford2);
+      }
+    }
+    // Queue display
+    if(b.trainQueue.length){
+      html+='<div class="queue-bar">';
+      for(const ut of b.trainQueue) html+=`<div class="q-pip">${UDEF[ut]?.emoji||'?'}</div>`;
+      html+='</div>';
+    }
+    // Rally point
+    if(def.trainable?.length) html+=`<button class="action-btn" onclick="setRallyMode()">🚩 Set Rally Point</button>`;
+    html+=`<button class="action-btn red" onclick="demolishSelected()">💥 Demolish</button>`;
+    si.innerHTML=html;
+  } else if(allUnits.length===1&&allBuildings.length===0){
+    const u=allUnits[0];
+    const def=UDEF[u.type]||{};
+    let html=`<div class="panel-title">${def.emoji||'?'} ${def.name||u.type}</div>`;
+    html+=`<div class="hpbar-wrap"><div class="hpbar" style="width:${u.hp/u.maxHp*100}%;background:${u.hp/u.maxHp>0.5?'#00FF87':u.hp/u.maxHp>0.25?'#FFE500':'#ff5555'}"></div></div>`;
+    html+=`<div class="stat-row">HP: <span>${Math.ceil(u.hp)}/${u.maxHp}</span></div>`;
+    html+=`<div class="stat-row">ATK: <span>${u.atk[0]}-${u.atk[1]}</span></div>`;
+    html+=`<div class="stat-row">DEF: <span>${u.def}</span></div>`;
+    html+=`<div class="stat-row">Range: <span>${u.range.toFixed(1)}</span></div>`;
+    html+=`<div class="stat-row">State: <span>${u.state}</span></div>`;
+    html+=`<button class="action-btn green" onclick="unitHoldPos()">🛑 Hold Position</button>`;
+    html+=`<button class="action-btn yellow" onclick="unitAttackMove()">⚔️ Attack Move</button>`;
+    si.innerHTML=html;
+  } else if(allUnits.length>1){
+    let html=`<div class="multi-info">${allUnits.length} UNITS SELECTED</div>`;
+    const counts={};
+    for(const u of allUnits){ counts[u.type]=(counts[u.type]||0)+1; }
+    for(const [t,c] of Object.entries(counts)){
+      html+=`<div class="stat-row">${UDEF[t]?.emoji||'?'} ${UDEF[t]?.name||t}: <span>${c}</span></div>`;
+    }
+    html+=`<button class="action-btn green" onclick="unitHoldPos()">🛑 Hold Position</button>`;
+    html+=`<button class="action-btn yellow" onclick="unitAttackMove()">⚔️ Attack Move</button>`;
+    si.innerHTML=html;
+  } else {
+    si.innerHTML='<div style="opacity:0.2;font-size:11px;letter-spacing:2px;font-weight:700;text-align:center;padding-top:20px">SELECT UNITS OR BUILDINGS</div>';
+  }
+}
+
+function trainUnit(buid,type){
+  const b=G.buildings.find(x=>x.uid==buid); if(!b) return;
+  const ud=UDEF[type]; if(!ud) return;
+  if(G.gold<(ud.cost?.gold||0)){ showToast('⚠️ Not enough gold!','warn'); return; }
+  if(G.food<(ud.cost?.food||0)){ showToast('⚠️ Not enough food!','warn'); return; }
+  if(playerPop()>=G.popCap){ showToast('⚠️ Population cap!','warn'); return; }
+  if(b.trainQueue.length>=8){ showToast('⚠️ Training queue full!','warn'); return; }
+  G.gold-=(ud.cost?.gold||0); G.food-=(ud.cost?.food||0);
+  b.trainQueue.push(type);
+  renderSelInfo();
+}
+
+function demolishSelected(){
+  for(const uid of G.selected){
+    const b=G.buildings.find(x=>x.uid===uid);
+    if(b&&b.type!=='town_hall'){
+      G.gold+=Math.floor(BDEF[b.type].cost.gold*0.4);
+      G.buildings=G.buildings.filter(x=>x.uid!==uid);
+    }
+  }
+  G.selected=[]; renderSelInfo();
+}
+
+let rallyModeBuilding=null;
+function setRallyMode(){ if(G.selected.length===1) rallyModeBuilding=G.selected[0]; showToast('📍 Click to set rally point','info'); }
+function unitHoldPos(){ for(const uid of G.selected){ const u=G.units.find(x=>x.uid===uid); if(u) u.holdPos=true; } }
+function unitAttackMove(){ G.attackMoveMode=true; showToast('⚔️ Click destination to attack-move','info'); }
+
+function updateBuildButtons(){
+  document.querySelectorAll('.build-btn').forEach(btn=>{
+    const type=btn.dataset.type;
+    const cost=BDEF[type]?.cost||{};
+    const canAfford=G.gold>=(cost.gold||0)&&G.wood>=(cost.wood||0);
+    btn.classList.toggle('cant-afford',!canAfford);
+    btn.classList.toggle('active',G.buildMode===type);
+  });
+}
+
+// ── TOAST NOTIFICATIONS ──────────────────────────────────────────
+const toastWrap=document.getElementById('toast-wrap');
+function showToast(msg,type='info'){
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.textContent=msg;
+  toastWrap.appendChild(el);
+  setTimeout(()=>el.remove(),2800);
+}
+
+// ── TECH MODAL ────────────────────────────────────────────────────
+function openTechModal(){ document.getElementById('tech-modal').classList.add('open'); renderTechModal(); }
+function closeTechModal(){ document.getElementById('tech-modal').classList.remove('open'); }
+function renderTechModal(){
+  const grid=document.getElementById('tech-grid'); grid.innerHTML='';
+  for(const [id,tech] of Object.entries(TECHS)){
+    const done=G.researched.has(id);
+    const prereqMet=tech.requires.every(r=>G.researched.has(r));
+    const canAfford=G.gold>=(tech.cost.gold||0)&&G.wood>=(tech.cost.wood||0);
+    const card=document.createElement('div');
+    card.className='tech-card'+(done?' researched':'')+((!done&&(!canAfford||!prereqMet))?' cant-afford':'');
+    const costStr=done?'<div class="tc-done">✅ RESEARCHED</div>':'<div class="tc-cost">💰'+(tech.cost.gold||0)+(tech.cost.wood?' 🪵'+tech.cost.wood:'')+'</div>';
+    card.innerHTML='<div class="tc-em">'+tech.emoji+'</div><div class="tc-name">'+tech.name+'</div><div class="tc-desc">'+tech.desc+'</div>'+costStr;
+    if(!done) card.onclick=()=>researchTech(id);
+    grid.appendChild(card);
+  }
+}
+
+// ── PLACEMENT ────────────────────────────────────────────────────
+function canPlaceBuilding(type,tx,ty){
+  const def=BDEF[type]; if(!def) return false;
+  const sz=def.size||1;
+  for(let dy=0;dy<sz;dy++) for(let dx=0;dx<sz;dx++){
+    const x=Math.floor(tx)+dx, y=Math.floor(ty)+dy;
+    if(x<0||y<0||x>=MAP_W||y>=MAP_H) return false;
+    if(TERRAIN_PASSABLE[G.map[y][x]]===false) return false;
+    for(const b of G.buildings) if(b.hp>0&&Math.floor(b.tx)===x&&Math.floor(b.ty)===y) return false;
+  }
+  return true;
+}
+
+function placeBuilding(type,tx,ty){
+  const def=BDEF[type];
+  if(!canPlaceBuilding(type,tx,ty)){ showToast('❌ Cannot place here!','warn'); return; }
+  const cost=def.cost||{};
+  if(G.gold<(cost.gold||0)){ showToast('⚠️ Not enough gold!','warn'); return; }
+  if(G.wood<(cost.wood||0)){ showToast('⚠️ Not enough wood!','warn'); return; }
+  G.gold-=cost.gold||0; G.wood-=cost.wood||0;
+  const b=createBuilding(type,tx,ty);
+  G.buildings.push(b);
+  showToast('🏗️ '+def.name+' placed!','info');
+  // Send nearby workers to build
+  const workers=G.units.filter(u=>u.team==='player'&&u.type==='worker'&&u.buildTarget===null);
+  for(let i=0;i<Math.min(2,workers.length);i++){
+    const w=workers[i]; w.buildTarget=b.uid;
+    const path=findPath(w.tx,w.ty,tx+0.5,ty+0.5);
+    if(path){ w.path=path; w.state='move'; }
+  }
+  PATH_CACHE.clear();
+}
+
+// ── INPUT ─────────────────────────────────────────────────────────
+let isDragging=false, dragStart=null, lastMouseTile=null;
+let camDragging=false, camDragStart=null, camDragCam=null;
+let mousePos={x:0,y:0};
+const KEYS=new Set();
+
+canvas.addEventListener('mousedown',e=>{
+  if(e.button===2){
+    // Right-click: cancel build, or move/attack selected units
+    if(G.buildMode){ G.buildMode=null; return; }
+    if(G.attackMoveMode){ G.attackMoveMode=false; }
+    if(rallyModeBuilding){ rallyModeBuilding=null; }
+    if(G.selected.length){
+      const {tx,ty}=screenToTile(e.offsetX,e.offsetY);
+      // Check if clicking enemy
+      const enemy=G.units.find(u=>u.team==='enemy'&&u.hp>0&&Math.abs(u.tx-tx)<1&&Math.abs(u.ty-ty)<1);
+      const enemyBuilding=G.buildings.find(b=>b.team!=='player'&&b.hp>0&&Math.abs(b.tx-tx)<1.5&&Math.abs(b.ty-ty)<1.5);
+      for(const uid of G.selected){
+        const u=G.units.find(x=>x.uid===uid);
+        if(!u) continue;
+        u.holdPos=false;
+        if(enemy||enemyBuilding){
+          u.target=(enemy||enemyBuilding).uid; u.state='attack'; u.path=[];
+        } else {
+          // Scatter units around target
+          const offX=IRNG(-1,1), offY=IRNG(-1,1);
+          const path=findPath(u.tx,u.ty,tx+offX,ty+offY);
+          if(path){ u.path=path; u.state='move'; u.target=null; }
+        }
+      }
+    }
+    return;
+  }
+  if(e.button===1){ camDragging=true; camDragStart={x:e.clientX,y:e.clientY}; camDragCam={x:G.camX,y:G.camY}; return; }
+
+  if(G.buildMode){
+    const {tx,ty}=screenToTile(e.offsetX,e.offsetY);
+    placeBuilding(G.buildMode,Math.floor(tx),Math.floor(ty));
+    if(!KEYS.has('ShiftLeft')&&!KEYS.has('ShiftRight')) G.buildMode=null;
+    return;
+  }
+  if(rallyModeBuilding){
+    const {tx,ty}=screenToTile(e.offsetX,e.offsetY);
+    G.rallyPoints[rallyModeBuilding]={tx,ty};
+    rallyModeBuilding=null; showToast('🚩 Rally point set','info'); return;
+  }
+  if(G.attackMoveMode){
+    const {tx,ty}=screenToTile(e.offsetX,e.offsetY);
+    for(const uid of G.selected){
+      const u=G.units.find(x=>x.uid===uid);
+      if(!u) continue;
+      const path=findPath(u.tx,u.ty,tx,ty);
+      if(path){ u.path=path; u.state='move'; }
+    }
+    G.attackMoveMode=false; return;
+  }
+
+  isDragging=false;
+  dragStart={x:e.offsetX,y:e.offsetY};
+  G.selBox={sx:e.offsetX,sy:e.offsetY,ex:e.offsetX,ey:e.offsetY};
+});
+
+canvas.addEventListener('mousemove',e=>{
+  mousePos={x:e.offsetX,y:e.offsetY};
+  lastMouseTile=screenToTile(e.offsetX,e.offsetY);
+  if(camDragging&&camDragStart){
+    G.camX=camDragCam.x-(e.clientX-camDragStart.x);
+    G.camY=camDragCam.y-(e.clientY-camDragStart.y);
+    clampCamera(); return;
+  }
+  if(dragStart&&G.selBox){
+    const dx=e.offsetX-dragStart.x, dy=e.offsetY-dragStart.y;
+    if(Math.sqrt(dx*dx+dy*dy)>5) isDragging=true;
+    G.selBox.ex=e.offsetX; G.selBox.ey=e.offsetY;
+  }
+});
+
+canvas.addEventListener('mouseup',e=>{
+  if(e.button===1){ camDragging=false; return; }
+  if(e.button!==0) return;
+  if(isDragging&&G.selBox){
+    // Box select player units
+    const sx=Math.min(G.selBox.sx,G.selBox.ex), ex=Math.max(G.selBox.sx,G.selBox.ex);
+    const sy=Math.min(G.selBox.sy,G.selBox.ey), ey=Math.max(G.selBox.sy,G.selBox.ey);
+    const newSel=[];
+    for(const u of G.units){
+      if(u.team!=='player'||u.hp<=0) continue;
+      const {sx:ux,sy:uy}=worldToScreen(u.tx,u.ty);
+      if(ux>=sx&&ux<=ex&&uy>=sy&&uy<=ey) newSel.push(u.uid);
+    }
+    if(!KEYS.has('ShiftLeft')) G.selected=newSel;
+    else G.selected=[...new Set([...G.selected,...newSel])];
+  } else {
+    // Click select
+    const {tx,ty}=screenToTile(e.offsetX,e.offsetY);
+    // Check unit first
+    let hit=null;
+    for(const u of G.units){
+      if(u.hp<=0) continue;
+      if(Math.abs(u.tx-tx)<0.7&&Math.abs(u.ty-ty)<0.7){ hit=u.uid; break; }
+    }
+    // Check building
+    if(!hit) for(const b of G.buildings){
+      if(b.hp<=0) continue;
+      const sz=BDEF[b.type].size||1;
+      if(tx>=b.tx&&tx<b.tx+sz&&ty>=b.ty&&ty<b.ty+sz){ hit=b.uid; break; }
+    }
+    if(!KEYS.has('ShiftLeft')) G.selected=hit?[hit]:[];
+    else if(hit){ if(G.selected.includes(hit)) G.selected=G.selected.filter(x=>x!==hit); else G.selected.push(hit); }
+  }
+  isDragging=false; dragStart=null; G.selBox=null;
+  renderSelInfo();
+});
+
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+
+canvas.addEventListener('wheel',e=>{
+  G.camX+=e.deltaX*0.6;
+  G.camY+=e.deltaY*0.6;
+  clampCamera();
+  e.preventDefault();
+},{passive:false});
+
+// Edge scrolling
+let edgeScrollTimer=null;
+canvas.addEventListener('mousemove',e=>{
+  if(!G||!G.running) return;
+  const EDGE=40,SPD=250;
+  const W=canvas.width,H=canvas.height;
+  const dx=(e.offsetX<EDGE?-1:e.offsetX>W-EDGE?1:0);
+  const dy=(e.offsetY<EDGE?-1:e.offsetY>H-EDGE?1:0);
+  if(dx||dy){
+    if(!edgeScrollTimer) edgeScrollTimer=setInterval(()=>{
+      G.camX+=dx*SPD/60; G.camY+=dy*SPD/60; clampCamera();
+    },16);
+  } else { clearInterval(edgeScrollTimer); edgeScrollTimer=null; }
+});
+
+document.addEventListener('keydown',e=>{
+  KEYS.add(e.code);
+  if(!G||!G.running) return;
+  // Hotkeys
+  if(e.code==='Space'){ e.preventDefault(); callWave(); }
+  if(e.key==='t'||e.key==='T'){ document.getElementById('tech-modal').classList.contains('open')?closeTechModal():openTechModal(); }
+  if(e.code==='Escape'){ G.buildMode=null; G.selected=[]; G.attackMoveMode=false; rallyModeBuilding=null; renderSelInfo(); closeTechModal(); }
+  // CTRL+A select all
+  if(e.ctrlKey&&e.key==='a'){ e.preventDefault(); G.selected=G.units.filter(u=>u.team==='player'&&u.hp>0).map(u=>u.uid); renderSelInfo(); }
+  // Keyboard scroll
+  const SCROLL=80;
+  if(e.code==='ArrowLeft') G.camX-=SCROLL;
+  if(e.code==='ArrowRight') G.camX+=SCROLL;
+  if(e.code==='ArrowUp') G.camY-=SCROLL;
+  if(e.code==='ArrowDown') G.camY+=SCROLL;
+  clampCamera();
+});
+document.addEventListener('keyup',e=>KEYS.delete(e.code));
+
+// Minimap click to pan camera
+mmCanvas.addEventListener('click',e=>{
+  if(!G) return;
+  const sc=Math.min(mmCanvas.width/MAP_W,mmCanvas.height/MAP_H);
+  const tx=e.offsetX/sc, ty=e.offsetY/sc;
+  G.camX=(tx-ty)*TW/2 - canvas.width/2;
+  G.camY=(tx+ty)*TH/2 - canvas.height/2;
+  clampCamera();
+});
+
+function clampCamera(){
+  const maxX=(MAP_W+MAP_H)*TW/2;
+  const maxY=(MAP_W+MAP_H)*TH/2;
+  G.camX=CLAMP(G.camX,-canvas.width/2,maxX);
+  G.camY=CLAMP(G.camY,-canvas.height/2,maxY);
+}
+
+// ── TOOLBAR SETUP ────────────────────────────────────────────────
+function buildToolbar(){
+  const bar=document.getElementById('bottombar');
+  // Remove old buttons
+  bar.querySelectorAll('.build-btn').forEach(b=>b.remove());
+  const buildOrder=['barracks','farm','lumber_mill','tower','wall','lab','blacksmith','market','mage_tower'];
+  for(const type of buildOrder){
+    const def=BDEF[type]; if(!def) continue;
+    const btn=document.createElement('div');
+    btn.className='build-btn'; btn.dataset.type=type;
+    const c=def.cost;
+    btn.innerHTML=`<span class="bb-emoji">${def.emoji}</span><span class="bb-name">${def.name.toUpperCase()}</span><span class="bb-cost">💰${c.gold}${c.wood?` 🪵${c.wood}`:''}</span>`;
+    btn.onclick=()=>{ G.buildMode=G.buildMode===type?null:type; };
+    bar.appendChild(btn);
+  }
+}
+
+// ── BUTTONS ──────────────────────────────────────────────────────
+document.getElementById('btn-wave').onclick=()=>callWave();
+document.getElementById('btn-pause').onclick=()=>{
+  G.paused=!G.paused;
+  const btn=document.getElementById('btn-pause');
+  btn.textContent=G.paused?'▶ RESUME':'⏸ PAUSE';
+  btn.classList.toggle('paused',G.paused);
+};
+document.getElementById('spd-btn').onclick=()=>{
+  G.speed=G.speed===1?2:1;
+  document.getElementById('spd-btn').textContent=G.speed+'×';
+  document.getElementById('spd-btn').classList.toggle('x2',G.speed===2);
+};
+document.getElementById('tech-btn').onclick=openTechModal;
+
+// ── GAME START ────────────────────────────────────────────────────
+function startGame(){
+  document.getElementById('overlay').classList.add('hidden');
+  G=createGameState();
+  G.running=true;
+  G.startTime=Date.now();
+  const {map,fog}=generateMap();
+  G.map=map; G.fog=fog;
+
+  // Place town hall
+  const th=createBuilding('town_hall',5,5);
+  th.constructing=false; th.buildProgress=1; th.active=true;
+  G.buildings.push(th);
+
+  // Starting workers
+  for(let i=0;i<3;i++){
+    const w=createUnit('worker',7+i,5,'player');
+    G.units.push(w);
+  }
+  // Starting soldier
+  G.units.push(createUnit('soldier',7,7,'player'));
+
+  // Center camera on town hall
+  const {sx,sy}=tileToScreen(5,5);
+  G.camX=sx-canvas.width/2+TW;
+  G.camY=sy-canvas.height/2+TH;
+  clampCamera();
+
+  buildToolbar();
+  G.wavePending=true; G.waveTimer=45;
+  showToast('🏰 Base established! First wave in 45 seconds.','info');
+  showToast('Right-click to move units. Left-click to select.','info');
+}
+
+document.getElementById('btn-play').onclick=startGame;
+
+// ── MAIN LOOP ─────────────────────────────────────────────────────
+let lastTime=0, accumulator=0;
+const FIXED_DT=1/60;
+
+function mainLoop(ts){
+  requestAnimationFrame(mainLoop);
+  const rawDt=Math.min((ts-lastTime)/1000,0.1); lastTime=ts;
+  if(!G||!G.running||G.paused){ render(); return; }
+  accumulator+=rawDt*G.speed;
+  let steps=0;
+  while(accumulator>=FIXED_DT&&steps<4){
+    const dt=FIXED_DT;
+    G.time+=dt;
+    tickResources(dt);
+    for(const u of [...G.units]) tickUnit(u,dt);
+    tickBuildings(dt);
+    tickWaveSystem(dt);
+    tickProjectiles(dt);
+    tickParticles(dt);
+    // Update fog every 10 ticks
+    if(G.tick%10===0) updateFog();
+    G.tick++;
+    accumulator-=FIXED_DT;
+    steps++;
+  }
+  // Dirty check for sel info — update every 30 frames
+  if(G.tick%30===0) renderSelInfo();
+  render();
+}
+
+// ── RESIZE ───────────────────────────────────────────────────────
+function initResize(){
+  resizeCanvas();
+  mmCanvas.width=document.getElementById('minimap-wrap').clientWidth;
+  mmCanvas.height=180;
+}
+window.addEventListener('resize',()=>{ initResize(); });
+initResize();
+requestAnimationFrame(ts=>{lastTime=ts; mainLoop(ts);});
+</script>
+</body>
+</html>

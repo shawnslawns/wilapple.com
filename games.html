@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wilapple.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+  <style>
+    /* ── GAME SELECT GRID ── */
+    .game-select-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 100px;
+      position: relative;
+      z-index: 2;
+    }
+    .game-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 16px;
+    }
+    .game-select-card {
+      border-radius: 18px;
+      border: 2px solid rgba(255,255,255,0.07);
+      padding: 28px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      cursor: none;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: gscIn 0.45s ease forwards;
+    }
+    @keyframes gscIn { to { opacity:1; transform:translateY(0); } }
+
+    .game-select-card:hover { transform: translateY(-6px) scale(1.03); }
+
+    .gsc-num {
+      position: absolute; top: 10px; left: 14px;
+      font-family: 'Boogaloo', cursive; font-size: 13px;
+      opacity: 0.18; letter-spacing: 1px;
+    }
+    .gsc-emoji { font-size: 46px; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
+    .gsc-title { font-family: 'Boogaloo', cursive; font-size: 17px; letter-spacing: 1.5px; text-align: center; line-height: 1.2; }
+    .gsc-tag   { font-size: 10px; font-weight: 700; letter-spacing: 2px; opacity: 0.35; text-align: center; }
+    .gsc-play  {
+      margin-top: 4px; font-size: 11px; font-weight: 900; letter-spacing: 3px;
+      padding: 6px 16px; border-radius: 100px; border: 1px solid currentColor;
+      opacity: 0; transform: translateY(5px);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .game-select-card:hover .gsc-play { opacity: 0.65; transform: translateY(0); }
+
+    .gsc-yellow { background: linear-gradient(135deg,#1a1800,#0e0e16); }
+    .gsc-yellow:hover { box-shadow: 0 16px 50px rgba(255,229,0,0.18); border-color: rgba(255,229,0,0.25); }
+    .gsc-yellow .gsc-title, .gsc-yellow .gsc-play { color: var(--yellow); }
+
+    .gsc-pink { background: linear-gradient(135deg,#1a0012,#0e0e16); }
+    .gsc-pink:hover { box-shadow: 0 16px 50px rgba(255,60,172,0.18); border-color: rgba(255,60,172,0.25); }
+    .gsc-pink .gsc-title, .gsc-pink .gsc-play { color: var(--pink); }
+
+    .gsc-cyan { background: linear-gradient(135deg,#001a1a,#0e0e16); }
+    .gsc-cyan:hover { box-shadow: 0 16px 50px rgba(0,240,255,0.18); border-color: rgba(0,240,255,0.25); }
+    .gsc-cyan .gsc-title, .gsc-cyan .gsc-play { color: var(--cyan); }
+
+    .gsc-green { background: linear-gradient(135deg,#001a0a,#0e0e16); }
+    .gsc-green:hover { box-shadow: 0 16px 50px rgba(0,255,135,0.18); border-color: rgba(0,255,135,0.25); }
+    .gsc-green .gsc-title, .gsc-green .gsc-play { color: var(--green); }
+
+    .gsc-orange { background: linear-gradient(135deg,#1a0a00,#0e0e16); }
+    .gsc-orange:hover { box-shadow: 0 16px 50px rgba(255,107,53,0.18); border-color: rgba(255,107,53,0.25); }
+    .gsc-orange .gsc-title, .gsc-orange .gsc-play { color: var(--orange); }
+
+    .gsc-purple { background: linear-gradient(135deg,#0d001a,#0e0e16); }
+    .gsc-purple:hover { box-shadow: 0 16px 50px rgba(192,132,252,0.18); border-color: rgba(192,132,252,0.25); }
+    .gsc-purple .gsc-title, .gsc-purple .gsc-play { color: var(--purple); }
+
+    /* ── MODAL ── */
+    #game-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(8,8,15,0.94);
+      backdrop-filter: blur(14px);
+      overflow-y: auto;
+      padding: 76px 20px 48px;
+    }
+    #game-modal.open { display: block; }
+
+    #modal-close {
+      position: fixed;
+      top: 16px; right: 20px;
+      z-index: 600;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Boogaloo', cursive;
+      font-size: 15px;
+      letter-spacing: 2px;
+      padding: 9px 22px;
+      border-radius: 100px;
+      cursor: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    #modal-close:hover { background: rgba(255,255,255,0.12); color: white; }
+
+    #modal-inner { max-width: 780px; margin: 0 auto; }
+    #modal-inner .game-card {
+      animation: modalIn 0.32s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes modalIn {
+      from { opacity:0; transform:translateY(28px) scale(0.97); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    /* hide the pool */
+    .games-section { display: none !important; }
+
+    @media(max-width:600px) {
+      .game-select-section { padding: 0 14px 70px; }
+      .game-select-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+      .game-select-card { padding: 20px 12px 16px; }
+      .gsc-emoji { font-size: 34px; }
+      .gsc-title { font-size: 13px; }
+      #game-modal { padding: 68px 12px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="blob blob1"></div><div class="blob blob2"></div>
+  <div class="blob blob3"></div><div class="blob blob4"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">🎪 WILAPPLE</div>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <a href="index.html" style="background:rgba(181,84,28,0.15);border:1px solid rgba(181,84,28,0.4);color:#e8824a;padding:7px 18px;border-radius:100px;font-weight:900;font-size:14px;text-decoration:none;letter-spacing:1px;">🍁 RECIPES</a>
+        <a href="casino.html" style="background:rgba(0,255,135,0.12);border:1px solid rgba(0,255,135,0.3);color:#00FF87;padding:7px 18px;border-radius:100px;font-weight:900;font-size:14px;text-decoration:none;letter-spacing:1px;">🎰 CASINO</a>
+        <div class="score-badge">🏆 <span id="totalScore">0</span> PTS</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">✨ THE MOST FUN PLACE ON THE INTERNET</div>
+      <h1 class="hero-title">
+        <span class="line1">PLAY.</span>
+        <span class="line2">VIBE.</span>
+        <span class="line3">WIN.</span>
+      </h1>
+      <p class="hero-sub">22 games. Zero rules. Pure chaos. 🎉</p>
+      <a href="#games" class="hero-btn">LET'S GOOO →</a>
+      <a href="casino.html" style="display:inline-block;margin-left:16px;background:rgba(0,255,135,0.1);border:2px solid rgba(0,255,135,0.35);color:#00FF87;padding:16px 38px;border-radius:100px;font-family:'Boogaloo',cursive;font-size:20px;letter-spacing:2px;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;animation:fadeUp 0.6s 0.6s ease both;">🎰 CASINO →</a>
+    </div>
+    <div class="hero-art">
+      <div class="floating-emoji" style="--d:0s;--x:10%;--y:20%">🎮</div>
+      <div class="floating-emoji" style="--d:0.5s;--x:70%;--y:10%">⭐</div>
+      <div class="floating-emoji" style="--d:1s;--x:80%;--y:60%">🎯</div>
+      <div class="floating-emoji" style="--d:1.5s;--x:20%;--y:70%">🔥</div>
+      <div class="floating-emoji" style="--d:0.8s;--x:50%;--y:80%">💥</div>
+      <div class="floating-emoji" style="--d:0.3s;--x:40%;--y:30%">🌈</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ GAME SELECT GRID ══════════════════ -->
+  <div id="games">
+    <div class="section-label" style="text-align:center;padding:0 0 30px;position:relative;z-index:2;">🎮 PICK YOUR GAME</div>
+    <div class="game-select-section">
+      <div class="game-select-grid">
+
+        <div class="game-select-card gsc-yellow" data-game="clicker" style="animation-delay:.03s">
+          <span class="gsc-num">01</span>
+          <div class="gsc-emoji">💥</div>
+          <div class="gsc-title">MANIC CLICKER</div>
+          <div class="gsc-tag">TAP TAP TAP</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-pink" data-game="snake" style="animation-delay:.06s">
+          <span class="gsc-num">02</span>
+          <div class="gsc-emoji">🐍</div>
+          <div class="gsc-title">NEON SNAKE</div>
+          <div class="gsc-tag">ARROW KEYS</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-cyan" data-game="memory" style="animation-delay:.09s">
+          <span class="gsc-num">03</span>
+          <div class="gsc-emoji">🧠</div>
+          <div class="gsc-title">EMOJI MEMORY</div>
+          <div class="gsc-tag">MATCH 'EM ALL</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-green" data-game="whack" style="animation-delay:.12s">
+          <span class="gsc-num">04</span>
+          <div class="gsc-emoji">🐹</div>
+          <div class="gsc-title">WHACK-A-MOLE</div>
+          <div class="gsc-tag">SMASH 'EM</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-orange" data-game="typer" style="animation-delay:.15s">
+          <span class="gsc-num">05</span>
+          <div class="gsc-emoji">⌨️</div>
+          <div class="gsc-title">TYPE RACER</div>
+          <div class="gsc-tag">HOW FAST?</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-purple" data-game="color" style="animation-delay:.18s">
+          <span class="gsc-num">06</span>
+          <div class="gsc-emoji">🎨</div>
+          <div class="gsc-title">COLOR GUESS</div>
+          <div class="gsc-tag">KNOW YOUR HEX?</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-yellow" data-game="reaction" style="animation-delay:.21s">
+          <span class="gsc-num">07</span>
+          <div class="gsc-emoji">⚡</div>
+          <div class="gsc-title">REACTION TIME</div>
+          <div class="gsc-tag">CLICK ON GREEN</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-pink" data-game="pong" style="animation-delay:.24s">
+          <span class="gsc-num">08</span>
+          <div class="gsc-emoji">🏓</div>
+          <div class="gsc-title">NEON PONG</div>
+          <div class="gsc-tag">W/S OR ↑↓</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-cyan" data-game="math" style="animation-delay:.27s">
+          <span class="gsc-num">09</span>
+          <div class="gsc-emoji">🔢</div>
+          <div class="gsc-title">MATH BLITZ</div>
+          <div class="gsc-tag">PICK THE ANSWER</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-green" data-game="scramble" style="animation-delay:.30s">
+          <span class="gsc-num">10</span>
+          <div class="gsc-emoji">🔤</div>
+          <div class="gsc-title">WORD SCRAMBLE</div>
+          <div class="gsc-tag">UNSCRAMBLE IT</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-purple" data-game="simon" style="animation-delay:.33s">
+          <span class="gsc-num">11</span>
+          <div class="gsc-emoji">🔴</div>
+          <div class="gsc-title">SIMON SAYS</div>
+          <div class="gsc-tag">REPEAT THE PATTERN</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-orange" data-game="dodge" style="animation-delay:.36s">
+          <span class="gsc-num">12</span>
+          <div class="gsc-emoji">🚀</div>
+          <div class="gsc-title">ASTEROID DODGE</div>
+          <div class="gsc-tag">MOVE MOUSE</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-cyan" data-game="numMemory" style="animation-delay:.39s">
+          <span class="gsc-num">13</span>
+          <div class="gsc-emoji">🔢</div>
+          <div class="gsc-title">NUMBER MEMORY</div>
+          <div class="gsc-tag">REMEMBER IT</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-yellow" data-game="emojiRain" style="animation-delay:.42s">
+          <span class="gsc-num">14</span>
+          <div class="gsc-emoji">🌟</div>
+          <div class="gsc-title">EMOJI RAIN</div>
+          <div class="gsc-tag">CLICK TO CATCH</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-green" data-game="guessNum" style="animation-delay:.45s">
+          <span class="gsc-num">15</span>
+          <div class="gsc-emoji">🎯</div>
+          <div class="gsc-title">GUESS THE NUMBER</div>
+          <div class="gsc-tag">1 TO 100</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-orange" data-game="speedmath" style="animation-delay:.48s">
+          <span class="gsc-num">16</span>
+          <div class="gsc-emoji">➕</div>
+          <div class="gsc-title">SPEED MATH</div>
+          <div class="gsc-tag">TYPE THE ANSWER</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-purple" data-game="pattern" style="animation-delay:.51s">
+          <span class="gsc-num">17</span>
+          <div class="gsc-emoji">🔮</div>
+          <div class="gsc-title">PATTERN COPY</div>
+          <div class="gsc-tag">COPY THE GRID</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-pink" data-game="trivia" style="animation-delay:.54s">
+          <span class="gsc-num">18</span>
+          <div class="gsc-emoji">❓</div>
+          <div class="gsc-title">RANDOM TRIVIA</div>
+          <div class="gsc-tag">TRUE OR FALSE</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-green" data-game="bricks" style="animation-delay:.57s">
+          <span class="gsc-num">19</span>
+          <div class="gsc-emoji">🧱</div>
+          <div class="gsc-title">BRICK BREAKER</div>
+          <div class="gsc-tag">MOUSE TO AIM</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <div class="game-select-card gsc-yellow" data-game="shooter" style="animation-delay:.60s">
+          <span class="gsc-num">20</span>
+          <div class="gsc-emoji">🎃</div>
+          <div class="gsc-title">EMOJI SHOOTER</div>
+          <div class="gsc-tag">CLICK TO SHOOT</div>
+          <div class="gsc-play">▶ PLAY</div>
+        </div>
+
+        <a href="Wilapple-command.html" class="game-select-card gsc-pink" style="animation-delay:.70s;text-decoration:none">
+          <span class="gsc-num">22</span>
+          <div class="gsc-emoji">⚔️</div>
+          <div class="gsc-title">WILAPPLE COMMAND</div>
+          <div class="gsc-tag">REAL-TIME STRATEGY</div>
+          <div class="gsc-play" style="color:var(--pink)">▶ PLAY</div>
+        </a>
+
+      </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MODAL ══════════════════ -->
+  <div id="game-modal">
+    <button id="modal-close">✕ BACK TO GAMES</button>
+    <div id="modal-inner"></div>
+  </div>
+
+  <!-- ══════════════════ HIDDEN GAME POOL ══════════════════ -->
+  <section class="games-section" id="game-pool">
+
+    <div id="clicker" class="game-card card-yellow">
+      <div class="game-header"><span class="game-num">01</span><h2>MANIC CLICKER</h2><span class="game-tag">TAP TAP TAP</span></div>
+      <div class="game-body"><div class="clicker-area">
+        <button class="clicker-btn" id="clickerBtn"><span class="click-inner">💥</span></button>
+        <div class="row-stats">
+          <div class="stat-box"><div class="stat-val" id="clickCount">0</div><div class="stat-label">CLICKS</div></div>
+          <div class="stat-box"><div class="stat-val" id="clickCPS">0</div><div class="stat-label">PER SEC</div></div>
+          <div class="stat-box"><div class="stat-val" id="clickBest">0</div><div class="stat-label">BEST CPS</div></div>
+        </div>
+        <div class="clicker-bar-wrap"><div class="clicker-bar" id="clickerBar"></div></div>
+        <div class="clicker-timer" id="clickerTimer">CLICK TO START — 10 SEC CHALLENGE</div>
+        <button class="reset-btn" id="clickerReset">RESET</button>
+      </div></div>
+    </div>
+
+    <div id="snake" class="game-card card-pink">
+      <div class="game-header"><span class="game-num">02</span><h2>NEON SNAKE</h2><span class="game-tag">ARROW KEYS</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="snakeScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="snakeHigh">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <canvas id="snakeCanvas" width="400" height="400"></canvas>
+        <div class="canvas-controls">
+          <button class="ctrl-btn pink" id="snakeStart">▶ START</button>
+          <div class="dpad">
+            <button class="dpad-btn" data-dir="up">▲</button>
+            <button class="dpad-btn" data-dir="left">◀</button>
+            <button class="dpad-btn" data-dir="right">▶</button>
+            <button class="dpad-btn" data-dir="down">▼</button>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div id="memory" class="game-card card-cyan">
+      <div class="game-header"><span class="game-num">03</span><h2>EMOJI MEMORY</h2><span class="game-tag">MATCH 'EM ALL</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="memoryMoves">0</div><div class="stat-label">MOVES</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="memoryMatches">0</div><div class="stat-label">MATCHES</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="memoryBest">—</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <button class="reset-btn cyan" id="memoryReset">NEW GAME</button>
+      </div></div>
+    </div>
+
+    <div id="whack" class="game-card card-green">
+      <div class="game-header"><span class="game-num">04</span><h2>WHACK-A-MOLE</h2><span class="game-tag">SMASH 'EM</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="whackScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="whackTimer">30</div><div class="stat-label">SECS</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="whackBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="whack-grid" id="whackGrid">
+          <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
+          <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
+          <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
+          <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
+          <div class="hole"><div class="mole">🐹</div></div>
+        </div>
+        <button class="reset-btn green" id="whackStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="typer" class="game-card card-orange">
+      <div class="game-header"><span class="game-num">05</span><h2>TYPE RACER</h2><span class="game-tag">HOW FAST?</span></div>
+      <div class="game-body"><div class="typer-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="typerWPM">0</div><div class="stat-label">WPM</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="typerAcc">100</div><div class="stat-label">ACC %</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="typerBest">0</div><div class="stat-label">BEST WPM</div></div>
+        </div>
+        <div class="typer-prompt" id="typerPrompt"></div>
+        <input class="game-input" id="typerInput" placeholder="START TYPING..." autocomplete="off" spellcheck="false" />
+        <div class="bar-wrap"><div class="bar orange-bar" id="typerTimerBar"></div></div>
+        <button class="reset-btn orange" id="typerReset">NEW PHRASE</button>
+      </div></div>
+    </div>
+
+    <div id="color" class="game-card card-purple">
+      <div class="game-header"><span class="game-num">06</span><h2>COLOR GUESS</h2><span class="game-tag">KNOW YOUR HEX?</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="colorScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="colorStreak">0</div><div class="stat-label">STREAK</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="colorBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="color-swatch" id="colorSwatch"></div>
+        <div class="color-choices" id="colorChoices"></div>
+        <div class="feedback-text" id="colorFeedback"></div>
+      </div></div>
+    </div>
+
+    <div id="reaction" class="game-card card-yellow">
+      <div class="game-header"><span class="game-num">07</span><h2>REACTION TIME</h2><span class="game-tag">CLICK ON GREEN</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="reactionLast">—</div><div class="stat-label">LAST ms</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="reactionBest">—</div><div class="stat-label">BEST ms</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="reactionAvg">—</div><div class="stat-label">AVG ms</div></div>
+        </div>
+        <div class="reaction-pad" id="reactionPad">
+          <div class="reaction-msg" id="reactionMsg">CLICK TO START</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div id="pong" class="game-card card-pink">
+      <div class="game-header"><span class="game-num">08</span><h2>NEON PONG</h2><span class="game-tag">W/S OR ↑↓</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="pongPlayer">0</div><div class="stat-label">YOU</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="pongAI">0</div><div class="stat-label">CPU</div></div>
+        </div>
+        <canvas id="pongCanvas" width="500" height="280"></canvas>
+        <button class="ctrl-btn pink" id="pongStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="math" class="game-card card-cyan">
+      <div class="game-header"><span class="game-num">09</span><h2>MATH BLITZ</h2><span class="game-tag">PICK THE ANSWER</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="mathScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="mathTimer">30</div><div class="stat-label">SECS</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="mathStreak">0</div><div class="stat-label">STREAK</div></div>
+        </div>
+        <div class="big-question" id="mathQuestion">PRESS START!</div>
+        <div class="choice-grid" id="mathChoices"></div>
+        <button class="reset-btn cyan" id="mathStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="scramble" class="game-card card-green">
+      <div class="game-header"><span class="game-num">10</span><h2>WORD SCRAMBLE</h2><span class="game-tag">UNSCRAMBLE IT</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="scrambleScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="scrambleStreak">0</div><div class="stat-label">STREAK</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="scrambleBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="scramble-word" id="scrambleWord">?????</div>
+        <div class="feedback-text dim" id="scrambleHint"></div>
+        <input class="game-input green-inp" id="scrambleInput" placeholder="TYPE YOUR ANSWER..." autocomplete="off" spellcheck="false" />
+        <div class="btn-row">
+          <button class="reset-btn green" id="scrambleCheck">✓ CHECK</button>
+          <button class="reset-btn" id="scrambleSkip">SKIP →</button>
+        </div>
+        <div class="feedback-text" id="scrambleFeedback"></div>
+      </div></div>
+    </div>
+
+    <div id="simon" class="game-card card-purple">
+      <div class="game-header"><span class="game-num">11</span><h2>SIMON SAYS</h2><span class="game-tag">REPEAT THE PATTERN</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="simonRound">0</div><div class="stat-label">ROUND</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="simonBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="simon-grid">
+          <button class="simon-btn" data-color="red"    style="--sc:#ff4444;--sd:#aa1111"></button>
+          <button class="simon-btn" data-color="blue"   style="--sc:#4488ff;--sd:#1144aa"></button>
+          <button class="simon-btn" data-color="green"  style="--sc:#44ff88;--sd:#11aa44"></button>
+          <button class="simon-btn" data-color="yellow" style="--sc:#ffee44;--sd:#aaaa11"></button>
+        </div>
+        <div class="feedback-text" id="simonMsg">PRESS START TO PLAY</div>
+        <button class="reset-btn purple" id="simonStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="dodge" class="game-card card-orange">
+      <div class="game-header"><span class="game-num">12</span><h2>ASTEROID DODGE</h2><span class="game-tag">MOVE MOUSE TO DODGE</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="dodgeScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="dodgeBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <canvas id="dodgeCanvas" width="500" height="300"></canvas>
+        <button class="ctrl-btn orange" id="dodgeStart">▶ START — MOVE MOUSE TO DODGE</button>
+      </div></div>
+    </div>
+
+    <div id="numMemory" class="game-card card-cyan">
+      <div class="game-header"><span class="game-num">13</span><h2>NUMBER MEMORY</h2><span class="game-tag">REMEMBER IT</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="nummemLevel">1</div><div class="stat-label">DIGITS</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="nummemBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="big-question" id="nummemDisplay">PRESS START</div>
+        <input class="game-input" id="nummemInput" placeholder="TYPE THE NUMBER..." type="number" style="display:none" />
+        <div class="feedback-text" id="nummemFeedback"></div>
+        <button class="reset-btn cyan" id="nummemStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="emojiRain" class="game-card card-yellow">
+      <div class="game-header"><span class="game-num">14</span><h2>EMOJI RAIN</h2><span class="game-tag">CLICK TO CATCH</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="rainScore">0</div><div class="stat-label">CAUGHT</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="rainMissed">0</div><div class="stat-label">MISSED</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="rainBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <canvas id="rainCanvas" width="500" height="300"></canvas>
+        <button class="ctrl-btn" id="rainStart">▶ START — CLICK STARS TO CATCH THEM</button>
+      </div></div>
+    </div>
+
+    <div id="guessNum" class="game-card card-green">
+      <div class="game-header"><span class="game-num">15</span><h2>GUESS THE NUMBER</h2><span class="game-tag">1 TO 100</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="guessAttempts">0</div><div class="stat-label">ATTEMPTS</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="guessBest">—</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="big-question" id="guessHint">I'm thinking of a number between 1 and 100...</div>
+        <div class="btn-row">
+          <input class="game-input green-inp" id="guessInput" type="number" min="1" max="100" placeholder="YOUR GUESS..." style="flex:1" />
+          <button class="reset-btn green" id="guessSubmit">GO!</button>
+        </div>
+        <div class="guess-history" id="guessHistory"></div>
+        <button class="reset-btn" id="guessReset">NEW GAME</button>
+      </div></div>
+    </div>
+
+    <div id="speedmath" class="game-card card-orange">
+      <div class="game-header"><span class="game-num">16</span><h2>SPEED MATH</h2><span class="game-tag">TYPE THE ANSWER</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="speedmathScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="speedmathTimer">60</div><div class="stat-label">SECS</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="speedmathBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="big-question" id="speedmathQ">PRESS START!</div>
+        <input class="game-input orange-inp" id="speedmathInput" type="number" placeholder="ANSWER..." style="display:none;text-align:center;font-size:28px" autocomplete="off" />
+        <button class="reset-btn orange" id="speedmathStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="pattern" class="game-card card-purple">
+      <div class="game-header"><span class="game-num">17</span><h2>PATTERN COPY</h2><span class="game-tag">COPY THE GRID</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="patternLevel">1</div><div class="stat-label">LEVEL</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="patternBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="feedback-text dim" id="patternMsg">Memorise the pattern then click CHECK to submit!</div>
+        <div class="pattern-grids">
+          <div><div class="pattern-label">MEMORISE</div><div class="pattern-grid" id="patternShow"></div></div>
+          <div><div class="pattern-label">YOUR COPY</div><div class="pattern-grid" id="patternDraw"></div></div>
+        </div>
+        <div class="btn-row">
+          <button class="reset-btn purple" id="patternCheck">✓ CHECK</button>
+          <button class="reset-btn purple" id="patternStart">▶ NEW ROUND</button>
+        </div>
+      </div></div>
+    </div>
+
+    <div id="trivia" class="game-card card-pink">
+      <div class="game-header"><span class="game-num">18</span><h2>RANDOM TRIVIA</h2><span class="game-tag">TRUE OR FALSE</span></div>
+      <div class="game-body"><div class="center-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="triviaScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="triviaStreak">0</div><div class="stat-label">STREAK</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="triviaBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <div class="trivia-question" id="triviaQuestion">Hit a button to begin!</div>
+        <div class="btn-row">
+          <button class="trivia-btn true-btn" id="triviaTrue">✅ TRUE</button>
+          <button class="trivia-btn false-btn" id="triviaFalse">❌ FALSE</button>
+        </div>
+        <div class="feedback-text" id="triviaFeedback"></div>
+      </div></div>
+    </div>
+
+    <div id="bricks" class="game-card card-green">
+      <div class="game-header"><span class="game-num">19</span><h2>BRICK BREAKER</h2><span class="game-tag">MOUSE TO AIM PADDLE</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="bricksScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="bricksLives">3</div><div class="stat-label">LIVES</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="bricksBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <canvas id="bricksCanvas" width="500" height="340"></canvas>
+        <button class="ctrl-btn green" id="bricksStart">▶ START</button>
+      </div></div>
+    </div>
+
+    <div id="shooter" class="game-card card-yellow">
+      <div class="game-header"><span class="game-num">20</span><h2>EMOJI SHOOTER</h2><span class="game-tag">CLICK TO SHOOT</span></div>
+      <div class="game-body"><div class="canvas-area">
+        <div class="row-stats">
+          <div class="stat-box dark"><div class="stat-val" id="shooterScore">0</div><div class="stat-label">SCORE</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="shooterLives">5</div><div class="stat-label">LIVES</div></div>
+          <div class="stat-box dark"><div class="stat-val" id="shooterBest">0</div><div class="stat-label">BEST</div></div>
+        </div>
+        <canvas id="shooterCanvas" width="500" height="320"></canvas>
+        <button class="ctrl-btn" id="shooterStart">▶ START — CLICK TO SHOOT</button>
+      </div></div>
+    </div>
+
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>🎪 WILAPPLE.COM</span>
+      <span>MADE WITH 💥 AND LOTS OF JS</span>
+      <span>TOTAL PTS: <strong id="footerScore">0</strong></span>
+    </div>
+  </footer>
+
+  <div class="popup" id="popup">
+    <span class="popup-icon" id="popupIcon">🏆</span>
+    <span class="popup-text" id="popupText">NICE!</span>
+  </div>
+
+  <script>
+    const modal    = document.getElementById('game-modal');
+    const inner    = document.getElementById('modal-inner');
+    const closeBtn = document.getElementById('modal-close');
+    const pool     = document.getElementById('game-pool');
+
+    document.querySelectorAll('.game-select-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const gameEl = document.getElementById(card.dataset.game);
+        if (!gameEl) return;
+        inner.innerHTML = '';
+        inner.appendChild(gameEl);
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        modal.scrollTop = 0;
+        if (typeof initGame === 'function') initGame(card.dataset.game);
+      });
+    });
+
+    function closeModal() {
+      const gameEl = inner.firstElementChild;
+      if (gameEl) pool.appendChild(gameEl);
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+  </script>
+
+</body>
+</html>
