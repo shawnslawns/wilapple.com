@@ -1594,148 +1594,107 @@
     });
 
     // ===================== 11 SCRATCH CARD =====================
-    const SCRATCH_SYMS = ['💎','⭐','🍒','🔥','💰','🎯'];
-    let scratchWonTotal = 0, scratchCards = 0, scratchRevealed = 0, scratchTotal = 9, scratchValues = [], scratchActive = false;
+    // ===================== 11 SCRATCH CARD =====================
+const SCRATCH_SYMS = ['💎','⭐','🍒','🔥','💰','🎯'];
+let scratchWonTotal = 0, scratchCards = 0, scratchRevealed = 0, scratchTotal = 9, scratchValues = [], scratchActive = false;
 
-    function newScratchCard() {
-      const bet = getBet('scratchBet');
-      if (!bet) { document.getElementById('scratchFeedback').textContent = 'ENTER A BET!'; return; }
-      if (!deduct(bet)) { document.getElementById('scratchFeedback').textContent = '❌ NOT ENOUGH!'; return; }
-      scratchCards++; document.getElementById('scratchCards').textContent = scratchCards;
-      scratchRevealed = 0; scratchActive = true;
-      document.getElementById('scratchFeedback').textContent = 'Click tiles to scratch!';
-      document.getElementById('scratchFeedback').style.color = 'rgba(255,255,255,0.5)';
-      document.getElementById('scratchNew').disabled = true;
+function generateLosingGrid(){
+  let grid;
+  do{
+    grid = Array.from({length:9}, () => SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)]);
+    const counts = {};
+    grid.forEach(s => counts[s] = (counts[s]||0)+1);
+    if(!Object.values(counts).some(c => c >= 3)) return grid;
+  }while(true);
+}
 
-      // Generate 9 symbols with a possible winning triple
-      scratchValues = Array.from({length:9}, () => SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)]);
-      if (Math.random() < 0.25) { // 25% win chance — plant a triple
-        const sym = SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)];
-        const positions = [0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5).slice(0,3);
-        positions.forEach(p => scratchValues[p] = sym);
-      }
+function newScratchCard() {
+  const bet = getBet('scratchBet');
+  if (!bet) { document.getElementById('scratchFeedback').textContent = 'ENTER A BET!'; return; }
+  if (!deduct(bet)) { document.getElementById('scratchFeedback').textContent = '❌ NOT ENOUGH!'; return; }
 
-      const grid = document.getElementById('scratchGrid'); grid.innerHTML = '';
-      scratchValues.forEach((sym, i) => {
-        const cell = document.createElement('div');
-        cell.style.cssText = 'height:90px;background:rgba(255,229,0,0.15);border:2px solid rgba(255,229,0,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:none;transition:all 0.2s;user-select:none;';
-        cell.textContent = '❓';
-        cell.addEventListener('click', () => {
-          if (cell.dataset.revealed || !scratchActive) return;
-          cell.dataset.revealed = '1';
-          cell.textContent = sym;
-          cell.style.background = 'rgba(255,255,255,0.08)';
-          cell.style.borderColor = 'rgba(255,255,255,0.15)';
-          scratchRevealed++;
-          if (scratchRevealed === scratchTotal) evaluateScratch(bet, grid);
-        });
-        grid.appendChild(cell);
-      });
-    }
+  scratchCards++;
+  document.getElementById('scratchCards').textContent = scratchCards;
 
-    function evaluateScratch(bet, grid) {
-      scratchActive = false;
-      const counts = {};
-      scratchValues.forEach(s => counts[s] = (counts[s]||0) + 1);
-      const tripleSymbol = Object.keys(counts).find(s => counts[s] >= 3);
-      const fb = document.getElementById('scratchFeedback');
-      document.getElementById('scratchNew').disabled = false;
-      if (tripleSymbol) {
-        const multipliers = {'💎':15,'⭐':8,'💰':6,'🔥':4,'🍒':3,'🎯':2};
-        const mult = multipliers[tripleSymbol] || 2;
-        const win = bet * mult; award(win); scratchWonTotal += win;
-        document.getElementById('scratchWon').textContent = '$' + scratchWonTotal;
-        fb.textContent = `✅ THREE ${tripleSymbol}! WIN $${win}!`;
-        fb.style.color = 'var(--yellow)';
-        showPopup('🎟️', `THREE ${tripleSymbol}! WIN!`);
-        spawnFloat(document.getElementById('scratchNew'), `+$${win}`);
-        // Highlight winners
-        document.querySelectorAll('#scratchGrid > div').forEach((cell, i) => {
-          if (scratchValues[i] === tripleSymbol) cell.style.borderColor = 'var(--yellow)';
-        });
-      } else {
-        fb.textContent = `❌ NO MATCH — LOST $${bet}`;
-        fb.style.color = '#ff5555';
-        showPopup('🎟️', 'NO MATCH', true);
-        spawnFloat(document.getElementById('scratchNew'), `-$${bet}`, false);
-      }
-    }
-    document.getElementById('scratchNew').addEventListener('click', newScratchCard);
-    newScratchCard();
+  scratchRevealed = 0;
+  scratchActive = true;
 
-    // ===================== 12 WHEEL OF FORTUNE =====================
-    const WHEEL_SEGMENTS = [
-      {label:'0×',mult:0,color:'#1a1a2e'},{label:'1.5×',mult:1.5,color:'#FF3CAC'},
-      {label:'2×',mult:2,color:'#FFE500'},{label:'0×',mult:0,color:'#1a1a2e'},
-      {label:'3×',mult:3,color:'#00F0FF'},{label:'0×',mult:0,color:'#1a1a2e'},
-      {label:'2×',mult:2,color:'#FFE500'},{label:'5×',mult:5,color:'#00FF87'},
-      {label:'0×',mult:0,color:'#1a1a2e'},{label:'1.5×',mult:1.5,color:'#FF3CAC'},
-      {label:'10×',mult:10,color:'#c084fc'},{label:'0×',mult:0,color:'#1a1a2e'},
-    ];
-    const wc = document.getElementById('wheelCanvas'), wctx = wc.getContext('2d');
-    let wheelAngle = 0, wheelSpinning = false, wheelWonTotal = 0, wheelSpins = 0;
+  document.getElementById('scratchFeedback').textContent = 'Click tiles to scratch!';
+  document.getElementById('scratchFeedback').style.color = 'rgba(255,255,255,0.5)';
+  document.getElementById('scratchNew').disabled = true;
 
-    function drawWheel(angle) {
-      const W = wc.width, H = wc.height, R = W/2 - 4, cx = W/2, cy = H/2;
-      wctx.clearRect(0,0,W,H);
-      const segAngle = (Math.PI * 2) / WHEEL_SEGMENTS.length;
-      WHEEL_SEGMENTS.forEach((seg, i) => {
-        const start = angle + i * segAngle, end = start + segAngle;
-        wctx.beginPath(); wctx.moveTo(cx,cy); wctx.arc(cx,cy,R,start,end); wctx.closePath();
-        wctx.fillStyle = seg.color; wctx.fill();
-        wctx.strokeStyle = 'rgba(255,255,255,0.08)'; wctx.lineWidth = 1; wctx.stroke();
-        // Label
-        wctx.save(); wctx.translate(cx, cy); wctx.rotate(start + segAngle/2);
-        wctx.fillStyle = 'white'; wctx.font = 'bold 13px Boogaloo'; wctx.textAlign = 'right';
-        wctx.fillText(seg.label, R - 10, 5); wctx.restore();
-      });
-      // Center circle
-      wctx.beginPath(); wctx.arc(cx,cy,18,0,Math.PI*2); wctx.fillStyle='#08080f'; wctx.fill();
-      wctx.strokeStyle='rgba(255,255,255,0.15)'; wctx.lineWidth=2; wctx.stroke();
-    }
-    drawWheel(0);
+  // Start with a guaranteed losing grid
+  scratchValues = generateLosingGrid();
 
-    document.getElementById('wheelSpinBtn').addEventListener('click', () => {
-      if (wheelSpinning) return;
-      const bet = getBet('wheelBet');
-      if (!bet) { document.getElementById('wheelFeedback').textContent = 'ENTER A BET!'; return; }
-      if (!deduct(bet)) { document.getElementById('wheelFeedback').textContent = '❌ NOT ENOUGH!'; return; }
-      wheelSpinning = true; wheelSpins++;
-      document.getElementById('wheelSpins').textContent = wheelSpins;
-      document.getElementById('wheelSpinBtn').disabled = true;
+  // Small chance to plant a win
+  if (Math.random() < 0.08) {   // 8% win chance
+    const sym = SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)];
+    const positions = [0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5).slice(0,3);
+    positions.forEach(p => scratchValues[p] = sym);
+  }
 
-      const totalSpin = Math.PI * 2 * (5 + Math.random() * 5);
-      const duration = 3500, start = performance.now();
-      const startAngle = wheelAngle;
+  const grid = document.getElementById('scratchGrid');
+  grid.innerHTML = '';
 
-      function animate(now) {
-        const t = Math.min((now - start) / duration, 1);
-        const ease = 1 - Math.pow(1 - t, 4);
-        wheelAngle = startAngle + totalSpin * ease;
-        drawWheel(wheelAngle);
-        if (t < 1) { requestAnimationFrame(animate); return; }
-        // Determine winning segment (pointer at top = -PI/2)
-        const segAngle = (Math.PI * 2) / WHEEL_SEGMENTS.length;
-        const normalized = (((-wheelAngle - Math.PI/2) % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
-        const idx = Math.floor(normalized / segAngle) % WHEEL_SEGMENTS.length;
-        const seg = WHEEL_SEGMENTS[idx];
-        const fb = document.getElementById('wheelFeedback');
-        if (seg.mult > 0) {
-          const win = Math.floor(bet * seg.mult); award(win); wheelWonTotal += win;
-          document.getElementById('wheelWon').textContent = '$' + wheelWonTotal;
-          fb.textContent = `🎡 ${seg.label}! WIN $${win}!`; fb.style.color = seg.color;
-          showPopup('🎡', `${seg.label} — WIN!`);
-          spawnFloat(document.getElementById('wheelSpinBtn'), `+$${win}`);
-        } else {
-          fb.textContent = `🎡 0× — LOST $${bet}`; fb.style.color = '#ff5555';
-          showPopup('🎡', `BUST!`, true);
-          spawnFloat(document.getElementById('wheelSpinBtn'), `-$${bet}`, false);
-        }
-        wheelSpinning = false;
-        document.getElementById('wheelSpinBtn').disabled = false;
-      }
-      requestAnimationFrame(animate);
+  scratchValues.forEach((sym) => {
+    const cell = document.createElement('div');
+    cell.style.cssText =
+      'height:90px;background:rgba(255,229,0,0.15);border:2px solid rgba(255,229,0,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:none;transition:all 0.2s;user-select:none;';
+    cell.textContent = '❓';
+
+    cell.addEventListener('click', () => {
+      if (cell.dataset.revealed || !scratchActive) return;
+
+      cell.dataset.revealed = '1';
+      cell.textContent = sym;
+      cell.style.background = 'rgba(255,255,255,0.08)';
+      cell.style.borderColor = 'rgba(255,255,255,0.15)';
+
+      scratchRevealed++;
+
+      if (scratchRevealed === scratchTotal) evaluateScratch(bet, grid);
     });
+
+    grid.appendChild(cell);
+  });
+}
+
+function evaluateScratch(bet, grid) {
+  scratchActive = false;
+
+  const counts = {};
+  scratchValues.forEach(s => counts[s] = (counts[s]||0)+1);
+
+  const tripleSymbol = Object.keys(counts).find(s => counts[s] >= 3);
+
+  const fb = document.getElementById('scratchFeedback');
+  document.getElementById('scratchNew').disabled = false;
+
+  if (tripleSymbol) {
+    const multipliers = {'💎':15,'⭐':8,'💰':6,'🔥':4,'🍒':3,'🎯':2};
+    const mult = multipliers[tripleSymbol] || 2;
+
+    const win = bet * mult;
+
+    award(win);
+    scratchWonTotal += win;
+
+    document.getElementById('scratchWon').textContent = '$' + scratchWonTotal;
+
+    fb.textContent = `✅ THREE ${tripleSymbol}! WIN $${win}!`;
+    fb.style.color = 'var(--yellow)';
+
+    showPopup('🎟️', `THREE ${tripleSymbol}! WIN!`);
+    spawnFloat(document.getElementById('scratchNew'), `+$${win}`);
+
+  } else {
+    fb.textContent = `❌ NO MATCH — LOST $${bet}`;
+    fb.style.color = '#ff5555';
+
+    showPopup('🎟️', 'NO WIN', true);
+    spawnFloat(document.getElementById('scratchNew'), `-$${bet}`, false);
+  }
+}
 
     // ===================== 13 VIDEO POKER =====================
     const VP_SUITS = ['♠','♥','♦','♣'], VP_RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
