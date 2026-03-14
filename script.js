@@ -1028,4 +1028,17 @@ registerGame('neon-cobra', () => {
     const move=map[e.code];
     if(move){if(move.x!==-dir.x||move.y!==-dir.y)nextDir=move;e.preventDefault();}
   });
+
+  // ── DPAD (mobile) ────────────────────────────────────────────
+  const dirMap={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+  document.querySelectorAll('#cobraDpad .dpad-btn').forEach(btn=>{
+    const handler=e=>{
+      e.preventDefault();
+      if(!running)return;
+      const move=dirMap[btn.dataset.dir];
+      if(move&&(move.x!==-dir.x||move.y!==-dir.y)) nextDir=move;
+    };
+    btn.addEventListener('touchstart',handler,{passive:false});
+    btn.addEventListener('mousedown',handler);
+  });
 });

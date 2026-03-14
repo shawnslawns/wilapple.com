@@ -690,7 +690,15 @@
           <canvas id="cobraCanvas" width="600" height="400" style="display:block;max-width:100%"></canvas>
           <div id="cobraFlash" style="position:absolute;inset:0;pointer-events:none;background:white;opacity:0;transition:opacity 0.1s;"></div>
         </div>
-        <button class="ctrl-btn" id="cobraStart">▶ START MISSION</button>
+        <div class="canvas-controls">
+          <button class="ctrl-btn cyan" id="cobraStart">▶ START MISSION</button>
+          <div class="dpad" id="cobraDpad">
+            <button class="dpad-btn" data-dir="up">▲</button>
+            <button class="dpad-btn" data-dir="left">◀</button>
+            <button class="dpad-btn" data-dir="right">▶</button>
+            <button class="dpad-btn" data-dir="down">▼</button>
+          </div>
+        </div>
       </div></div>
     </div>
 
