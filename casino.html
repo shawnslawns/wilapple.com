@@ -1989,7 +1989,105 @@ function evaluateScratch(bet, grid) {
       }
     });
 
-    // ===================== SCROLL ANIMATIONS =====================
+    
+    // ===================== 11 SCRATCH CARD - button binding =====================
+    document.getElementById('scratchNew').addEventListener('click', newScratchCard);
+
+    // ===================== 12 WHEEL OF FORTUNE =====================
+    const WF_SEGS = [
+      { label: '2x',    mult: 2,    col: '#FF3CAC' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+      { label: '3x',    mult: 3,    col: '#FFE500' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+      { label: '1.5x',  mult: 1.5,  col: '#00F0FF' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+      { label: '5x',    mult: 5,    col: '#FF6B35' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+      { label: '2x',    mult: 2,    col: '#FF3CAC' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+      { label: '10x',   mult: 10,   col: '#00FF87' },
+      { label: 'LOSE',  mult: 0,    col: '#1a1a2e' },
+    ];
+    let wfAngle = 0, wfSpinning = false, wfWonTotal = 0, wfSpinCount = 0;
+
+    function drawWheelFortune(angle) {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const cx = canvas.width / 2, cy = canvas.height / 2, r = cx - 4;
+      const n = WF_SEGS.length, arc = (2 * Math.PI) / n;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      WF_SEGS.forEach((seg, i) => {
+        const s = angle + i * arc, e = s + arc;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, s, e); ctx.closePath();
+        ctx.fillStyle = seg.col; ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(s + arc / 2);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px Nunito,sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 3;
+        ctx.fillText(seg.label, r - 8, 5); ctx.restore();
+      });
+      // Hub
+      ctx.beginPath(); ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+      ctx.fillStyle = '#08080f'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,229,0,0.6)'; ctx.lineWidth = 3; ctx.stroke();
+      // Pointer
+      ctx.beginPath(); ctx.moveTo(cx - 9, 6); ctx.lineTo(cx + 9, 6); ctx.lineTo(cx, 24);
+      ctx.closePath(); ctx.fillStyle = '#FFE500'; ctx.fill();
+    }
+
+    function doSpinWheel() {
+      if (wfSpinning) return;
+      const bet = getBet('wheelBet');
+      if (!bet) { document.getElementById('wheelFeedback').textContent = 'ENTER A BET!'; return; }
+      if (!deduct(bet)) { document.getElementById('wheelFeedback').textContent = 'NOT ENOUGH CHIPS!'; return; }
+      wfSpinning = true; wfSpinCount++;
+      document.getElementById('wheelSpins').textContent = wfSpinCount;
+      document.getElementById('wheelSpinBtn').disabled = true;
+      document.getElementById('wheelFeedback').textContent = 'Spinning...';
+      document.getElementById('wheelFeedback').style.color = 'rgba(255,255,255,0.5)';
+      const n = WF_SEGS.length, arc = (2 * Math.PI) / n;
+      const tIdx = Math.floor(Math.random() * n);
+      const extraRot = (6 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+      const norm = ((wfAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      const tAngle = (-(tIdx * arc) - arc / 2 - Math.PI / 2 + 4 * Math.PI) % (2 * Math.PI);
+      const delta = ((tAngle - norm) + 2 * Math.PI) % (2 * Math.PI);
+      const totalRot = extraRot + delta;
+      const startAngle = wfAngle, dur = 4000, t0 = performance.now();
+      function ease(t) { return 1 - Math.pow(1 - t, 4); }
+      function frame(now) {
+        const t = Math.min((now - t0) / dur, 1);
+        wfAngle = startAngle + totalRot * ease(t);
+        drawWheelFortune(wfAngle);
+        if (t < 1) { requestAnimationFrame(frame); return; }
+        wfAngle = startAngle + totalRot;
+        wfSpinning = false;
+        document.getElementById('wheelSpinBtn').disabled = false;
+        const seg = WF_SEGS[tIdx];
+        const fb = document.getElementById('wheelFeedback');
+        if (seg.mult > 0) {
+          const win = Math.round(bet * seg.mult);
+          award(win); wfWonTotal += win;
+          document.getElementById('wheelWon').textContent = '$' + wfWonTotal;
+          fb.textContent = seg.label + ' -- WIN $' + win + '!';
+          fb.style.color = seg.col;
+          showPopup('🎡', seg.label + ' WIN!');
+          spawnFloat(document.getElementById('wheelSpinBtn'), '+$' + win);
+        } else {
+          fb.textContent = 'LOSE -- Lost $' + bet;
+          fb.style.color = '#ff5555';
+          showPopup('🎡', 'LOSE', true);
+          spawnFloat(document.getElementById('wheelSpinBtn'), '-$' + bet, false);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    document.getElementById('wheelSpinBtn').addEventListener('click', doSpinWheel);
+    setTimeout(function() { drawWheelFortune(0); }, 100);
+
+// ===================== SCROLL ANIMATIONS =====================
     const obs = new IntersectionObserver(entries => entries.forEach(e => {
       if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
     }), { threshold: 0.08 });
@@ -2020,6 +2118,8 @@ function evaluateScratch(bet, grid) {
         casinoModal.classList.add('open');
         document.body.style.overflow = 'hidden';
         casinoModal.scrollTop = 0;
+        // Redraw canvas-based games after they become visible
+        if (card.dataset.game === 'cg-wheel') setTimeout(function(){ drawWheelFortune(wfAngle); }, 50);
       });
     });
 
