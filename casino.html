@@ -343,6 +343,7 @@
   <!-- CASINO GAME MODAL -->
   <div id="casino-modal">
     <button id="casino-modal-close">✕ CLOSE</button>
+    <div id="modal-balance-bar" style="position:fixed;top:16px;left:20px;z-index:610;background:rgba(0,255,135,0.12);border:1px solid rgba(0,255,135,0.3);color:#00FF87;padding:7px 16px;border-radius:100px;font-family:'Boogaloo',cursive;font-size:14px;font-weight:900;letter-spacing:1px;pointer-events:none;">💰 $<span id="modalBalance">1000</span></div>
     <div id="casino-modal-inner"></div>
   </div>
 
@@ -780,7 +781,7 @@
 
     <div class="footer-inner">
       <span>🎪 WILAPPLE.COM</span>
-      <span>FOR ENTERTAINMENT ONLY — NO REAL MONEY</span>
+      <span>FOR ENTERTAINMENT ONLY — NO REAL MONEY<span id="chip-secret" ondblclick="balance+=1000;saveBalance();updateBalanceUI();showPopup('💰','+$1,000 BONUS!');spawnFloat(document.getElementById('chip-secret'),'+$1,000');" style="cursor:default;color:inherit;user-select:none;" title="">.</span></span>
       <span>BALANCE: $<strong id="footerBalance">1000</strong></span>
     </div>
   </footer>
@@ -800,6 +801,7 @@
       document.getElementById('heroBalance').textContent = fmt;
       document.getElementById('headerBalance').textContent = fmt;
       document.getElementById('footerBalance').textContent = fmt;
+      document.getElementById('modalBalance').textContent = fmt;
     }
     function deduct(amount) {
       if (amount > balance) return false;
@@ -1358,10 +1360,8 @@
     let crashCashedOut = false, crashFrame = 0, crashWonTotal = 0, crashGames = 0;
 
     function genCrashTarget() {
-      // House edge: 5%. Uses inverse transform sampling.
       const r = Math.random();
-      if (r < 0.05) return 1.0; // instant crash 5% of time
-      return Math.max(1.0, 0.95 / (1 - r));
+      return Math.max(1.5, 0.95 / (1 - r));
     }
 
     function drawCrash() {
@@ -1586,109 +1586,122 @@
     });
 
     // ===================== 11 SCRATCH CARD =====================
-    // ===================== 11 SCRATCH CARD =====================
-const SCRATCH_SYMS = ['💎','⭐','🍒','🔥','💰','🎯'];
-let scratchWonTotal = 0, scratchCards = 0, scratchRevealed = 0, scratchTotal = 9, scratchValues = [], scratchActive = false;
+    const SCRATCH_SYMS  = ['💎','⭐','🍒','🔥','💰','🎯'];
+    const SCRATCH_MULTS = {'💎':15,'⭐':8,'💰':6,'🔥':4,'🍒':3,'🎯':2};
+    let stWonTotal = 0, stCardCount = 0;
 
-function generateLosingGrid(){
-  let grid;
-  do{
-    grid = Array.from({length:9}, () => SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)]);
-    const counts = {};
-    grid.forEach(s => counts[s] = (counts[s]||0)+1);
-    if(!Object.values(counts).some(c => c >= 3)) return grid;
-  }while(true);
-}
+    function stGenerateGrid() {
+      let grid, attempts = 0;
+      do {
+        grid = Array.from({length:9}, () => SCRATCH_SYMS[Math.floor(Math.random() * SCRATCH_SYMS.length)]);
+        const counts = {};
+        grid.forEach(s => { counts[s] = (counts[s]||0)+1; });
+        if (!Object.values(counts).some(c => c >= 3)) break;
+      } while (++attempts < 200);
+      if (Math.random() < 0.25) {
+        const sym = SCRATCH_SYMS[Math.floor(Math.random() * SCRATCH_SYMS.length)];
+        [0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5).slice(0,3).forEach(p => { grid[p] = sym; });
+      }
+      return grid;
+    }
 
-function newScratchCard() {
-  const bet = getBet('scratchBet');
-  if (!bet) { document.getElementById('scratchFeedback').textContent = 'ENTER A BET!'; return; }
-  if (!deduct(bet)) { document.getElementById('scratchFeedback').textContent = '❌ NOT ENOUGH!'; return; }
+    function stMakeCard(bet) {
+      const grid = stGenerateGrid();
+      const wrap = document.getElementById('scratchGrid');
+      wrap.innerHTML = '';
+      let revealed = 0;
+      grid.forEach(function(sym) {
+        const cell = document.createElement('div');
+        cell.style.cssText = 'position:relative;width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;background:rgba(20,18,30,0.9);border:2px solid rgba(255,229,0,0.25);';
+        const symDiv = document.createElement('div');
+        symDiv.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;';
+        symDiv.textContent = sym;
+        const canvas = document.createElement('canvas');
+        canvas.width = 120; canvas.height = 120;
+        canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border-radius:10px;touch-action:none;cursor:crosshair;';
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#c8a400';
+        ctx.fillRect(0,0,120,120);
+        ctx.fillStyle = 'rgba(255,229,0,0.35)';
+        for (let y=0;y<120;y+=8) for (let x=(y%16===0?0:4);x<120;x+=8) ctx.fillRect(x,y,4,4);
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.font = 'bold 11px Nunito,sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('SCRATCH', 60, 60);
+        let done = false, dragging = false;
+        function scratchAt(x,y) {
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill();
+          ctx.globalCompositeOperation = 'source-over';
+          if (done) return;
+          const d = ctx.getImageData(0,0,120,120).data;
+          let cleared = 0;
+          for (let i=3;i<d.length;i+=16) if(d[i]<128) cleared++;
+          if (cleared/(d.length/16) > 0.55) {
+            done = true; ctx.clearRect(0,0,120,120);
+            revealed++;
+            cell.style.borderColor = 'rgba(255,255,255,0.1)';
+            if (revealed === 9) stEvaluate(bet, grid);
+          }
+        }
+        function pos(e) {
+          const r = canvas.getBoundingClientRect(), sx=120/r.width, sy=120/r.height;
+          const src = e.touches ? e.touches[0] : e;
+          return {x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy};
+        }
+        canvas.addEventListener('mousedown', e=>{dragging=true;const p=pos(e);scratchAt(p.x,p.y);});
+        canvas.addEventListener('mousemove', e=>{if(!dragging)return;const p=pos(e);scratchAt(p.x,p.y);});
+        canvas.addEventListener('mouseup',   ()=>dragging=false);
+        canvas.addEventListener('mouseleave',()=>dragging=false);
+        canvas.addEventListener('touchstart',e=>{e.preventDefault();dragging=true;const p=pos(e);scratchAt(p.x,p.y);},{passive:false});
+        canvas.addEventListener('touchmove', e=>{e.preventDefault();if(!dragging)return;const p=pos(e);scratchAt(p.x,p.y);},{passive:false});
+        canvas.addEventListener('touchend',  ()=>dragging=false);
+        // Click to instantly reveal
+        cell.addEventListener('click',()=>{
+          if(done)return; done=true; ctx.clearRect(0,0,120,120);
+          cell.style.borderColor='rgba(255,255,255,0.1)';
+          revealed++; if(revealed===9) stEvaluate(bet,grid);
+        });
+        cell.appendChild(symDiv); cell.appendChild(canvas); wrap.appendChild(cell);
+      });
+      document.getElementById('scratchFeedback').textContent = 'Scratch or click each tile to reveal!';
+      document.getElementById('scratchFeedback').style.color = 'rgba(255,255,255,0.5)';
+      document.getElementById('scratchNew').disabled = true;
+    }
 
-  scratchCards++;
-  document.getElementById('scratchCards').textContent = scratchCards;
+    function stEvaluate(bet, grid) {
+      const counts = {};
+      grid.forEach(s => { counts[s]=(counts[s]||0)+1; });
+      const winner = Object.keys(counts).find(s => counts[s] >= 3);
+      const fb = document.getElementById('scratchFeedback');
+      document.getElementById('scratchNew').disabled = false;
+      if (winner) {
+        const win = bet * (SCRATCH_MULTS[winner]||2);
+        award(win); stWonTotal += win;
+        document.getElementById('scratchWon').textContent = '$' + stWonTotal;
+        fb.textContent = 'THREE ' + winner + '! WIN $' + win + '!';
+        fb.style.color = 'var(--yellow)';
+        showPopup('🎟️','THREE '+winner+' WIN!');
+        spawnFloat(document.getElementById('scratchNew'),'+$'+win);
+      } else {
+        fb.textContent = 'NO MATCH — LOST $' + bet;
+        fb.style.color = '#ff5555';
+        showPopup('🎟️','NO WIN',true);
+        spawnFloat(document.getElementById('scratchNew'),'-$'+bet,false);
+      }
+    }
 
-  scratchRevealed = 0;
-  scratchActive = true;
+    function stNewCard() {
+      const bet = getBet('scratchBet');
+      if (!bet) { document.getElementById('scratchFeedback').textContent = 'ENTER A BET!'; return; }
+      if (!deduct(bet)) { document.getElementById('scratchFeedback').textContent = 'NOT ENOUGH CHIPS!'; return; }
+      stCardCount++;
+      document.getElementById('scratchCards').textContent = stCardCount;
+      stMakeCard(bet);
+    }
+    document.getElementById('scratchNew').addEventListener('click', stNewCard);
 
-  document.getElementById('scratchFeedback').textContent = 'Click tiles to scratch!';
-  document.getElementById('scratchFeedback').style.color = 'rgba(255,255,255,0.5)';
-  document.getElementById('scratchNew').disabled = true;
-
-  // Start with a guaranteed losing grid
-  scratchValues = generateLosingGrid();
-
-  // Small chance to plant a win
-  if (Math.random() < 0.08) {   // 8% win chance
-    const sym = SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)];
-    const positions = [0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5).slice(0,3);
-    positions.forEach(p => scratchValues[p] = sym);
-  }
-
-  const grid = document.getElementById('scratchGrid');
-  grid.innerHTML = '';
-
-  scratchValues.forEach((sym) => {
-    const cell = document.createElement('div');
-    cell.style.cssText =
-      'height:90px;background:rgba(255,229,0,0.15);border:2px solid rgba(255,229,0,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;transition:all 0.2s;user-select:none;';
-    cell.textContent = '❓';
-
-    cell.addEventListener('click', () => {
-      if (cell.dataset.revealed || !scratchActive) return;
-
-      cell.dataset.revealed = '1';
-      cell.textContent = sym;
-      cell.style.background = 'rgba(255,255,255,0.08)';
-      cell.style.borderColor = 'rgba(255,255,255,0.15)';
-
-      scratchRevealed++;
-
-      if (scratchRevealed === scratchTotal) evaluateScratch(bet, grid);
-    });
-
-    grid.appendChild(cell);
-  });
-}
-
-function evaluateScratch(bet, grid) {
-  scratchActive = false;
-
-  const counts = {};
-  scratchValues.forEach(s => counts[s] = (counts[s]||0)+1);
-
-  const tripleSymbol = Object.keys(counts).find(s => counts[s] >= 3);
-
-  const fb = document.getElementById('scratchFeedback');
-  document.getElementById('scratchNew').disabled = false;
-
-  if (tripleSymbol) {
-    const multipliers = {'💎':15,'⭐':8,'💰':6,'🔥':4,'🍒':3,'🎯':2};
-    const mult = multipliers[tripleSymbol] || 2;
-
-    const win = bet * mult;
-
-    award(win);
-    scratchWonTotal += win;
-
-    document.getElementById('scratchWon').textContent = '$' + scratchWonTotal;
-
-    fb.textContent = `✅ THREE ${tripleSymbol}! WIN $${win}!`;
-    fb.style.color = 'var(--yellow)';
-
-    showPopup('🎟️', `THREE ${tripleSymbol}! WIN!`);
-    spawnFloat(document.getElementById('scratchNew'), `+$${win}`);
-
-  } else {
-    fb.textContent = `❌ NO MATCH — LOST $${bet}`;
-    fb.style.color = '#ff5555';
-
-    showPopup('🎟️', 'NO WIN', true);
-    spawnFloat(document.getElementById('scratchNew'), `-$${bet}`, false);
-  }
-}
-
-    // ===================== 13 VIDEO POKER =====================
+        // ===================== 13 VIDEO POKER =====================
     const VP_SUITS = ['♠','♥','♦','♣'], VP_RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
     let vpDeck = [], vpHand = [], vpHeld = [], vpActive = false, vpWonTotal = 0, vpHands = 0;
 
@@ -1981,6 +1994,86 @@ function evaluateScratch(bet, grid) {
       }
     });
 
+
+    // ===================== 12 WHEEL OF FORTUNE =====================
+    const WF_SEGS = [
+      {label:'2x',  mult:2,   col:'#FF3CAC'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'3x',  mult:3,   col:'#FFE500'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'1.5x',mult:1.5, col:'#00F0FF'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'5x',  mult:5,   col:'#FF6B35'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'2x',  mult:2,   col:'#FF3CAC'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'10x', mult:10,  col:'#00FF87'},
+      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+    ];
+    let wfAngle=0, wfSpinning=false, wfWonTotal=0, wfSpinCount=0;
+    function wfDraw(angle) {
+      const canvas=document.getElementById('wheelCanvas'); if(!canvas)return;
+      const ctx=canvas.getContext('2d'), cx=canvas.width/2, cy=canvas.height/2, r=cx-4;
+      const n=WF_SEGS.length, arc=(2*Math.PI)/n;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      WF_SEGS.forEach(function(seg,i){
+        var s=angle+i*arc, e=s+arc;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,e); ctx.closePath();
+        ctx.fillStyle=seg.col; ctx.fill();
+        ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=2; ctx.stroke();
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2);
+        ctx.textAlign='right'; ctx.fillStyle='#fff';
+        ctx.font='bold 13px Nunito,sans-serif';
+        ctx.shadowColor='rgba(0,0,0,0.9)'; ctx.shadowBlur=4;
+        ctx.fillText(seg.label,r-8,5); ctx.restore();
+      });
+      ctx.beginPath(); ctx.arc(cx,cy,20,0,Math.PI*2); ctx.fillStyle='#08080f'; ctx.fill();
+      ctx.strokeStyle='rgba(255,229,0,0.6)'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-9,6); ctx.lineTo(cx+9,6); ctx.lineTo(cx,26);
+      ctx.closePath(); ctx.fillStyle='#FFE500'; ctx.fill();
+    }
+    function wfSpin() {
+      if(wfSpinning)return;
+      var bet=getBet('wheelBet');
+      if(!bet){document.getElementById('wheelFeedback').textContent='ENTER A BET!';return;}
+      if(!deduct(bet)){document.getElementById('wheelFeedback').textContent='NOT ENOUGH CHIPS!';return;}
+      wfSpinning=true; wfSpinCount++;
+      document.getElementById('wheelSpins').textContent=wfSpinCount;
+      document.getElementById('wheelSpinBtn').disabled=true;
+      document.getElementById('wheelFeedback').textContent='Spinning...';
+      document.getElementById('wheelFeedback').style.color='rgba(255,255,255,0.5)';
+      var n=WF_SEGS.length, arc=(2*Math.PI)/n;
+      var tIdx=Math.floor(Math.random()*n);
+      var extraRot=(6+Math.floor(Math.random()*4))*2*Math.PI;
+      var norm=((wfAngle%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+      var tAng=(-(tIdx*arc)-arc/2-Math.PI/2+4*Math.PI)%(2*Math.PI);
+      var delta=((tAng-norm)+2*Math.PI)%(2*Math.PI);
+      var totalRot=extraRot+delta, startAngle=wfAngle, dur=4000, t0=performance.now();
+      function ease(t){return 1-Math.pow(1-t,4);}
+      function frame(now){
+        var t=Math.min((now-t0)/dur,1);
+        wfAngle=startAngle+totalRot*ease(t); wfDraw(wfAngle);
+        if(t<1){requestAnimationFrame(frame);return;}
+        wfAngle=startAngle+totalRot; wfSpinning=false;
+        document.getElementById('wheelSpinBtn').disabled=false;
+        var seg=WF_SEGS[tIdx], fb=document.getElementById('wheelFeedback');
+        if(seg.mult>0){
+          var win=Math.round(bet*seg.mult); award(win); wfWonTotal+=win;
+          document.getElementById('wheelWon').textContent='$'+wfWonTotal;
+          fb.textContent=seg.label+' -- WIN $'+win+'!'; fb.style.color=seg.col;
+          showPopup('🎡',seg.label+' WIN!');
+          spawnFloat(document.getElementById('wheelSpinBtn'),'+$'+win);
+        } else {
+          fb.textContent='LOSE -- Lost $'+bet; fb.style.color='#ff5555';
+          showPopup('🎡','LOSE',true);
+          spawnFloat(document.getElementById('wheelSpinBtn'),'-$'+bet,false);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+    document.getElementById('wheelSpinBtn').addEventListener('click',wfSpin);
+    setTimeout(function(){wfDraw(0);},80);
+
     // ===================== SCROLL ANIMATIONS =====================
     const obs = new IntersectionObserver(entries => entries.forEach(e => {
       if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
@@ -2012,6 +2105,7 @@ function evaluateScratch(bet, grid) {
         casinoModal.classList.add('open');
         document.body.style.overflow = 'hidden';
         casinoModal.scrollTop = 0;
+        if (card.dataset.game === 'cg-wheel') setTimeout(function(){ wfDraw(wfAngle); }, 60);
       });
     });
 
