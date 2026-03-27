@@ -106,7 +106,7 @@ canvas { border-radius:14px; max-width:100%; display:block; }
 #shooterCanvas{ border:2px solid rgba(255,229,0,0.25);   background:#08080f; cursor:none; }
 
 .dpad { display:grid; grid-template-areas:". up ." "left . right" ". down ."; grid-template-columns:40px 40px 40px; grid-template-rows:40px 40px 40px; gap:4px; }
-.dpad-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:white; font-size:14px; cursor:none; transition:background 0.1s; }
+.dpad-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:white; font-size:14px; cursor:pointer; transition:background 0.1s; }
 .dpad-btn:hover,.dpad-btn:active { background:rgba(255,60,172,0.3); }
 .dpad-btn[data-dir=up]{grid-area:up} .dpad-btn[data-dir=left]{grid-area:left}
 .dpad-btn[data-dir=right]{grid-area:right} .dpad-btn[data-dir=down]{grid-area:down}

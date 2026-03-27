@@ -2183,7 +2183,7 @@ function renderStudy(){
 ═══════════════════════════════════════════════════════ */
 document.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
-  const tabMap={'1':'tasks','2':'notes','3':'finance','4':'schedule','5':'study'};
+  const tabMap={'1':'tasks','2':'notes','3':'schedule','4':'study'};
   if(tabMap[e.key])$$('.tab').find(b=>b.dataset.tab===tabMap[e.key])?.click();
   if(e.key==='n'&&curTab==='tasks'&&!e.ctrlKey&&!e.metaKey)openTaskModal();
   if(e.key===' '&&curTab==='study'){e.preventDefault();pomoStart();}

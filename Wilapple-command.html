@@ -679,6 +679,7 @@ function tickResources(dt){
       if(G.researched.has('advanced_farming')&&(b.type==='farm'||b.type==='market')) rate*=2;
       G[def.produces]=Math.min(G[def.produces]+rate,9999);
       if(def.produces==='gold') G.totalGoldEarned+=rate;
+      _selInfoDirty=true;
       spawnFloatText(b.tx,b.ty,'+'+rate+(def.produces==='gold'?'💰':def.produces==='wood'?'🪵':'🌾'),'#FFE500');
     }
   }
@@ -1455,6 +1456,7 @@ function updateHUD(){
   if(G.wavePending) document.getElementById('wave-timer').textContent=`(next: ${Math.ceil(G.waveTimer)}s)`;
   else document.getElementById('wave-timer').textContent='';
   updateBuildButtons();
+  if(_selInfoDirty){ renderSelInfo(); _selInfoDirty=false; }
 }
 
 let _selInfoDirty=true;
@@ -1536,6 +1538,7 @@ function trainUnit(buid,type){
   if(playerPop()>=G.popCap){ showToast('⚠️ Population cap!','warn'); return; }
   if(b.trainQueue.length>=8){ showToast('⚠️ Training queue full!','warn'); return; }
   G.gold-=(ud.cost?.gold||0); G.food-=(ud.cost?.food||0);
+  _selInfoDirty=true;
   b.trainQueue.push(type);
   renderSelInfo();
 }
@@ -1545,6 +1548,7 @@ function demolishSelected(){
     const b=G.buildings.find(x=>x.uid===uid);
     if(b&&b.type!=='town_hall'){
       G.gold+=Math.floor(BDEF[b.type].cost.gold*0.4);
+      _selInfoDirty=true;
       G.buildings=G.buildings.filter(x=>x.uid!==uid);
     }
   }
@@ -1614,6 +1618,7 @@ function placeBuilding(type,tx,ty){
   if(G.gold<(cost.gold||0)){ showToast('⚠️ Not enough gold!','warn'); return; }
   if(G.wood<(cost.wood||0)){ showToast('⚠️ Not enough wood!','warn'); return; }
   G.gold-=cost.gold||0; G.wood-=cost.wood||0;
+  _selInfoDirty=true;
   const b=createBuilding(type,tx,ty);
   G.buildings.push(b);
   showToast('🏗️ '+def.name+' placed!','info');
