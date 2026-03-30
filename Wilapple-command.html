@@ -2,38 +2,39 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>WILAPPLE COMMAND ⚔️</title>
-<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<title>Wilapple Command</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--y:#FFE500;--p:#FF3CAC;--c:#00F0FF;--g:#00FF87;--o:#FF6B35;--v:#c084fc;--dk:#0e0e16;--dr:#08080f}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-family:'Nunito',sans-serif;color:#fff;cursor:default}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-family:'DM Sans',system-ui,sans-serif;color:#fff;cursor:default}
 #wrap{display:flex;flex-direction:column;height:100vh}
 
 /* TOP BAR */
 #topbar{
-  background:rgba(8,8,15,0.95);border-bottom:1px solid rgba(255,255,255,0.08);
+  background:rgba(248,247,244,0.95);border-bottom:1px solid #e8e6df;
   padding:6px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;z-index:100;
   backdrop-filter:blur(12px);
 }
-.logo{font-family:'Boogaloo',cursive;font-size:18px;color:var(--y);text-shadow:0 0 14px rgba(255,229,0,0.4);white-space:nowrap}
-.res-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;white-space:nowrap}
-.res-pill span{font-family:'Boogaloo',cursive;font-size:15px;min-width:32px;text-align:right}
-#res-gold{border-color:rgba(255,229,0,0.3);color:var(--y)}
-#res-wood{border-color:rgba(0,255,135,0.3);color:var(--g)}
-#res-food{border-color:rgba(255,107,53,0.3);color:var(--o)}
-#res-pop {border-color:rgba(0,240,255,0.3);color:var(--c)}
-.wave-info{margin-left:auto;font-family:'Boogaloo',cursive;font-size:13px;color:var(--p);letter-spacing:1px}
-#wave-timer{font-size:15px;color:var(--y)}
-#btn-wave{font-family:'Boogaloo',cursive;font-size:13px;padding:5px 16px;border-radius:100px;border:1px solid rgba(255,60,172,0.4);background:rgba(255,60,172,0.1);color:var(--p);cursor:pointer;transition:all 0.15s;letter-spacing:1px}
-#btn-wave:hover{background:rgba(255,60,172,0.2);transform:scale(1.04)}
-#btn-wave.disabled{opacity:0.4;pointer-events:none}
-#btn-pause{font-family:'Boogaloo',cursive;font-size:13px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s}
-#btn-pause:hover{background:rgba(255,255,255,0.1);color:#fff}
-#btn-pause.paused{border-color:rgba(255,229,0,0.4);color:var(--y)}
-#spd-btn{font-family:'Boogaloo',cursive;font-size:12px;padding:4px 12px;border-radius:100px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.5);cursor:pointer}
-#spd-btn:hover{background:rgba(255,255,255,0.08)}
-#spd-btn.x2{color:var(--c);border-color:rgba(0,240,255,0.3)}
+.logo{font-family:'DM Sans',system-ui,sans-serif;font-size:18px;color:#f8f7f4;text-shadow:none;white-space:nowrap}
+.res-pill{display:flex;align-items:center;gap:5px;background:#ffffff;border:1px solid #e8e6df;border-radius:100px;padding:4px 12px;font-size:12px;font-weight:600;white-space:nowrap;color:#3a3830;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.res-pill span{font-family:'DM Sans',system-ui,sans-serif;font-size:15px;min-width:32px;text-align:right}
+#res-gold{border-color:rgba(168,120,0,.25);color:#a07010}
+#res-wood{border-color:rgba(34,100,60,.25);color:#1e6e44}
+#res-food{border-color:rgba(180,80,30,.25);color:#b04820}
+#res-pop {border-color:rgba(30,100,160,.25);color:#1a5a9a}
+.wave-info{margin-left:auto;font-family:'DM Sans',system-ui,sans-serif;font-size:13px;color:#3a3830;font-weight:500;letter-spacing:0}
+#wave-timer{font-size:15px;color:#181712;font-weight:600}
+#btn-wave{font-family:'DM Sans',system-ui,sans-serif;font-size:12px;font-weight:600;padding:5px 14px;border-radius:100px;border:1px solid #e8e6df;background:#ffffff;color:#3a3830;cursor:pointer;transition:all 0.15s;letter-spacing:0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+#btn-wave:hover{background:#f1f0ec;border-color:#d4d1c8;transform:none}
+#btn-wave.disabled{opacity:0.35;pointer-events:none}
+#btn-pause{font-family:'DM Sans',system-ui,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:100px;border:1px solid #e8e6df;background:#ffffff;color:#7a7870;cursor:pointer;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+#btn-pause:hover{background:#f1f0ec;color:#181712}
+#btn-pause.paused{border-color:#a07010;color:#a07010;background:#fdf4e4}
+#spd-btn{font-family:'DM Sans',system-ui,sans-serif;font-size:11px;font-weight:500;padding:4px 10px;border-radius:100px;border:1px solid #e8e6df;background:#f8f7f4;color:#7a7870;cursor:pointer}
+#spd-btn:hover{background:#f1f0ec;color:#181712}
+#spd-btn.x2{color:#1a5a9a;border-color:rgba(26,90,154,.3);background:#edf2fd}
 
 /* MAIN AREA */
 #main{display:flex;flex:1;overflow:hidden;min-height:0}
@@ -67,7 +68,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
 #sel-info::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
 
 /* TECH TREE BTN */
-#tech-btn{font-family:'Boogaloo',cursive;font-size:12px;letter-spacing:1px;padding:6px;text-align:center;border-top:1px solid rgba(255,255,255,0.07);cursor:pointer;color:var(--v);background:rgba(192,132,252,0.05);flex-shrink:0;transition:all 0.15s}
+#tech-btn{font-family:'DM Sans',system-ui,sans-serif;font-size:12px;letter-spacing:1px;padding:6px;text-align:center;border-top:1px solid rgba(255,255,255,0.07);cursor:pointer;color:var(--v);background:rgba(192,132,252,0.05);flex-shrink:0;transition:all 0.15s}
 #tech-btn:hover{background:rgba(192,132,252,0.12)}
 
 /* BOTTOM BAR - BUILD PALETTE */
@@ -89,13 +90,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
 .bb-cost{font-size:9px;color:var(--y);opacity:0.8}
 
 /* UI COMPONENTS */
-.panel-title{font-family:'Boogaloo',cursive;font-size:14px;letter-spacing:1px;color:var(--y);margin-bottom:8px}
+.panel-title{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;letter-spacing:1px;color:var(--y);margin-bottom:8px}
 .stat-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;opacity:0.7}
 .stat-row span{color:#fff;opacity:1;font-weight:700}
 .hpbar-wrap{background:rgba(0,0,0,0.4);border-radius:100px;height:5px;margin:4px 0 8px;overflow:hidden}
 .hpbar{height:100%;border-radius:100px;background:#00FF87;transition:width 0.2s}
 .action-btn{
-  font-family:'Boogaloo',cursive;font-size:12px;letter-spacing:1px;
+  font-family:'DM Sans',system-ui,sans-serif;font-size:12px;letter-spacing:1px;
   padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);
   background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);cursor:pointer;
   transition:all 0.15s;width:100%;text-align:left;margin-bottom:4px;display:flex;align-items:center;gap:6px;
@@ -112,15 +113,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
 /* OVERLAYS */
 #overlay{position:absolute;inset:0;background:rgba(5,5,12,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:200;text-align:center}
 #overlay.hidden{display:none}
-#ov-title{font-family:'Boogaloo',cursive;font-size:clamp(40px,6vw,80px);line-height:1}
+#ov-title{font-family:'DM Sans',system-ui,sans-serif;font-size:clamp(40px,6vw,80px);line-height:1}
 #ov-sub{font-size:14px;opacity:0.5;letter-spacing:2px;font-weight:700;max-width:500px}
 #ov-stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:8px 0}
 .ov-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:10px 18px}
-.ov-sv{font-family:'Boogaloo',cursive;font-size:28px}
+.ov-sv{font-family:'DM Sans',system-ui,sans-serif;font-size:28px}
 .ov-sl{font-size:9px;letter-spacing:2px;opacity:0.35;font-weight:700}
-#btn-play{font-family:'Boogaloo',cursive;font-size:20px;letter-spacing:2px;padding:13px 40px;border-radius:100px;border:none;background:var(--g);color:var(--dr);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 24px rgba(0,255,135,0.3)}
+#btn-play{font-family:'DM Sans',system-ui,sans-serif;font-size:20px;letter-spacing:2px;padding:13px 40px;border-radius:100px;border:none;background:var(--g);color:var(--dr);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 24px rgba(0,255,135,0.3)}
 #btn-play:hover{transform:scale(1.06);box-shadow:0 8px 32px rgba(0,255,135,0.4)}
-#btn-back{font-family:'Boogaloo',cursive;font-size:14px;padding:8px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.15s}
+#btn-back{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;padding:8px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.15s}
 #btn-back:hover{background:rgba(255,255,255,0.1);color:#fff}
 
 /* TECH TREE MODAL */
@@ -133,18 +134,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
 .tech-card.researched:hover{transform:none;cursor:default}
 .tech-card.cant-afford{opacity:0.4}
 .tc-em{font-size:28px;margin-bottom:6px}
-.tc-name{font-family:'Boogaloo',cursive;font-size:14px;color:var(--v)}
+.tc-name{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:var(--v)}
 .tc-desc{font-size:10px;opacity:0.5;margin:3px 0}
 .tc-cost{font-size:10px;color:var(--y);font-weight:700}
 .tc-done{font-size:10px;color:var(--g);font-weight:700}
 
 /* FLOATING DAMAGE NUMBERS */
-.float-num{position:absolute;font-family:'Boogaloo',cursive;font-size:14px;font-weight:700;pointer-events:none;animation:floatUp 1.2s ease forwards;white-space:nowrap}
+.float-num{position:absolute;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;font-weight:700;pointer-events:none;animation:floatUp 1.2s ease forwards;white-space:nowrap}
 @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(0.8)}}
 
 /* NOTIFICATION TOASTS */
 #toast-wrap{position:absolute;top:50px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:180;display:flex;flex-direction:column;gap:6px;align-items:center}
-.toast{font-family:'Boogaloo',cursive;font-size:14px;letter-spacing:1px;padding:7px 20px;border-radius:100px;border:1px solid;background:rgba(8,8,15,0.95);animation:toastIn 0.3s ease,toastOut 0.4s 2.2s ease forwards;white-space:nowrap}
+.toast{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;letter-spacing:1px;padding:7px 20px;border-radius:100px;border:1px solid;background:rgba(8,8,15,0.95);animation:toastIn 0.3s ease,toastOut 0.4s 2.2s ease forwards;white-space:nowrap}
 @keyframes toastIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
 @keyframes toastOut{from{opacity:1}to{opacity:0;transform:scale(0.9)}}
 .toast.warn{color:var(--p);border-color:rgba(255,60,172,0.4)}
@@ -177,7 +178,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
     <button id="btn-wave">CALL WAVE</button>
     <button id="btn-pause">⏸ PAUSE</button>
     <button id="spd-btn">1×</button>
-    <a href="games.html" style="font-family:'Boogaloo',cursive;font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);text-decoration:none;transition:all 0.15s;white-space:nowrap">← BACK</a>
+    <a href="games.html" style="font-family:'DM Sans',system-ui,sans-serif;font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);text-decoration:none;transition:all 0.15s;white-space:nowrap">← BACK</a>
   </div>
 
   <div id="main">
@@ -221,10 +222,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dr);font-famil
 
 <!-- TECH TREE MODAL -->
 <div id="tech-modal">
-  <div style="font-family:'Boogaloo',cursive;font-size:24px;color:var(--v)">📚 RESEARCH LAB</div>
+  <div style="font-family:'DM Sans',system-ui,sans-serif;font-size:24px;color:var(--v)">📚 RESEARCH LAB</div>
   <div style="font-size:12px;opacity:0.4;letter-spacing:2px;margin-top:4px">Click to research. Requires Lab building.</div>
   <div class="tech-grid" id="tech-grid"></div>
-  <button onclick="closeTechModal()" style="margin-top:20px;font-family:'Boogaloo',cursive;font-size:14px;padding:8px 28px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;cursor:pointer">CLOSE [T]</button>
+  <button onclick="closeTechModal()" style="margin-top:20px;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;padding:8px 28px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;cursor:pointer">CLOSE [T]</button>
 </div>
 
 <script>

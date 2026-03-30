@@ -3,356 +3,203 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wilapple casino</title>
-  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>Wilapple Casino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
   <style>
-    :root {
-      --yellow: #FFE500; --pink: #FF3CAC; --cyan: #00F0FF;
-      --green: #00FF87;  --orange: #FF6B35; --purple: #c084fc;
-      --dark: #0e0e16;   --darker: #08080f; --white: #ffffff;
+    @keyframes floatUp { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-50px)} }
+
+    .hero { min-height: auto; padding: 140px 32px 72px; }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--ink3); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { background: var(--darker); color: var(--white); font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+    .hero-eyebrow::after { content:''; flex:1; max-width:48px; height:1px; background:var(--border2); }
 
-    .blob { position:fixed; border-radius:50%; filter:blur(80px); opacity:0.1; pointer-events:none; z-index:0; animation:blobFloat 12s ease-in-out infinite alternate; }
-    .blob1{width:500px;height:500px;background:var(--green);top:-100px;left:-100px;animation-delay:0s}
-    .blob2{width:400px;height:400px;background:var(--yellow);top:30%;right:-100px;animation-delay:3s}
-    .blob3{width:350px;height:350px;background:var(--pink);bottom:10%;left:20%;animation-delay:6s}
-    .blob4{width:300px;height:300px;background:var(--cyan);bottom:-80px;right:20%;animation-delay:9s}
-    @keyframes blobFloat { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
+    .balance-display {
+      display: inline-flex; flex-direction: column; gap: 2px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 14px 20px;
+      box-shadow: var(--sh); margin-top: 28px;
+      animation: fadeUp .5s .4s ease both;
+    }
+    .balance-display-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
+    .balance-display-val { font-family: var(--font-m); font-size: 28px; color: var(--green); font-weight: 400; }
 
-    header { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 40px; background:rgba(8,8,15,0.85); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.06); }
-    .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-    .logo { font-family:'Boogaloo',cursive; font-size:26px; color:var(--yellow); text-shadow:0 0 20px rgba(255,229,0,0.5); text-decoration:none; }
-    .balance-badge { background:rgba(0,255,135,0.12); border:1px solid rgba(0,255,135,0.3); color:var(--green); padding:7px 18px; border-radius:100px; font-weight:900; font-size:14px; letter-spacing:1px; }
-    .nav-links { display:flex; gap:12px; align-items:center; }
-    .nav-link { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; letter-spacing:2px; text-decoration:none; transition:color 0.2s; }
-    .nav-link:hover { color:var(--white); }
+    .reset-balance-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid var(--border2); color: var(--ink3);
+      padding: 7px 14px; border-radius: 100px; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all .13s; margin-top: 10px;
+    }
+    .reset-balance-btn:hover { border-color: var(--red); color: var(--red); }
 
-    .hero { padding:140px 40px 60px; text-align:center; position:relative; z-index:2; }
-    .hero-tag { display:inline-block; background:rgba(0,255,135,0.12); border:1px solid rgba(0,255,135,0.35); color:var(--green); padding:8px 18px; border-radius:100px; font-size:12px; font-weight:700; letter-spacing:2px; margin-bottom:24px; animation:fadeUp 0.6s ease both; }
-    .hero-title { font-family:'Boogaloo',cursive; font-size:clamp(52px,10vw,110px); line-height:0.95; margin-bottom:20px; animation:fadeUp 0.6s 0.1s ease both; }
-    .hero-title span { color:var(--green); }
-    .hero-sub { font-size:18px; color:rgba(255,255,255,0.45); animation:fadeUp 0.6s 0.2s ease both; margin-bottom:30px; }
-    .balance-big { font-family:'Boogaloo',cursive; font-size:clamp(28px,5vw,48px); color:var(--green); text-shadow:0 0 30px rgba(0,255,135,0.4); animation:fadeUp 0.6s 0.3s ease both; }
-    .balance-label { font-size:12px; letter-spacing:3px; opacity:0.4; font-weight:700; margin-bottom:6px; }
-    .reset-balance-btn { background:rgba(255,85,85,0.1); border:1px solid rgba(255,85,85,0.3); color:#ff7777; padding:8px 20px; border-radius:100px; font-size:12px; font-weight:700; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-top:14px; }
-    .reset-balance-btn:hover { background:rgba(255,85,85,0.2); }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .disclaimer {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--amber-bg); border: 1px solid rgba(168,104,32,.2);
+      color: var(--amber); padding: 6px 14px; border-radius: 100px;
+      font-size: 11px; font-weight: 600; letter-spacing: .3px;
+      margin-bottom: 24px; animation: fadeUp .5s ease both;
+    }
 
-    .games-section { max-width:1100px; margin:0 auto; padding:20px 40px 80px; position:relative; z-index:2; }
-    .section-label { font-family:'Boogaloo',cursive; font-size:15px; letter-spacing:4px; color:rgba(255,255,255,0.35); margin-bottom:40px; text-align:center; }
+    .section-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 0 0 28px; color: var(--ink3);
+      font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
 
-    .game-card { border-radius:22px; margin-bottom:50px; overflow:hidden; border:2px solid rgba(255,255,255,0.07); transition:transform 0.3s,box-shadow 0.3s; }
-    .game-card:hover { transform:translateY(-4px); }
-    .card-green  { background:linear-gradient(135deg,#001a0a 0%,#0e0e16 60%); } .card-green:hover{box-shadow:0 20px 60px rgba(0,255,135,0.12)}
-    .card-yellow { background:linear-gradient(135deg,#1a1800 0%,#0e0e16 60%); } .card-yellow:hover{box-shadow:0 20px 60px rgba(255,229,0,0.12)}
-    .card-pink   { background:linear-gradient(135deg,#1a0012 0%,#0e0e16 60%); } .card-pink:hover{box-shadow:0 20px 60px rgba(255,60,172,0.12)}
-    .card-cyan   { background:linear-gradient(135deg,#001a1a 0%,#0e0e16 60%); } .card-cyan:hover{box-shadow:0 20px 60px rgba(0,240,255,0.12)}
-    .card-purple { background:linear-gradient(135deg,#0d001a 0%,#0e0e16 60%); } .card-purple:hover{box-shadow:0 20px 60px rgba(192,132,252,0.12)}
+    .casino-select-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--green);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .2s ease;
+    }
+    .casino-select-card:hover::after { transform: scaleX(1); }
 
-    .game-header { display:flex; align-items:center; gap:18px; padding:26px 36px 18px; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .game-num { font-family:'Boogaloo',cursive; font-size:48px; opacity:0.1; line-height:1; }
-    .game-header h2 { font-family:'Boogaloo',cursive; font-size:32px; letter-spacing:2px; flex:1; }
-    .game-tag { font-size:11px; font-weight:700; letter-spacing:3px; opacity:0.35; }
-    .card-green  .game-header h2{color:var(--green)}
-    .card-yellow .game-header h2{color:var(--yellow)}
-    .card-pink   .game-header h2{color:var(--pink)}
-    .card-cyan   .game-header h2{color:var(--cyan)}
-    .card-purple .game-header h2{color:var(--purple)}
-    .game-body { padding:28px 36px 36px; }
+    /* Override game cards for casino — keep stat boxes with dark feel for readability */
+    .stat-box { background: var(--bg2); }
 
-    .center-area { display:flex; flex-direction:column; align-items:center; gap:20px; }
-    .row-stats { display:flex; gap:14px; flex-wrap:wrap; }
-    .btn-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; }
-    .stat-box { background:rgba(0,0,0,0.3); border-radius:12px; padding:12px 18px; text-align:center; min-width:90px; }
-    .stat-val { font-family:'Boogaloo',cursive; font-size:30px; line-height:1; margin-bottom:3px; }
-    .stat-label { font-size:10px; letter-spacing:2px; opacity:0.45; font-weight:700; }
+    /* Card display overrides (black/red still work) */
+    .play-card.red { color: #c0392b; }
+    .play-card.black { color: var(--ink); }
+    .play-card.face-down { background: linear-gradient(135deg, #1e3a5f, #2d5a8e); border-color: transparent; }
 
-    .feedback-text { font-size:18px; font-weight:700; letter-spacing:2px; min-height:28px; text-align:center; }
-    .feedback-text.dim { opacity:0.45; font-size:14px; }
+    /* Roulette wheel border */
+    .roulette-wheel { border: 3px solid var(--border2); }
 
-    .bet-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
-    .bet-input { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); border-radius:12px; color:white; font-size:20px; padding:11px 16px; font-family:'Boogaloo',cursive; outline:none; width:160px; text-align:center; transition:border-color 0.2s; }
-    .bet-input:focus { border-color:rgba(255,255,255,0.4); }
-    .bet-input::placeholder { color:rgba(255,255,255,0.25); font-size:15px; }
-    .bet-chip { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:white; padding:8px 14px; border-radius:100px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-    .bet-chip:hover { background:rgba(255,255,255,0.12); }
+    /* Keno grid styling */
+    #kenoGrid { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; max-width:440px; width:100%; }
+    .keno-btn { aspect-ratio:1; border-radius:var(--r); border:1px solid var(--border2); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; cursor:pointer; transition:all .12s; color:var(--ink2); }
+    .keno-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .keno-btn.selected { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .keno-btn.hit { background:var(--green); border-color:var(--green); color:#fff; }
+    .keno-btn.miss { opacity:.35; }
 
-    .action-btn { background:var(--green); color:var(--darker); border:none; padding:14px 36px; border-radius:100px; font-family:'Boogaloo',cursive; font-size:20px; letter-spacing:2px; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; box-shadow:0 4px 24px rgba(0,255,135,0.3); }
-    .action-btn:hover { transform:scale(1.05); box-shadow:0 8px 32px rgba(0,255,135,0.4); }
-    .action-btn:disabled { opacity:0.4; transform:none; box-shadow:none; }
-    .action-btn.yellow { background:var(--yellow); box-shadow:0 4px 24px rgba(255,229,0,0.3); }
-    .action-btn.yellow:hover { box-shadow:0 8px 32px rgba(255,229,0,0.4); }
-    .action-btn.pink { background:var(--pink); color:white; box-shadow:0 4px 24px rgba(255,60,172,0.3); }
-    .action-btn.pink:hover { box-shadow:0 8px 32px rgba(255,60,172,0.4); }
-    .action-btn.cyan { background:var(--cyan); color:var(--darker); box-shadow:0 4px 24px rgba(0,240,255,0.3); }
-    .action-btn.cyan:hover { box-shadow:0 8px 32px rgba(0,240,255,0.4); }
-    .action-btn.red { background:#ff5555; color:white; box-shadow:0 4px 24px rgba(255,85,85,0.3); }
-    .secondary-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:white; padding:12px 28px; border-radius:100px; font-family:'Boogaloo',cursive; font-size:18px; letter-spacing:2px; cursor:pointer; transition:all 0.15s; }
-    .secondary-btn:hover { background:rgba(255,255,255,0.12); }
+    /* Scratch cells */
+    .scratch-cell { aspect-ratio:1; border-radius:var(--r); border:2px solid var(--border2); background:var(--bg2); display:flex; align-items:center; justify-content:center; font-size:32px; cursor:pointer; transition:all .18s; }
+    .scratch-cell.revealed { background:var(--surface); border-color:var(--border); }
+    .scratch-cell.win-cell { border-color:var(--green); background:var(--green-bg); }
 
-    /* ---- SLOTS ---- */
-    .slots-machine { display:flex; flex-direction:column; align-items:center; gap:24px; }
-    .reels-wrap { background:rgba(0,0,0,0.6); border:3px solid rgba(0,255,135,0.2); border-radius:20px; padding:24px 32px; box-shadow:0 0 50px rgba(0,255,135,0.05); position:relative; }
-    .reels-wrap::before,.reels-wrap::after { content:''; position:absolute; left:0; right:0; height:36px; pointer-events:none; z-index:3; border-radius:18px; }
-    .reels-wrap::before { top:0; background:linear-gradient(to bottom,rgba(0,0,0,0.85),transparent); }
-    .reels-wrap::after  { bottom:0; background:linear-gradient(to top,rgba(0,0,0,0.85),transparent); }
-    .reels { display:flex; gap:16px; }
-    .reel-outer { width:90px; height:90px; overflow:hidden; border-radius:14px; border:2px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.5); position:relative; }
-    .reel-strip { display:flex; flex-direction:column; position:absolute; width:100%; transition:none; }
-    .reel-strip.spinning { transition: transform 0s; }
-    .reel-cell { width:90px; height:90px; display:flex; align-items:center; justify-content:center; font-size:52px; flex-shrink:0; }
-    .reel-outer.win { border-color:var(--green); box-shadow:0 0 20px rgba(0,255,135,0.5); animation:winPulse 0.5s ease infinite alternate; }
-    @keyframes winPulse { from{box-shadow:0 0 10px rgba(0,255,135,0.3)} to{box-shadow:0 0 30px rgba(0,255,135,0.7)} }
-    .payouts { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
-    .payout-item { background:rgba(0,0,0,0.3); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; letter-spacing:1px; opacity:0.55; text-align:center; }
+    /* Crash multiplier */
+    #crashMulti { font-family:var(--font-m); font-size:52px; color:var(--ink); }
+    #crashCanvas { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); }
 
-    /* ---- BLACKJACK ---- */
-    .bj-table { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:560px; }
-    .bj-zone-label { font-size:11px; letter-spacing:3px; opacity:0.4; font-weight:700; }
-    .card-hand { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; min-height:100px; align-items:center; }
-    .play-card { width:66px; height:90px; background:white; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:22px; font-weight:900; border:1px solid rgba(0,0,0,0.1); box-shadow:0 4px 12px rgba(0,0,0,0.4); position:relative; transition:transform 0.3s; animation:cardDeal 0.3s ease both; flex-shrink:0; }
-    @keyframes cardDeal { from{transform:translateY(-30px) rotate(-10deg);opacity:0} to{transform:none;opacity:1} }
-    .play-card.red { color:#cc0000; }
-    .play-card.black { color:#111; }
-    .play-card.face-down { background:linear-gradient(135deg,#1a237e,#283593); color:transparent; font-size:0; border:1px solid rgba(255,255,255,0.1); }
-    .play-card.face-down::after { content:'🂠'; font-size:44px; color:rgba(255,255,255,0.25); }
-    .play-card .suit { font-size:13px; position:absolute; bottom:5px; right:7px; }
-    .score-chip { background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.12); border-radius:100px; padding:5px 14px; font-family:'Boogaloo',cursive; font-size:18px; }
-    .bj-divider { width:100%; height:1px; background:rgba(255,255,255,0.06); }
+    /* Horse track */
+    .horse-lane { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+    .horse-lane:last-child { border-bottom:none; }
+    .horse-name { font-size:13px; font-weight:500; width:100px; flex-shrink:0; }
+    .horse-track-bar { flex:1; height:20px; background:var(--bg2); border-radius:100px; overflow:hidden; position:relative; }
+    .horse-fill { height:100%; border-radius:100px; transition:width .05s; background:var(--accent); }
+    .horse-emoji { font-size:20px; }
+    .horse-odds { font-family:var(--font-m); font-size:11px; color:var(--ink3); width:40px; text-align:right; flex-shrink:0; }
 
-    /* ---- ROULETTE ---- */
-    .roulette-wrap { display:flex; flex-direction:column; align-items:center; gap:22px; width:100%; }
-    .roulette-wheel-area { position:relative; width:220px; height:220px; }
-    .roulette-wheel { width:220px; height:220px; border-radius:50%; border:6px solid rgba(255,229,0,0.3); box-shadow:0 0 40px rgba(255,229,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:transform 0s; }
-    .roulette-wheel.spinning { transition: transform 4s cubic-bezier(0.17,0.67,0.12,1.0); }
-    .roulette-inner { font-size:70px; position:relative; z-index:2; user-select:none; transition:none; }
-    .roulette-pointer { position:absolute; top:-2px; left:50%; transform:translateX(-50%); font-size:28px; z-index:10; filter:drop-shadow(0 2px 4px black); }
-    .roulette-bets { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:480px; }
-    .roulette-bet-btn { padding:11px 18px; border-radius:12px; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:white; font-family:'Boogaloo',cursive; font-size:16px; cursor:pointer; transition:all 0.15s; }
-    .roulette-bet-btn:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); }
-    .roulette-bet-btn.selected { border-color:var(--yellow); background:rgba(255,229,0,0.12); color:var(--yellow); }
-    .roulette-bet-btn.red-btn { border-color:rgba(255,85,85,0.3); }
-    .roulette-bet-btn.red-btn.selected { border-color:#ff5555; background:rgba(255,85,85,0.15); color:#ff7777; }
-    .roulette-bet-btn.black-btn { border-color:rgba(200,200,200,0.2); }
-    .roulette-bet-btn.black-btn.selected { border-color:#aaa; background:rgba(200,200,200,0.1); color:#ddd; }
-    .roulette-bet-btn.green-btn { border-color:rgba(0,255,135,0.3); }
-    .roulette-bet-btn.green-btn.selected { border-color:var(--green); background:rgba(0,255,135,0.12); color:var(--green); }
+    /* War cards */
+    #warPlayerCard, #warDealerCard { width:80px; height:110px; background:var(--surface); border-radius:var(--r); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:700; box-shadow:var(--sh); border:1px solid var(--border); }
 
-    /* ---- COIN FLIP ---- */
-    .coin-wrap { display:flex; flex-direction:column; align-items:center; gap:24px; }
-    .coin { width:130px; height:130px; border-radius:50%; background:radial-gradient(circle at 35% 35%,#ffe97a,#FFE500 50%,#b89800); border:4px solid #a08000; box-shadow:0 0 40px rgba(255,229,0,0.3),inset 0 -6px 0 rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; font-size:60px; font-family:'Boogaloo',cursive; transition:transform 0.1s; }
-    .coin.flipping { animation:coinFlip 1s ease forwards; }
-    @keyframes coinFlip { 0%{transform:rotateY(0)} 100%{transform:rotateY(1080deg)} }
-    .coin-choice-row { display:flex; gap:14px; }
-    .coin-choice { padding:14px 32px; border-radius:14px; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:white; font-family:'Boogaloo',cursive; font-size:22px; cursor:pointer; transition:all 0.15s; }
-    .coin-choice:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); }
-    .coin-choice.selected { border-color:var(--yellow); background:rgba(255,229,0,0.12); color:var(--yellow); }
+    /* Baccarat */
+    .bac-card-area { display:flex; gap:6px; justify-content:center; min-height:90px; align-items:center; flex-wrap:wrap; }
+    #bacPlayerScore, #bacBankerScore { font-family:var(--font-m); font-size:22px; color:var(--ink); margin-top:6px; }
 
-    /* ---- DICE ---- */
-    .dice-area { display:flex; flex-direction:column; align-items:center; gap:20px; }
-    .dice-display { display:flex; gap:20px; }
-    .die { width:90px; height:90px; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,0.5),0 2px 0 #999; transition:transform 0.15s; }
-    .die.rolling { animation:dieRoll 0.12s linear infinite; }
-    @keyframes dieRoll { 0%{transform:rotate(-10deg) scale(1.05)} 50%{transform:rotate(10deg) scale(0.95)} 100%{transform:rotate(-10deg) scale(1.05)} }
-    .dice-bet-opts { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
-    .dice-opt { padding:10px 18px; border-radius:100px; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:white; font-family:'Boogaloo',cursive; font-size:16px; cursor:pointer; transition:all 0.15s; }
-    .dice-opt:hover { background:rgba(255,255,255,0.1); }
-    .dice-opt.selected { border-color:var(--cyan); background:rgba(0,240,255,0.12); color:var(--cyan); }
+    /* Video poker holds */
+    #vpHolds { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .vp-hold-btn { padding:5px 14px; border-radius:100px; border:1px solid var(--border2); background:var(--surface); font-size:11px; font-weight:600; cursor:pointer; transition:all .13s; color:var(--ink3); }
+    .vp-hold-btn.held { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+    #vpHand { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; min-height:100px; align-items:center; }
+    .vp-card { width:64px; height:88px; background:var(--surface); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--sh); display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:22px; font-weight:700; cursor:pointer; transition:all .15s; }
+    .vp-card.held { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent); }
+    .vp-card.red { color:#c0392b; }
 
-    /* ---- POPUP ---- */
-    .popup { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(120px); background:rgba(14,14,22,0.96); border:2px solid var(--green); border-radius:100px; padding:13px 26px; display:flex; align-items:center; gap:10px; font-weight:900; font-size:15px; letter-spacing:2px; color:var(--green); z-index:1000; transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow:0 8px 40px rgba(0,0,0,0.5); pointer-events:none; }
-    .popup.show { transform:translateX(-50%) translateY(0); }
-    .popup.loss { border-color:#ff5555; color:#ff7777; }
-    .popup-icon { font-size:22px; }
+    /* HiLo */
+    #hiloCard { width:80px; height:110px; background:var(--surface); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--sh); display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:30px; font-weight:700; color:#c0392b; }
+    .hilo-next { width:80px; height:110px; background:var(--bg2); border:2px dashed var(--border2); border-radius:var(--r); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--ink4); }
 
-    @keyframes floatUp { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-60px)} }
+    /* Plinko */
+    #plinkoCanvas { border-radius:var(--r); border:1px solid var(--border); background:var(--bg2); }
 
-    footer { border-top:1px solid rgba(255,255,255,0.05); padding:28px 40px; position:relative; z-index:2; }
-    .footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; font-size:12px; opacity:0.35; font-weight:700; letter-spacing:2px; flex-wrap:wrap; gap:10px; }
+    /* Slots win highlight */
+    .reel-outer.win { border-color:var(--green) !important; box-shadow:0 0 12px rgba(42,122,80,.3) !important; }
+
+    /* Override feedback colors */
+    .feedback-text { color:var(--ink2); }
 
     @media(max-width:600px) {
-      .game-body { padding:20px 20px 28px; }
-      .game-header { padding:20px 20px 14px; }
-      header { padding:14px 20px; }
-    }
-
-    /* ── CASINO GAME SELECT GRID ── */
-    .games-section { display: none !important; }
-
-    .casino-select-section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 40px 100px;
-      position: relative;
-      z-index: 2;
-    }
-    .casino-select-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-      gap: 16px;
-    }
-    .casino-select-card {
-      border-radius: 18px;
-      border: 2px solid rgba(255,255,255,0.07);
-      padding: 28px 18px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 9px;
-      cursor:pointer;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: cscIn 0.45s ease forwards;
-    }
-    @keyframes cscIn { to { opacity:1; transform:translateY(0); } }
-    .casino-select-card:hover { transform: translateY(-6px) scale(1.03); }
-
-    .csc-num { position:absolute; top:10px; left:14px; font-family:'Boogaloo',cursive; font-size:13px; opacity:0.18; letter-spacing:1px; }
-    .csc-emoji { font-size:46px; line-height:1; filter:drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
-    .csc-title { font-family:'Boogaloo',cursive; font-size:17px; letter-spacing:1.5px; text-align:center; line-height:1.2; }
-    .csc-tag   { font-size:10px; font-weight:700; letter-spacing:2px; opacity:0.35; text-align:center; }
-    .csc-play  { margin-top:4px; font-size:11px; font-weight:900; letter-spacing:3px; padding:6px 16px; border-radius:100px; border:1px solid currentColor; opacity:0; transform:translateY(5px); transition:opacity 0.18s, transform 0.18s; }
-    .casino-select-card:hover .csc-play { opacity:0.65; transform:translateY(0); }
-
-    .csc-green  { background:linear-gradient(135deg,#001a0a,#0e0e16); }
-    .csc-green:hover  { box-shadow:0 16px 50px rgba(0,255,135,0.18); border-color:rgba(0,255,135,0.25); }
-    .csc-green  .csc-title, .csc-green  .csc-play { color:var(--green); }
-
-    .csc-yellow { background:linear-gradient(135deg,#1a1800,#0e0e16); }
-    .csc-yellow:hover { box-shadow:0 16px 50px rgba(255,229,0,0.18); border-color:rgba(255,229,0,0.25); }
-    .csc-yellow .csc-title, .csc-yellow .csc-play { color:var(--yellow); }
-
-    .csc-pink   { background:linear-gradient(135deg,#1a0012,#0e0e16); }
-    .csc-pink:hover   { box-shadow:0 16px 50px rgba(255,60,172,0.18); border-color:rgba(255,60,172,0.25); }
-    .csc-pink   .csc-title, .csc-pink   .csc-play { color:var(--pink); }
-
-    .csc-cyan   { background:linear-gradient(135deg,#001a1a,#0e0e16); }
-    .csc-cyan:hover   { box-shadow:0 16px 50px rgba(0,240,255,0.18); border-color:rgba(0,240,255,0.25); }
-    .csc-cyan   .csc-title, .csc-cyan   .csc-play { color:var(--cyan); }
-
-    .csc-purple { background:linear-gradient(135deg,#0d001a,#0e0e16); }
-    .csc-purple:hover { box-shadow:0 16px 50px rgba(192,132,252,0.18); border-color:rgba(192,132,252,0.25); }
-    .csc-purple .csc-title, .csc-purple .csc-play { color:var(--purple); }
-
-    .csc-orange { background:linear-gradient(135deg,#1a0a00,#0e0e16); }
-    .csc-orange:hover { box-shadow:0 16px 50px rgba(255,107,53,0.18); border-color:rgba(255,107,53,0.25); }
-    .csc-orange .csc-title, .csc-orange .csc-play { color:var(--orange); }
-
-    /* ── CASINO MODAL ── */
-    #casino-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      background: rgba(8,8,15,0.94);
-      backdrop-filter: blur(14px);
-      overflow-y: auto;
-      padding: 76px 20px 48px;
-    }
-    #casino-modal.open { display: block; }
-
-    #casino-modal-close {
-      position: fixed;
-      top: 16px; right: 20px;
-      z-index: 600;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(255,255,255,0.7);
-      font-family: 'Boogaloo', cursive;
-      font-size: 15px;
-      letter-spacing: 2px;
-      padding: 9px 22px;
-      border-radius: 100px;
-      cursor:pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    #casino-modal-close:hover { background: rgba(255,255,255,0.12); color: white; }
-
-    #casino-modal-inner { max-width: 780px; margin: 0 auto; }
-    #casino-modal-inner .game-card {
-      animation: casinoModalIn 0.32s cubic-bezier(0.22,1,0.36,1) both;
-    }
-    @keyframes casinoModalIn {
-      from { opacity:0; transform:translateY(28px) scale(0.97); }
-      to   { opacity:1; transform:translateY(0) scale(1); }
-    }
-
-    @media(max-width:600px) {
-      .casino-select-section { padding: 0 14px 70px; }
-      .casino-select-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
-      .casino-select-card { padding: 20px 12px 16px; }
-      .csc-emoji { font-size: 34px; }
-      .csc-title { font-size: 13px; }
-      #casino-modal { padding: 68px 12px 36px; }
+      .hero { padding:110px 20px 48px; }
+      .card-grid { grid-template-columns:repeat(2,1fr); }
     }
   </style>
 </head>
 <body>
 
-  <div class="blob blob1"></div><div class="blob blob2"></div>
-  <div class="blob blob3"></div><div class="blob blob4"></div>
-
   <header>
     <div class="header-inner">
-      <span class="logo">🎰 WILAPPLE CASINO</span>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <a href="games.html" class="nav-link">← GAMES</a>
-        <div class="balance-badge">💰 $<span id="headerBalance">1000</span></div>
-      </div>
+      <a href="games.html" class="logo">Wilapple<span class="logo-dot">.</span></a>
+      <nav class="nav-links">
+        <a href="games.html" class="nav-link">Games</a>
+        <a href="casino.html" class="nav-link active">Casino</a>
+        <div class="balance-badge">$ <span id="headerBalance">1,000</span></div>
+      </nav>
     </div>
   </header>
 
   <section class="hero">
-    <div class="hero-tag">🎰 FAKE MONEY ONLY — NO REAL CASH INVOLVED</div>
-    <h1 class="hero-title">WILAPPLE <span>CASINO</span></h1>
-    <p class="hero-sub">Slots. Blackjack. Roulette. Dice. All fake. All fun.</p>
-    <div class="balance-label">YOUR BALANCE</div>
-    <div class="balance-big">$<span id="heroBalance">1,000</span></div>
-    <button class="reset-balance-btn" id="resetBalance">↺ RESET TO $1,000</button>
-  </section>
-
-  <!-- GAME PICKER GRID -->
-  <section class="casino-select-section" id="casino-pick">
-    <div style="font-family:'Boogaloo',cursive;font-size:15px;letter-spacing:4px;color:rgba(255,255,255,0.35);margin-bottom:32px;text-align:center;">🎰 15 CASINO GAMES — SPEND WISELY</div>
-    <div class="casino-select-grid">
-      <div class="casino-select-card csc-green"  data-game="cg-slots"    style="animation-delay:0.02s"><span class="csc-num">01</span><span class="csc-emoji">🎰</span><span class="csc-title">SLOT MACHINE</span><span class="csc-tag">MATCH TO WIN</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-yellow" data-game="cg-blackjack" style="animation-delay:0.05s"><span class="csc-num">02</span><span class="csc-emoji">🃏</span><span class="csc-title">BLACKJACK</span><span class="csc-tag">GET TO 21</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-pink"   data-game="cg-roulette"  style="animation-delay:0.08s"><span class="csc-num">03</span><span class="csc-emoji">🎡</span><span class="csc-title">ROULETTE</span><span class="csc-tag">SPIN &amp; WIN</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-cyan"   data-game="cg-coinflip"  style="animation-delay:0.11s"><span class="csc-num">04</span><span class="csc-emoji">🪙</span><span class="csc-title">COIN FLIP</span><span class="csc-tag">50/50 ODDS</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-purple" data-game="cg-dice"      style="animation-delay:0.14s"><span class="csc-num">05</span><span class="csc-emoji">🎲</span><span class="csc-title">DICE ROLL</span><span class="csc-tag">GUESS THE TOTAL</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-green"  data-game="cg-horse"     style="animation-delay:0.17s"><span class="csc-num">06</span><span class="csc-emoji">🏇</span><span class="csc-title">HORSE RACING</span><span class="csc-tag">PICK YOUR HORSE</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-orange" data-game="cg-crash"     style="animation-delay:0.20s"><span class="csc-num">07</span><span class="csc-emoji">📈</span><span class="csc-title">CRASH</span><span class="csc-tag">CASH OUT IN TIME</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-cyan"   data-game="cg-hilo"      style="animation-delay:0.23s"><span class="csc-num">08</span><span class="csc-emoji">🃏</span><span class="csc-title">HI-LO</span><span class="csc-tag">HIGHER OR LOWER?</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-pink"   data-game="cg-war"       style="animation-delay:0.26s"><span class="csc-num">09</span><span class="csc-emoji">⚔️</span><span class="csc-title">WAR</span><span class="csc-tag">HIGHER CARD WINS</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-purple" data-game="cg-keno"      style="animation-delay:0.29s"><span class="csc-num">10</span><span class="csc-emoji">🎱</span><span class="csc-title">KENO</span><span class="csc-tag">PICK YOUR NUMBERS</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-yellow" data-game="cg-scratch"   style="animation-delay:0.32s"><span class="csc-num">11</span><span class="csc-emoji">🎟️</span><span class="csc-title">SCRATCH CARD</span><span class="csc-tag">CLICK TO REVEAL</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-pink"   data-game="cg-wheel"     style="animation-delay:0.35s"><span class="csc-num">12</span><span class="csc-emoji">🎡</span><span class="csc-title">WHEEL OF FORTUNE</span><span class="csc-tag">SPIN TO WIN</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-cyan"   data-game="cg-poker"     style="animation-delay:0.38s"><span class="csc-num">13</span><span class="csc-emoji">♠️</span><span class="csc-title">VIDEO POKER</span><span class="csc-tag">JACKS OR BETTER</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-orange" data-game="cg-plinko"    style="animation-delay:0.41s"><span class="csc-num">14</span><span class="csc-emoji">⬇️</span><span class="csc-title">PLINKO</span><span class="csc-tag">DROP THE BALL</span><span class="csc-play">PLAY</span></div>
-      <div class="casino-select-card csc-purple" data-game="cg-baccarat"  style="animation-delay:0.44s"><span class="csc-num">15</span><span class="csc-emoji">🎴</span><span class="csc-title">BACCARAT</span><span class="csc-tag">PLAYER VS BANKER</span><span class="csc-play">PLAY</span></div>
+    <div style="max-width:1140px;margin:0 auto;width:100%">
+      <div class="hero-eyebrow">Wilapple Casino</div>
+      <div class="disclaimer">⚠ Fake money only — no real cash involved</div>
+      <h1 class="hero-title" style="animation:fadeUp .5s ease both">
+        Casino.<em> Play.</em>
+      </h1>
+      <p class="hero-sub" style="animation:fadeUp .5s .16s ease both">Slots, blackjack, roulette, dice and more. 15 games, zero real stakes.</p>
+      <div class="balance-display">
+        <div class="balance-display-label">Your balance</div>
+        <div class="balance-display-val">$<span id="heroBalance">1,000</span></div>
+      </div>
+      <div><button class="reset-balance-btn" id="resetBalance">↺ Reset to $1,000</button></div>
     </div>
   </section>
 
-  <!-- CASINO GAME MODAL -->
+  <!-- Casino game picker -->
+  <div style="max-width:1140px;margin:0 auto;padding:0 32px 80px">
+    <div class="section-divider">15 casino games</div>
+    <div class="card-grid">
+      <div class="casino-select-card" data-game="cg-slots"    style="animation-delay:0.02s"><span class="csc-num">01</span><span class="csc-emoji">🎰</span><span class="csc-title">Slot Machine</span><span class="csc-tag">Match to win</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-blackjack" style="animation-delay:0.04s"><span class="csc-num">02</span><span class="csc-emoji">🃏</span><span class="csc-title">Blackjack</span><span class="csc-tag">Get to 21</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-roulette"  style="animation-delay:0.06s"><span class="csc-num">03</span><span class="csc-emoji">🎡</span><span class="csc-title">Roulette</span><span class="csc-tag">Spin &amp; win</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-coinflip"  style="animation-delay:0.08s"><span class="csc-num">04</span><span class="csc-emoji">🪙</span><span class="csc-title">Coin Flip</span><span class="csc-tag">50/50 odds</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-dice"      style="animation-delay:0.10s"><span class="csc-num">05</span><span class="csc-emoji">🎲</span><span class="csc-title">Dice Roll</span><span class="csc-tag">Guess the total</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-horse"     style="animation-delay:0.12s"><span class="csc-num">06</span><span class="csc-emoji">🏇</span><span class="csc-title">Horse Racing</span><span class="csc-tag">Pick your horse</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-crash"     style="animation-delay:0.14s"><span class="csc-num">07</span><span class="csc-emoji">📈</span><span class="csc-title">Crash</span><span class="csc-tag">Cash out in time</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-hilo"      style="animation-delay:0.16s"><span class="csc-num">08</span><span class="csc-emoji">🃏</span><span class="csc-title">Hi-Lo</span><span class="csc-tag">Higher or lower?</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-war"       style="animation-delay:0.18s"><span class="csc-num">09</span><span class="csc-emoji">⚔️</span><span class="csc-title">War</span><span class="csc-tag">Higher card wins</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-keno"      style="animation-delay:0.20s"><span class="csc-num">10</span><span class="csc-emoji">🎱</span><span class="csc-title">Keno</span><span class="csc-tag">Pick your numbers</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-scratch"   style="animation-delay:0.22s"><span class="csc-num">11</span><span class="csc-emoji">🎟️</span><span class="csc-title">Scratch Card</span><span class="csc-tag">Click to reveal</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-wheel"     style="animation-delay:0.24s"><span class="csc-num">12</span><span class="csc-emoji">🎡</span><span class="csc-title">Wheel of Fortune</span><span class="csc-tag">Spin to win</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-poker"     style="animation-delay:0.26s"><span class="csc-num">13</span><span class="csc-emoji">♠️</span><span class="csc-title">Video Poker</span><span class="csc-tag">Jacks or better</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-plinko"    style="animation-delay:0.28s"><span class="csc-num">14</span><span class="csc-emoji">⬇️</span><span class="csc-title">Plinko</span><span class="csc-tag">Drop the ball</span><span class="csc-play">Play</span></div>
+      <div class="casino-select-card" data-game="cg-baccarat"  style="animation-delay:0.30s"><span class="csc-num">15</span><span class="csc-emoji">🎴</span><span class="csc-title">Baccarat</span><span class="csc-tag">Player vs banker</span><span class="csc-play">Play</span></div>
+    </div>
+  </div>
+
+  <!-- Casino modal -->
   <div id="casino-modal">
-    <button id="casino-modal-close">✕ CLOSE</button>
-    <div id="modal-balance-bar" style="position:fixed;top:16px;left:20px;z-index:610;background:rgba(0,255,135,0.12);border:1px solid rgba(0,255,135,0.3);color:#00FF87;padding:7px 16px;border-radius:100px;font-family:'Boogaloo',cursive;font-size:14px;font-weight:900;letter-spacing:1px;pointer-events:none;">💰 $<span id="modalBalance">1000</span></div>
+    <button id="casino-modal-close">← Back to casino</button>
+    <div id="modal-balance-bar">$ <span id="modalBalance">1,000</span></div>
     <div id="casino-modal-inner"></div>
   </div>
 
+  <!-- Hidden game pool — keeps original HTML structure intact so JS works -->
+  <div id="casino-game-pool" style="display:none !important">
   <!-- HIDDEN GAME POOL -->
   <div id="casino-game-pool" style="display:none !important;">
-    <div class="section-label">🎰 15 CASINO GAMES — SPEND WISELY</div>
+    
 
     <!-- 01 SLOTS -->
-    <div id="cg-slots" class="game-card card-green">
+    <div id="cg-slots" class="game-card">
       <div class="game-header"><span class="game-num">01</span><h2>SLOT MACHINE</h2><span class="game-tag">MATCH TO WIN</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -388,7 +235,7 @@
     </div>
 
     <!-- 02 BLACKJACK -->
-    <div id="cg-blackjack" class="game-card card-yellow">
+    <div id="cg-blackjack" class="game-card">
       <div class="game-header"><span class="game-num">02</span><h2>BLACKJACK</h2><span class="game-tag">GET TO 21</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -423,7 +270,7 @@
     </div>
 
     <!-- 03 ROULETTE -->
-    <div id="cg-roulette" class="game-card card-pink">
+    <div id="cg-roulette" class="game-card">
       <div class="game-header"><span class="game-num">03</span><h2>ROULETTE</h2><span class="game-tag">SPIN & WIN</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -464,7 +311,7 @@
     </div>
 
     <!-- 04 COIN FLIP -->
-    <div id="cg-coinflip" class="game-card card-cyan">
+    <div id="cg-coinflip" class="game-card">
       <div class="game-header"><span class="game-num">04</span><h2>COIN FLIP</h2><span class="game-tag">50/50 ODDS</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -492,7 +339,7 @@
     </div>
 
     <!-- 05 DICE -->
-    <div id="cg-dice" class="game-card card-purple">
+    <div id="cg-dice" class="game-card">
       <div class="game-header"><span class="game-num">05</span><h2>DICE ROLL</h2><span class="game-tag">GUESS THE TOTAL</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -528,7 +375,7 @@
 
 
     <!-- 06 HORSE RACING -->
-    <div id="cg-horse" class="game-card card-green">
+    <div id="cg-horse" class="game-card">
       <div class="game-header"><span class="game-num">06</span><h2>HORSE RACING</h2><span class="game-tag">PICK YOUR HORSE</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -548,15 +395,15 @@
     </div>
 
     <!-- 07 CRASH -->
-    <div id="cg-crash" class="game-card card-orange">
+    <div id="cg-crash" class="game-card">
       <div class="game-header"><span class="game-num">07</span><h2>CRASH</h2><span class="game-tag">CASH OUT BEFORE IT CRASHES</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
           <div class="stat-box"><div class="stat-val" id="crashWon">$0</div><div class="stat-label">WON</div></div>
           <div class="stat-box"><div class="stat-val" id="crashGames">0</div><div class="stat-label">GAMES</div></div>
         </div>
-        <canvas id="crashCanvas" width="500" height="200" style="border-radius:14px;background:rgba(0,0,0,0.5);max-width:100%;border:2px solid rgba(255,107,53,0.2);"></canvas>
-        <div style="font-family:'Boogaloo',cursive;font-size:56px;color:var(--orange);text-shadow:0 0 20px rgba(255,107,53,0.5);" id="crashMulti">1.00×</div>
+        <canvas id="crashCanvas" width="500" height="200" style="border-radius:var(--r);background:var(--bg2);max-width:100%;border:1px solid var(--border);"></canvas>
+        <div style="font-family:var(--font-m);font-size:48px;font-weight:300;color:var(--ink);" id="crashMulti">1.00×</div>
         <div class="bet-row">
           <span style="font-size:13px;opacity:.5;font-weight:700;letter-spacing:2px;">BET:</span>
           <input class="bet-input" id="crashBet" type="number" value="25" min="1"/>
@@ -572,7 +419,7 @@
     </div>
 
     <!-- 08 HI-LO -->
-    <div id="cg-hilo" class="game-card card-cyan">
+    <div id="cg-hilo" class="game-card">
       <div class="game-header"><span class="game-num">08</span><h2>HI-LO</h2><span class="game-tag">HIGHER OR LOWER?</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -599,7 +446,7 @@
     </div>
 
     <!-- 09 WAR -->
-    <div id="cg-war" class="game-card card-pink">
+    <div id="cg-war" class="game-card">
       <div class="game-header"><span class="game-num">09</span><h2>WAR</h2><span class="game-tag">HIGHER CARD WINS</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -612,7 +459,7 @@
             <div style="font-size:11px;letter-spacing:2px;opacity:.4;font-weight:700;margin-bottom:8px;">YOU</div>
             <div id="warPlayerCard" style="width:80px;height:110px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;box-shadow:0 6px 20px rgba(0,0,0,0.5);">🂠</div>
           </div>
-          <div style="font-family:'Boogaloo',cursive;font-size:28px;opacity:0.4;">VS</div>
+          <div style="font-family:var(--font-s);font-size:24px;font-weight:300;color:var(--ink3)">vs</div>
           <div style="text-align:center;">
             <div style="font-size:11px;letter-spacing:2px;opacity:.4;font-weight:700;margin-bottom:8px;">DEALER</div>
             <div id="warDealerCard" style="width:80px;height:110px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;box-shadow:0 6px 20px rgba(0,0,0,0.5);">🂠</div>
@@ -630,7 +477,7 @@
     </div>
 
     <!-- 10 KENO -->
-    <div id="cg-keno" class="game-card card-purple">
+    <div id="cg-keno" class="game-card">
       <div class="game-header"><span class="game-num">10</span><h2>KENO</h2><span class="game-tag">PICK UP TO 5 NUMBERS</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -654,7 +501,7 @@
     </div>
 
     <!-- 11 SCRATCH CARD -->
-    <div id="cg-scratch" class="game-card card-yellow">
+    <div id="cg-scratch" class="game-card">
       <div class="game-header"><span class="game-num">11</span><h2>SCRATCH CARD</h2><span class="game-tag">CLICK TO REVEAL</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -674,7 +521,7 @@
     </div>
 
     <!-- 12 WHEEL OF FORTUNE -->
-    <div id="cg-wheel" class="game-card card-pink">
+    <div id="cg-wheel" class="game-card">
       <div class="game-header"><span class="game-num">12</span><h2>WHEEL OF FORTUNE</h2><span class="game-tag">SPIN TO WIN</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -697,7 +544,7 @@
     </div>
 
     <!-- 13 VIDEO POKER -->
-    <div id="cg-poker" class="game-card card-cyan">
+    <div id="cg-poker" class="game-card">
       <div class="game-header"><span class="game-num">13</span><h2>VIDEO POKER</h2><span class="game-tag">JACKS OR BETTER</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -721,14 +568,14 @@
     </div>
 
     <!-- 14 PLINKO -->
-    <div id="cg-plinko" class="game-card card-orange">
+    <div id="cg-plinko" class="game-card">
       <div class="game-header"><span class="game-num">14</span><h2>PLINKO</h2><span class="game-tag">DROP THE BALL</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
           <div class="stat-box"><div class="stat-val" id="plinkoWon">$0</div><div class="stat-label">WON</div></div>
           <div class="stat-box"><div class="stat-val" id="plinkoDrops">0</div><div class="stat-label">DROPS</div></div>
         </div>
-        <canvas id="plinkoCanvas" width="400" height="360" style="border-radius:14px;background:rgba(0,0,0,0.5);max-width:100%;border:2px solid rgba(255,107,53,0.2);"></canvas>
+        <canvas id="plinkoCanvas" width="400" height="360" style="border-radius:var(--r);background:var(--bg2);max-width:100%;border:1px solid var(--border);"></canvas>
         <div class="bet-row">
           <span style="font-size:13px;opacity:.5;font-weight:700;letter-spacing:2px;">BET:</span>
           <input class="bet-input" id="plinkoBet" type="number" value="15" min="1"/>
@@ -741,7 +588,7 @@
     </div>
 
     <!-- 15 BACCARAT -->
-    <div id="cg-baccarat" class="game-card card-purple">
+    <div id="cg-baccarat" class="game-card">
       <div class="game-header"><span class="game-num">15</span><h2>BACCARAT</h2><span class="game-tag">PLAYER VS BANKER</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
@@ -753,12 +600,12 @@
           <div style="text-align:center;">
             <div style="font-size:11px;letter-spacing:2px;opacity:.4;font-weight:700;margin-bottom:10px;">PLAYER</div>
             <div id="bacPlayerHand" style="display:flex;gap:6px;justify-content:center;min-height:90px;align-items:center;flex-wrap:wrap;"></div>
-            <div id="bacPlayerScore" style="font-family:'Boogaloo',cursive;font-size:24px;margin-top:8px;color:var(--purple);">—</div>
+            <div id="bacPlayerScore" style="font-family:var(--font-s);font-size:24px;margin-top:8px;color:var(--purple);">—</div>
           </div>
           <div style="text-align:center;">
             <div style="font-size:11px;letter-spacing:2px;opacity:.4;font-weight:700;margin-bottom:10px;">BANKER</div>
             <div id="bacBankerHand" style="display:flex;gap:6px;justify-content:center;min-height:90px;align-items:center;flex-wrap:wrap;"></div>
-            <div id="bacBankerScore" style="font-family:'Boogaloo',cursive;font-size:24px;margin-top:8px;color:var(--yellow);">—</div>
+            <div id="bacBankerScore" style="font-family:var(--font-m);font-size:20px;margin-top:8px;color:var(--ink);">—</div>
           </div>
         </div>
         <div class="bet-row" style="flex-wrap:wrap;justify-content:center;">
@@ -778,17 +625,19 @@
     </div>
 
   </div><!-- end casino-game-pool -->
+  </div><!-- end casino-game-pool -->
 
+  <footer>
     <div class="footer-inner">
-      <span>🎪 WILAPPLE.COM</span>
-      <span>FOR ENTERTAINMENT ONLY — NO REAL MONEY<span id="chip-secret" ondblclick="balance+=1000;saveBalance();updateBalanceUI();showPopup('💰','+$1,000 BONUS!');spawnFloat(document.getElementById('chip-secret'),'+$1,000');" style="cursor:default;color:inherit;user-select:none;" title="">.</span></span>
-      <span>BALANCE: $<strong id="footerBalance">1000</strong></span>
+      <span class="footer-logo">Wilapple<span class="logo-dot">.</span></span>
+      <span>For entertainment only — no real money<span id="chip-secret" ondblclick="balance+=1000;saveBalance();updateBalanceUI();showPopup('💰','+$1,000 bonus!',false);spawnFloat(document.getElementById('chip-secret'),'+$1,000');" style="cursor:default;color:inherit;user-select:none;" title="">.</span></span>
+      <span style="font-family:var(--font-m)">Balance: $<strong id="footerBalance">1,000</strong></span>
     </div>
   </footer>
 
   <div class="popup" id="popup">
     <span class="popup-icon" id="popupIcon">💰</span>
-    <span class="popup-text" id="popupText">WIN!</span>
+    <span class="popup-text" id="popupText">Win!</span>
   </div>
 
   <script>
@@ -821,7 +670,7 @@
       const p = document.getElementById('popup');
       document.getElementById('popupIcon').textContent = icon;
       document.getElementById('popupText').textContent = text;
-      p.className = 'popup' + (isLoss ? ' loss' : '');
+      p.className = 'popup' + (isLoss ? ' loss' : ' win');
       p.classList.add('show');
       setTimeout(() => p.classList.remove('show'), 2500);
     }
@@ -941,7 +790,7 @@
         showPopup('🎰', msg);
       } else {
         document.getElementById('slotsFeedback').textContent = `❌ NO MATCH — LOST $${bet}`;
-        document.getElementById('slotsFeedback').style.color = '#ff5555';
+        document.getElementById('slotsFeedback').style.color = 'var(--red)';
         spawnFloat(document.getElementById('spinBtn'), `-$${bet}`, false);
       }
       btn.disabled = false;
@@ -1005,11 +854,11 @@
       } else if (outcome === 'push') {
         award(bjBetAmt);
         bjPushes++; document.getElementById('bjPushes').textContent = bjPushes;
-        document.getElementById('bjFeedback').style.color = 'var(--yellow)';
+        document.getElementById('bjFeedback').style.color = 'var(--amber)';
         showPopup('🤝', 'PUSH — BET RETURNED');
       } else {
         bjLosses++; document.getElementById('bjLosses').textContent = bjLosses;
-        document.getElementById('bjFeedback').style.color = '#ff5555';
+        document.getElementById('bjFeedback').style.color = 'var(--red)';
         spawnFloat(document.getElementById('bjDeal'), `-$${bjBetAmt}`, false);
         showPopup('💸', msg, true);
       }
@@ -1065,7 +914,7 @@
     });
 
     document.getElementById('roulSpin').addEventListener('click', () => {
-      if (!roulBet) { document.getElementById('roulFeedback').textContent = 'PICK A BET TYPE FIRST!'; document.getElementById('roulFeedback').style.color = 'var(--yellow)'; return; }
+      if (!roulBet) { document.getElementById('roulFeedback').textContent = 'PICK A BET TYPE FIRST!'; document.getElementById('roulFeedback').style.color = 'var(--amber)'; return; }
       const bet = getBet('roulBet');
       if (!bet) { document.getElementById('roulFeedback').textContent = 'ENTER A BET!'; return; }
       if (!deduct(bet)) { document.getElementById('roulFeedback').textContent = '❌ NOT ENOUGH FUNDS!'; return; }
@@ -1122,7 +971,7 @@
           showPopup('🎡', `${num} — WIN!`);
         } else {
           fb.textContent = `${emoji} ${num} — LOST $${bet}`;
-          fb.style.color = '#ff5555';
+          fb.style.color = 'var(--red)';
           spawnFloat(spinBtn, `-$${bet}`, false);
           showPopup('🎡', `${num} — BUST`, true);
         }
@@ -1140,7 +989,7 @@
       });
     });
     document.getElementById('coinFlipBtn').addEventListener('click', () => {
-      if (!coinPick) { document.getElementById('coinFeedback').textContent = 'PICK HEADS OR TAILS!'; document.getElementById('coinFeedback').style.color = 'var(--yellow)'; return; }
+      if (!coinPick) { document.getElementById('coinFeedback').textContent = 'PICK HEADS OR TAILS!'; document.getElementById('coinFeedback').style.color = 'var(--amber)'; return; }
       const bet = getBet('coinBet');
       if (!bet) { document.getElementById('coinFeedback').textContent = 'ENTER A BET!'; return; }
       if (!deduct(bet)) { document.getElementById('coinFeedback').textContent = '❌ NOT ENOUGH FUNDS!'; return; }
@@ -1169,7 +1018,7 @@
           coinStreak = coinStreak <= 0 ? coinStreak - 1 : -1;
           document.getElementById('coinLosses').textContent = coinLosses;
           fb.textContent = `${word}! ❌ LOST $${bet}`;
-          fb.style.color = '#ff5555';
+          fb.style.color = 'var(--red)';
           spawnFloat(flipBtn, `-$${bet}`, false);
           showPopup('🪙', `${word}! YOU LOSE`, true);
         }
@@ -1230,7 +1079,7 @@
     });
 
     document.getElementById('diceRollBtn').addEventListener('click', () => {
-      if (!diceBetType) { document.getElementById('diceFeedback').textContent = 'PICK A BET TYPE!'; document.getElementById('diceFeedback').style.color = 'var(--yellow)'; return; }
+      if (!diceBetType) { document.getElementById('diceFeedback').textContent = 'PICK A BET TYPE!'; document.getElementById('diceFeedback').style.color = 'var(--amber)'; return; }
       const bet = getBet('diceBet');
       if (!bet) { document.getElementById('diceFeedback').textContent = 'ENTER A BET!'; return; }
       if (!deduct(bet)) { document.getElementById('diceFeedback').textContent = '❌ NOT ENOUGH FUNDS!'; return; }
@@ -1270,12 +1119,12 @@
           award(win); diceWonTotal += win;
           document.getElementById('diceWon').textContent = '$' + diceWonTotal;
           fb.textContent = `🎲 ${r1}+${r2}=${total} — WIN $${win}!`;
-          fb.style.color = 'var(--purple)';
+          fb.style.color = '#6438a0';
           spawnFloat(rollBtn, `+$${win}`);
           showPopup('🎲', `${total} — WIN $${win}!`);
         } else {
           fb.textContent = `🎲 ${r1}+${r2}=${total} — LOST $${bet}`;
-          fb.style.color = '#ff5555';
+          fb.style.color = 'var(--red)';
           spawnFloat(rollBtn, `-$${bet}`, false);
           showPopup('🎲', `${total} — BUST`, true);
         }
@@ -1299,7 +1148,7 @@
       HORSES.forEach((h, i) => {
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border-radius:10px;padding:10px 14px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;';
-        row.innerHTML = `<span style="font-size:22px;">${h.emoji}</span><span style="font-family:'Boogaloo',cursive;font-size:18px;flex:1;color:${h.color};">${h.name}</span><span style="font-size:12px;opacity:.5;font-weight:700;letter-spacing:1px;">${h.odds}× odds</span><div id="bar${i}" style="width:0%;height:8px;background:${h.color};border-radius:4px;transition:width 0.1s;min-width:0;"></div>`;
+        row.innerHTML = `<span style="font-size:22px;">${h.emoji}</span><span style="font-family:var(--font-s);font-size:18px;flex:1;color:${h.color};">${h.name}</span><span style="font-size:12px;opacity:.5;font-weight:700;letter-spacing:1px;">${h.odds}× odds</span><div id="bar${i}" style="width:0%;height:8px;background:${h.color};border-radius:4px;transition:width 0.1s;min-width:0;"></div>`;
         row.addEventListener('click', () => {
           document.querySelectorAll('#horseTrack > div').forEach(r => r.style.borderColor='transparent');
           row.style.borderColor = h.color;
@@ -1311,7 +1160,7 @@
     buildTrack();
 
     document.getElementById('horseRaceBtn').addEventListener('click', () => {
-      if (horsePick === null) { document.getElementById('horseFeedback').textContent = 'PICK A HORSE FIRST!'; document.getElementById('horseFeedback').style.color = 'var(--yellow)'; return; }
+      if (horsePick === null) { document.getElementById('horseFeedback').textContent = 'PICK A HORSE FIRST!'; document.getElementById('horseFeedback').style.color = 'var(--amber)'; return; }
       const bet = getBet('horseBet');
       if (!bet) { document.getElementById('horseFeedback').textContent = 'ENTER A BET!'; return; }
       if (!deduct(bet)) { document.getElementById('horseFeedback').textContent = '❌ NOT ENOUGH!'; return; }
@@ -1343,7 +1192,7 @@
             spawnFloat(btn, `+$${win}`);
           } else {
             fb.textContent = `❌ ${HORSES[winner].name} WON — LOST $${bet}`;
-            fb.style.color = '#ff5555';
+            fb.style.color = 'var(--red)';
             showPopup('🐴', `${HORSES[winner].name} WON`, true);
             spawnFloat(btn, `-$${bet}`, false);
           }
@@ -1414,9 +1263,9 @@
           document.getElementById('crashStartBtn').disabled = false;
           if (!crashCashedOut) {
             document.getElementById('crashMulti').textContent = '💥 CRASH!';
-            document.getElementById('crashMulti').style.color = '#ff5555';
+            document.getElementById('crashMulti').style.color = 'var(--red)';
             document.getElementById('crashFeedback').textContent = `💥 CRASHED AT ${crashTarget.toFixed(2)}× — LOST $${crashBetAmt}`;
-            document.getElementById('crashFeedback').style.color = '#ff5555';
+            document.getElementById('crashFeedback').style.color = 'var(--red)';
             showPopup('💥', `CRASHED! LOST $${crashBetAmt}`, true);
             spawnFloat(document.getElementById('crashStartBtn'), `-$${crashBetAmt}`, false);
             drawCrash();
@@ -1468,19 +1317,19 @@
       if (tie) {
         award(bet); // push
         fb.textContent = `🤝 TIE (${RANKS_HL[newRank]}) — BET RETURNED`;
-        fb.style.color = 'var(--yellow)';
+        fb.style.color = 'var(--amber)';
       } else if (won) {
         const win = bet * 2; award(win); hiloWonTotal += win;
         hiloStreak++; document.getElementById('hiloStreak').textContent = hiloStreak;
         document.getElementById('hiloWon').textContent = '$' + hiloWonTotal;
         fb.textContent = `✅ ${RANKS_HL[newRank]} — CORRECT! +$${win}`;
-        fb.style.color = 'var(--cyan)';
+        fb.style.color = '#1a5a9a';
         spawnFloat(document.getElementById('hiloHighBtn'), `+$${win}`);
         showPopup('📈', `${RANKS_HL[newRank]} — WIN!`);
       } else {
         hiloStreak = 0; document.getElementById('hiloStreak').textContent = 0;
         fb.textContent = `❌ ${RANKS_HL[newRank]} — WRONG! LOST $${bet}`;
-        fb.style.color = '#ff5555';
+        fb.style.color = 'var(--red)';
         spawnFloat(document.getElementById('hiloLowBtn'), `-$${bet}`, false);
         showPopup('📉', `WRONG! LOST $${bet}`, true);
       }
@@ -1511,19 +1360,19 @@
         award(bet * 2); warWins++;
         document.getElementById('warWins').textContent = warWins;
         fb.textContent = `✅ ${WAR_RANKS[p]} vs ${WAR_RANKS[d]} — YOU WIN! +$${bet*2}`;
-        fb.style.color = 'var(--pink)';
+        fb.style.color = '#a0406e';
         showPopup('⚔️', 'YOU WIN THE WAR!');
         spawnFloat(document.getElementById('warDealBtn'), `+$${bet*2}`);
       } else if (d > p) {
         warLosses++; document.getElementById('warLosses').textContent = warLosses;
         fb.textContent = `❌ ${WAR_RANKS[p]} vs ${WAR_RANKS[d]} — DEALER WINS! LOST $${bet}`;
-        fb.style.color = '#ff5555';
+        fb.style.color = 'var(--red)';
         showPopup('⚔️', `DEALER WINS!`, true);
         spawnFloat(document.getElementById('warDealBtn'), `-$${bet}`, false);
       } else {
         award(bet); warTies++; document.getElementById('warTies').textContent = warTies;
         fb.textContent = `🤝 TIE (${WAR_RANKS[p]}) — BET RETURNED`;
-        fb.style.color = 'var(--yellow)';
+        fb.style.color = 'var(--amber)';
         showPopup('🤝', 'TIE!');
       }
     });
@@ -1573,12 +1422,12 @@
         const win = bet * mult; award(win); kenoWonTotal += win;
         document.getElementById('kenoWon').textContent = '$' + kenoWonTotal;
         fb.textContent = `🎱 ${hits}/${kenoPicked.size} HITS — WIN $${win}!`;
-        fb.style.color = 'var(--purple)';
+        fb.style.color = '#6438a0';
         showPopup('🎱', `${hits} HITS — WIN!`);
         spawnFloat(document.getElementById('kenoDraw'), `+$${win}`);
       } else {
         fb.textContent = `🎱 ${hits}/${kenoPicked.size} HITS — LOST $${bet}`;
-        fb.style.color = '#ff5555';
+        fb.style.color = 'var(--red)';
         showPopup('🎱', `${hits} HITS — BUST`, true);
         spawnFloat(document.getElementById('kenoDraw'), `-$${bet}`, false);
       }
@@ -1680,12 +1529,12 @@
         award(win); stWonTotal += win;
         document.getElementById('scratchWon').textContent = '$' + stWonTotal;
         fb.textContent = 'THREE ' + winner + '! WIN $' + win + '!';
-        fb.style.color = 'var(--yellow)';
+        fb.style.color = 'var(--amber)';
         showPopup('🎟️','THREE '+winner+' WIN!');
         spawnFloat(document.getElementById('scratchNew'),'+$'+win);
       } else {
         fb.textContent = 'NO MATCH — LOST $' + bet;
-        fb.style.color = '#ff5555';
+        fb.style.color = 'var(--red)';
         showPopup('🎟️','NO WIN',true);
         spawnFloat(document.getElementById('scratchNew'),'-$'+bet,false);
       }
@@ -1997,18 +1846,18 @@
 
     // ===================== 12 WHEEL OF FORTUNE =====================
     const WF_SEGS = [
-      {label:'2x',  mult:2,   col:'#FF3CAC'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
-      {label:'3x',  mult:3,   col:'#FFE500'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
-      {label:'1.5x',mult:1.5, col:'#00F0FF'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
-      {label:'5x',  mult:5,   col:'#FF6B35'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
-      {label:'2x',  mult:2,   col:'#FF3CAC'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
-      {label:'10x', mult:10,  col:'#00FF87'},
-      {label:'LOSE',mult:0,   col:'#1a1a2e'},
+      {label:'2×',  mult:2,   col:'#3d5a80'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
+      {label:'3×',  mult:3,   col:'#a86820'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
+      {label:'1.5×',mult:1.5, col:'#2a7a8a'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
+      {label:'5×',  mult:5,   col:'#c9783a'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
+      {label:'2×',  mult:2,   col:'#3d5a80'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
+      {label:'10×', mult:10,  col:'#2a7a50'},
+      {label:'LOSE',mult:0,   col:'#d4d1c8'},
     ];
     let wfAngle=0, wfSpinning=false, wfWonTotal=0, wfSpinCount=0;
     function wfDraw(angle) {
@@ -2027,10 +1876,10 @@
         ctx.shadowColor='rgba(0,0,0,0.9)'; ctx.shadowBlur=4;
         ctx.fillText(seg.label,r-8,5); ctx.restore();
       });
-      ctx.beginPath(); ctx.arc(cx,cy,20,0,Math.PI*2); ctx.fillStyle='#08080f'; ctx.fill();
-      ctx.strokeStyle='rgba(255,229,0,0.6)'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy,20,0,Math.PI*2); ctx.fillStyle='#f8f7f4'; ctx.fill();
+      ctx.strokeStyle='#e8e6df'; ctx.lineWidth=3; ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx-9,6); ctx.lineTo(cx+9,6); ctx.lineTo(cx,26);
-      ctx.closePath(); ctx.fillStyle='#FFE500'; ctx.fill();
+      ctx.closePath(); ctx.fillStyle='#3d5a80'; ctx.fill();
     }
     function wfSpin() {
       if(wfSpinning)return;
@@ -2060,7 +1909,7 @@
         if(seg.mult>0){
           var win=Math.round(bet*seg.mult); award(win); wfWonTotal+=win;
           document.getElementById('wheelWon').textContent='$'+wfWonTotal;
-          fb.textContent=seg.label+' -- WIN $'+win+'!'; fb.style.color=seg.col;
+          fb.textContent=seg.label+' -- WIN $'+win+'!'; fb.style.color=seg.mult>0?'var(--green)':'var(--red)';
           showPopup('🎡',seg.label+' WIN!');
           spawnFloat(document.getElementById('wheelSpinBtn'),'+$'+win);
         } else {
@@ -2098,9 +1947,8 @@
         if (!gameEl) return;
         casinoInner.innerHTML = '';
         casinoInner.appendChild(gameEl);
-        // Reset animation so it plays fresh
         gameEl.style.animation = 'none';
-        gameEl.offsetHeight; // reflow
+        gameEl.offsetHeight;
         gameEl.style.animation = '';
         casinoModal.classList.add('open');
         document.body.style.overflow = 'hidden';

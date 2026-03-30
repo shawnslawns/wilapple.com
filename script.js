@@ -1,9 +1,3 @@
-// ===================== CUSTOM CURSOR =====================
-document.addEventListener('mousemove', e => {
-  const c = document.getElementById('cursor');
-  if(c){ c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; }
-});
-
 // ===================== SCORE & POPUP =====================
 let totalScore = 0;
 function addScore(n) {
@@ -25,7 +19,7 @@ function spawnFloat(el, text) {
   const r = el.getBoundingClientRect();
   const d = document.createElement('div');
   d.textContent = text;
-  d.style.cssText = `position:fixed;left:${r.left+r.width/2+(Math.random()-.5)*50}px;top:${r.top+10}px;color:#FFE500;font-family:Boogaloo,cursive;font-size:20px;pointer-events:none;z-index:9999;animation:floatUp 0.8s ease forwards`;
+  d.style.cssText = `position:fixed;left:${r.left+r.width/2+(Math.random()-.5)*50}px;top:${r.top+10}px;color:#181712;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;font-weight:700;pointer-events:none;z-index:9999;animation:floatUp 0.8s ease forwards`;
   document.body.appendChild(d);
   setTimeout(() => d.remove(), 800);
 }

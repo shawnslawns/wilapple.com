@@ -3,443 +3,445 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wilapple.com</title>
-  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>Wilapple — Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
   <style>
-    /* ── GAME SELECT GRID ── */
-    .game-select-section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 40px 100px;
-      position: relative;
-      z-index: 2;
+    /* ── Games-page specific styles ── */
+    .hero { min-height: auto; padding: 140px 32px 72px; }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--ink3); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .game-select-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-      gap: 16px;
-    }
-    .game-select-card {
-      border-radius: 18px;
-      border: 2px solid rgba(255,255,255,0.07);
-      padding: 28px 18px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 9px;
-      cursor: none;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: gscIn 0.45s ease forwards;
-    }
-    @keyframes gscIn { to { opacity:1; transform:translateY(0); } }
+    .hero-eyebrow::after { content:''; flex:1; max-width:48px; height:1px; background:var(--border2); }
 
-    .game-select-card:hover { transform: translateY(-6px) scale(1.03); }
-
-    .gsc-num {
-      position: absolute; top: 10px; left: 14px;
-      font-family: 'Boogaloo', cursive; font-size: 13px;
-      opacity: 0.18; letter-spacing: 1px;
-    }
-    .gsc-emoji { font-size: 46px; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.15)); }
-    .gsc-title { font-family: 'Boogaloo', cursive; font-size: 17px; letter-spacing: 1.5px; text-align: center; line-height: 1.2; }
-    .gsc-tag   { font-size: 10px; font-weight: 700; letter-spacing: 2px; opacity: 0.35; text-align: center; }
-    .gsc-play  {
-      margin-top: 4px; font-size: 11px; font-weight: 900; letter-spacing: 3px;
-      padding: 6px 16px; border-radius: 100px; border: 1px solid currentColor;
-      opacity: 0; transform: translateY(5px);
-      transition: opacity 0.18s, transform 0.18s;
-    }
-    .game-select-card:hover .gsc-play { opacity: 0.65; transform: translateY(0); }
-
-    .gsc-yellow { background: linear-gradient(135deg,#1a1800,#0e0e16); }
-    .gsc-yellow:hover { box-shadow: 0 16px 50px rgba(255,229,0,0.18); border-color: rgba(255,229,0,0.25); }
-    .gsc-yellow .gsc-title, .gsc-yellow .gsc-play { color: var(--yellow); }
-
-    .gsc-pink { background: linear-gradient(135deg,#1a0012,#0e0e16); }
-    .gsc-pink:hover { box-shadow: 0 16px 50px rgba(255,60,172,0.18); border-color: rgba(255,60,172,0.25); }
-    .gsc-pink .gsc-title, .gsc-pink .gsc-play { color: var(--pink); }
-
-    .gsc-cyan { background: linear-gradient(135deg,#001a1a,#0e0e16); }
-    .gsc-cyan:hover { box-shadow: 0 16px 50px rgba(0,240,255,0.18); border-color: rgba(0,240,255,0.25); }
-    .gsc-cyan .gsc-title, .gsc-cyan .gsc-play { color: var(--cyan); }
-
-    .gsc-green { background: linear-gradient(135deg,#001a0a,#0e0e16); }
-    .gsc-green:hover { box-shadow: 0 16px 50px rgba(0,255,135,0.18); border-color: rgba(0,255,135,0.25); }
-    .gsc-green .gsc-title, .gsc-green .gsc-play { color: var(--green); }
-
-    .gsc-orange { background: linear-gradient(135deg,#1a0a00,#0e0e16); }
-    .gsc-orange:hover { box-shadow: 0 16px 50px rgba(255,107,53,0.18); border-color: rgba(255,107,53,0.25); }
-    .gsc-orange .gsc-title, .gsc-orange .gsc-play { color: var(--orange); }
-
-    .gsc-purple { background: linear-gradient(135deg,#0d001a,#0e0e16); }
-    .gsc-purple:hover { box-shadow: 0 16px 50px rgba(192,132,252,0.18); border-color: rgba(192,132,252,0.25); }
-    .gsc-purple .gsc-title, .gsc-purple .gsc-play { color: var(--purple); }
-
-    /* ── MODAL ── */
-    #game-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      background: rgba(8,8,15,0.94);
-      backdrop-filter: blur(14px);
-      overflow-y: auto;
-      padding: 76px 20px 48px;
-    }
-    #game-modal.open { display: block; }
-
-    #modal-close {
-      position: fixed;
-      top: 16px; right: 20px;
-      z-index: 600;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(255,255,255,0.7);
-      font-family: 'Boogaloo', cursive;
-      font-size: 15px;
-      letter-spacing: 2px;
-      padding: 9px 22px;
-      border-radius: 100px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    #modal-close:hover { background: rgba(255,255,255,0.12); color: white; }
-
-    #modal-inner { max-width: 780px; margin: 0 auto; }
-    #modal-inner .game-card {
-      animation: modalIn 0.32s cubic-bezier(0.22,1,0.36,1) both;
-    }
-    @keyframes modalIn {
-      from { opacity:0; transform:translateY(28px) scale(0.97); }
-      to   { opacity:1; transform:translateY(0) scale(1); }
+    /* Game count badge next to title */
+    .game-count-pill {
+      display: inline-flex; align-items: center;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 100px; padding: 4px 12px;
+      font-family: var(--font-m); font-size: 12px; color: var(--ink3);
+      vertical-align: middle; margin-left: 12px; margin-bottom: 6px;
     }
 
-    /* hide the pool */
-    .games-section { display: none !important; }
+    /* Category filter bar */
+    .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 32px; }
+    .filter-chip {
+      height: 32px; padding: 0 14px; border-radius: 100px;
+      font-size: 12px; font-weight: 600; letter-spacing: .3px;
+      border: 1px solid var(--border2); color: var(--ink3); background: var(--surface);
+      cursor: pointer; transition: all .13s;
+    }
+    .filter-chip:hover { border-color: var(--ink); color: var(--ink); }
+    .filter-chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
 
+    /* Game cards — override shared with a hover accent bar */
+    .game-select-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--ink);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .2s ease;
+    }
+    .game-select-card:hover::after { transform: scaleX(1); }
+
+    /* Section dividers */
+    .section-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 56px 0 28px; color: var(--ink3);
+      font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Whack-a-mole holes */
+    .whack-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:360px; }
+    .hole { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r2); height:90px; overflow:hidden; position:relative; display:flex; align-items:flex-end; justify-content:center; cursor:pointer; }
+    .mole { font-size:36px; transform:translateY(100%); transition:transform .15s; user-select:none; }
+    .hole.active .mole { transform:translateY(0); }
+    .hole:active { background:var(--bg); }
+
+    /* Memory grid */
+    .memory-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; max-width:360px; }
+    .mem-card { aspect-ratio:1; border-radius:var(--r); background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; transition:all .18s; }
+    .mem-card.flipped,.mem-card.matched { background:var(--surface); border-color:var(--border2); }
+    .mem-card.matched { border-color:var(--green); background:var(--green-bg); }
+
+    /* Simon */
+    .simon-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:220px; height:220px; }
+    .simon-btn { border-radius:var(--r2); border:none; cursor:pointer; opacity:.5; transition:opacity .12s; }
+    .simon-btn[data-color="red"]    { background:#e74c3c; border-radius: var(--r2) 0 0 0; }
+    .simon-btn[data-color="blue"]   { background:#2980b9; border-radius: 0 var(--r2) 0 0; }
+    .simon-btn[data-color="green"]  { background:#27ae60; border-radius: 0 0 0 var(--r2); }
+    .simon-btn[data-color="yellow"] { background:#f39c12; border-radius: 0 0 var(--r2) 0; }
+    .simon-btn.lit { opacity:1; box-shadow:0 0 16px currentColor; }
+
+    /* Reaction pad */
+    .reaction-pad { width:100%; max-width:420px; height:160px; border-radius:var(--r2); border:1px solid var(--border); background:var(--bg2); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s; user-select:none; }
+    .reaction-msg { font-size:15px; font-weight:600; color:var(--ink3); letter-spacing:.3px; }
+    .reaction-pad.wait-state { background:var(--red-bg); border-color:rgba(184,50,50,.3); }
+    .reaction-pad.wait-state .reaction-msg { color:var(--red); }
+    .reaction-pad.go-state { background:var(--green); border-color:var(--green); }
+    .reaction-pad.go-state .reaction-msg { color:#fff; }
+
+    /* Various game inputs */
+    .game-input {
+      padding:11px 16px; border-radius:var(--r); border:1px solid var(--border2);
+      font-size:15px; color:var(--ink); background:var(--surface); outline:none;
+      transition:border-color .13s; font-family:var(--font); width:100%; max-width:360px;
+    }
+    .game-input:focus { border-color:var(--ink); box-shadow:0 0 0 3px rgba(24,23,18,.05); }
+
+    /* Pattern grids */
+    .pattern-grids { display:flex; gap:28px; flex-wrap:wrap; justify-content:center; }
+    .pattern-label { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--ink4); margin-bottom:8px; text-align:center; }
+    .pattern-grid { display:grid; gap:5px; }
+    .pattern-cell { aspect-ratio:1; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); cursor:pointer; transition:all .12s; width:38px; }
+    .pattern-cell.on { background:var(--ink); border-color:var(--ink); }
+    .pattern-cell.target { background:var(--accent); border-color:var(--accent); }
+
+    /* Progress bar variants */
+    .bar-wrap { width:100%; max-width:440px; height:5px; background:var(--border); border-radius:100px; overflow:hidden; }
+    .bar { height:100%; border-radius:100px; transition:width .1s; }
+    .orange-bar { background: var(--accent2); }
+
+    /* Big display text (number memory, speed math Q, etc.) */
+    .big-question {
+      font-family:var(--font-s); font-size:36px; font-weight:300;
+      color:var(--ink); text-align:center; letter-spacing:2px;
+      padding:16px 24px; background:var(--bg2); border-radius:var(--r2);
+      border:1px solid var(--border); min-width:280px;
+    }
+
+    /* Color choices */
+    .color-choices { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:440px; }
+    .color-choice {
+      padding:10px 16px; border-radius:var(--r); border:1px solid var(--border2);
+      background:var(--surface); font-family:var(--font-m); font-size:12px; font-weight:500;
+      cursor:pointer; transition:all .13s; color:var(--ink2);
+    }
+    .color-choice:hover { border-color:var(--ink); color:var(--ink); }
+    .color-choice.correct { background:var(--green-bg); border-color:var(--green); color:var(--green); }
+    .color-choice.wrong   { background:var(--red-bg);   border-color:var(--red);   color:var(--red); }
+    .color-swatch { width:180px; height:90px; border-radius:var(--r2); border:1px solid var(--border); box-shadow:var(--sh); }
+
+    /* Guess history */
+    .guess-history { font-size:12px; color:var(--ink3); font-family:var(--font-m); text-align:center; max-width:320px; line-height:1.8; }
+
+    /* Scramble */
+    .scramble-word { font-family:var(--font-s); font-size:42px; font-weight:300; letter-spacing:5px; color:var(--ink); text-align:center; }
+
+    /* Canvas defaults */
+    canvas { display:block; max-width:100%; border-radius:var(--r); }
+    #snakeCanvas, #pongCanvas { border:1px solid var(--border); background:var(--bg2); }
+    #dodgeCanvas, #bricksCanvas, #shooterCanvas, #cobraCanvas, #rainCanvas { border:1px solid var(--border); background:#0a0a12; border-radius:var(--r); }
+
+    /* Responsive */
     @media(max-width:600px) {
-      .game-select-section { padding: 0 14px 70px; }
-      .game-select-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
-      .game-select-card { padding: 20px 12px 16px; }
-      .gsc-emoji { font-size: 34px; }
-      .gsc-title { font-size: 13px; }
-      #game-modal { padding: 68px 12px 36px; }
+      .hero { padding:110px 20px 48px; }
+      .card-grid { grid-template-columns:repeat(2,1fr); }
     }
   </style>
 </head>
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="blob blob1"></div><div class="blob blob2"></div>
-  <div class="blob blob3"></div><div class="blob blob4"></div>
-
   <header>
     <div class="header-inner">
-      <div class="logo">🎪 WILAPPLE</div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        
-        <a href="casino.html" style="background:rgba(0,255,135,0.12);border:1px solid rgba(0,255,135,0.3);color:#00FF87;padding:7px 18px;border-radius:100px;font-weight:900;font-size:14px;text-decoration:none;letter-spacing:1px;">🎰 CASINO</a>
-        <div class="score-badge">🏆 <span id="totalScore">0</span> PTS</div>
-      </div>
+      <a href="index.html" class="logo">Wilapple<span class="logo-dot">.</span></a>
+      <nav class="nav-links">
+        <a href="games.html" class="nav-link active">Games</a>
+        <a href="casino.html" class="nav-link">Casino</a>
+        <div class="score-badge">★ <span id="totalScore">0</span> pts</div>
+      </nav>
     </div>
   </header>
 
   <section class="hero">
-    <div class="hero-content">
-      <div class="hero-tag">✨ THE MOST FUN PLACE ON THE INTERNET</div>
-      <h1 class="hero-title">
-        <span class="line1">PLAY.</span>
-        <span class="line2">VIBE.</span>
-        <span class="line3">WIN.</span>
+    <div style="max-width:1140px;margin:0 auto;width:100%">
+      <div class="hero-eyebrow">Wilapple Games</div>
+      <h1 class="hero-title" style="animation:fadeUp .5s ease both">
+        Play.<em> Win.</em>
+        <span class="game-count-pill">28 games</span>
       </h1>
-      <p class="hero-sub">28 games. Zero rules. Pure chaos. 🎉</p>
-      <a href="#games" class="hero-btn">LET'S GOOO →</a>
-      <a href="casino.html" style="display:inline-block;margin-left:16px;background:rgba(0,255,135,0.1);border:2px solid rgba(0,255,135,0.35);color:#00FF87;padding:16px 38px;border-radius:100px;font-family:'Boogaloo',cursive;font-size:20px;letter-spacing:2px;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;animation:fadeUp 0.6s 0.6s ease both;">🎰 CASINO →</a>
-    </div>
-    <div class="hero-art">
-      <div class="floating-emoji" style="--d:0s;--x:10%;--y:20%">🎮</div>
-      <div class="floating-emoji" style="--d:0.5s;--x:70%;--y:10%">⭐</div>
-      <div class="floating-emoji" style="--d:1s;--x:80%;--y:60%">🎯</div>
-      <div class="floating-emoji" style="--d:1.5s;--x:20%;--y:70%">🔥</div>
-      <div class="floating-emoji" style="--d:0.8s;--x:50%;--y:80%">💥</div>
-      <div class="floating-emoji" style="--d:0.3s;--x:40%;--y:30%">🌈</div>
+      <p class="hero-sub">Mini-games, strategy, reflexes, puzzles — all in one place. Click a game to get started.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .5s .32s ease both">
+        <a href="#games" class="hero-btn">Browse games ↓</a>
+        <a href="casino.html" class="hero-btn-outline">Casino →</a>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════════════ GAME SELECT GRID ══════════════════ -->
-  <div id="games">
-    <div class="section-label" style="text-align:center;padding:0 0 30px;position:relative;z-index:2;">🎮 PICK YOUR GAME</div>
-    <div class="game-select-section">
-      <div class="game-select-grid">
+  <!-- ── Game Picker ── -->
+  <div id="games" style="max-width:1140px;margin:0 auto;padding:0 32px 80px">
 
-        <div class="game-select-card gsc-yellow" data-game="clicker" style="animation-delay:.03s">
-          <span class="gsc-num">01</span>
-          <div class="gsc-emoji">💥</div>
-          <div class="gsc-title">MANIC CLICKER</div>
-          <div class="gsc-tag">TAP TAP TAP</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+    <div class="section-divider">Original games</div>
+    <div class="card-grid">
 
-        <div class="game-select-card gsc-pink" data-game="snake" style="animation-delay:.06s">
-          <span class="gsc-num">02</span>
-          <div class="gsc-emoji">🐍</div>
-          <div class="gsc-title">NEON SNAKE</div>
-          <div class="gsc-tag">ARROW KEYS</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="clicker" style="animation-delay:.03s">
+        <span class="gsc-num">01</span>
+        <div class="gsc-emoji">💥</div>
+        <div class="gsc-title">Manic Clicker</div>
+        <div class="gsc-tag">Tap tap tap</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-cyan" data-game="memory" style="animation-delay:.09s">
-          <span class="gsc-num">03</span>
-          <div class="gsc-emoji">🧠</div>
-          <div class="gsc-title">EMOJI MEMORY</div>
-          <div class="gsc-tag">MATCH 'EM ALL</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="snake" style="animation-delay:.05s">
+        <span class="gsc-num">02</span>
+        <div class="gsc-emoji">🐍</div>
+        <div class="gsc-title">Neon Snake</div>
+        <div class="gsc-tag">Arrow keys</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-green" data-game="whack" style="animation-delay:.12s">
-          <span class="gsc-num">04</span>
-          <div class="gsc-emoji">🐹</div>
-          <div class="gsc-title">WHACK-A-MOLE</div>
-          <div class="gsc-tag">SMASH 'EM</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="memory" style="animation-delay:.07s">
+        <span class="gsc-num">03</span>
+        <div class="gsc-emoji">🧠</div>
+        <div class="gsc-title">Emoji Memory</div>
+        <div class="gsc-tag">Match 'em all</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-orange" data-game="typer" style="animation-delay:.15s">
-          <span class="gsc-num">05</span>
-          <div class="gsc-emoji">⌨️</div>
-          <div class="gsc-title">TYPE RACER</div>
-          <div class="gsc-tag">HOW FAST?</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="whack" style="animation-delay:.09s">
+        <span class="gsc-num">04</span>
+        <div class="gsc-emoji">🐹</div>
+        <div class="gsc-title">Whack-a-Mole</div>
+        <div class="gsc-tag">Smash 'em</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-purple" data-game="color" style="animation-delay:.18s">
-          <span class="gsc-num">06</span>
-          <div class="gsc-emoji">🎨</div>
-          <div class="gsc-title">COLOR GUESS</div>
-          <div class="gsc-tag">KNOW YOUR HEX?</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="typer" style="animation-delay:.11s">
+        <span class="gsc-num">05</span>
+        <div class="gsc-emoji">⌨️</div>
+        <div class="gsc-title">Type Racer</div>
+        <div class="gsc-tag">How fast?</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-yellow" data-game="reaction" style="animation-delay:.21s">
-          <span class="gsc-num">07</span>
-          <div class="gsc-emoji">⚡</div>
-          <div class="gsc-title">REACTION TIME</div>
-          <div class="gsc-tag">CLICK ON GREEN</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="color" style="animation-delay:.13s">
+        <span class="gsc-num">06</span>
+        <div class="gsc-emoji">🎨</div>
+        <div class="gsc-title">Color Guess</div>
+        <div class="gsc-tag">Know your hex?</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-pink" data-game="pong" style="animation-delay:.24s">
-          <span class="gsc-num">08</span>
-          <div class="gsc-emoji">🏓</div>
-          <div class="gsc-title">NEON PONG</div>
-          <div class="gsc-tag">W/S OR ↑↓</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="reaction" style="animation-delay:.15s">
+        <span class="gsc-num">07</span>
+        <div class="gsc-emoji">⚡</div>
+        <div class="gsc-title">Reaction Time</div>
+        <div class="gsc-tag">Click on green</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-cyan" data-game="math" style="animation-delay:.27s">
-          <span class="gsc-num">09</span>
-          <div class="gsc-emoji">🔢</div>
-          <div class="gsc-title">MATH BLITZ</div>
-          <div class="gsc-tag">PICK THE ANSWER</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="pong" style="animation-delay:.17s">
+        <span class="gsc-num">08</span>
+        <div class="gsc-emoji">🏓</div>
+        <div class="gsc-title">Neon Pong</div>
+        <div class="gsc-tag">W/S or ↑↓</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-green" data-game="scramble" style="animation-delay:.30s">
-          <span class="gsc-num">10</span>
-          <div class="gsc-emoji">🔤</div>
-          <div class="gsc-title">WORD SCRAMBLE</div>
-          <div class="gsc-tag">UNSCRAMBLE IT</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="math" style="animation-delay:.19s">
+        <span class="gsc-num">09</span>
+        <div class="gsc-emoji">🔢</div>
+        <div class="gsc-title">Math Blitz</div>
+        <div class="gsc-tag">Pick the answer</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-purple" data-game="simon" style="animation-delay:.33s">
-          <span class="gsc-num">11</span>
-          <div class="gsc-emoji">🔴</div>
-          <div class="gsc-title">SIMON SAYS</div>
-          <div class="gsc-tag">REPEAT THE PATTERN</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="scramble" style="animation-delay:.21s">
+        <span class="gsc-num">10</span>
+        <div class="gsc-emoji">🔤</div>
+        <div class="gsc-title">Word Scramble</div>
+        <div class="gsc-tag">Unscramble it</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-orange" data-game="dodge" style="animation-delay:.36s">
-          <span class="gsc-num">12</span>
-          <div class="gsc-emoji">🚀</div>
-          <div class="gsc-title">ASTEROID DODGE</div>
-          <div class="gsc-tag">MOVE MOUSE</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="simon" style="animation-delay:.23s">
+        <span class="gsc-num">11</span>
+        <div class="gsc-emoji">🔴</div>
+        <div class="gsc-title">Simon Says</div>
+        <div class="gsc-tag">Repeat the pattern</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-cyan" data-game="numMemory" style="animation-delay:.39s">
-          <span class="gsc-num">13</span>
-          <div class="gsc-emoji">🔢</div>
-          <div class="gsc-title">NUMBER MEMORY</div>
-          <div class="gsc-tag">REMEMBER IT</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="dodge" style="animation-delay:.25s">
+        <span class="gsc-num">12</span>
+        <div class="gsc-emoji">🚀</div>
+        <div class="gsc-title">Asteroid Dodge</div>
+        <div class="gsc-tag">Move mouse</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-yellow" data-game="emojiRain" style="animation-delay:.42s">
-          <span class="gsc-num">14</span>
-          <div class="gsc-emoji">🌟</div>
-          <div class="gsc-title">EMOJI RAIN</div>
-          <div class="gsc-tag">CLICK TO CATCH</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="numMemory" style="animation-delay:.27s">
+        <span class="gsc-num">13</span>
+        <div class="gsc-emoji">🔢</div>
+        <div class="gsc-title">Number Memory</div>
+        <div class="gsc-tag">Remember it</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-green" data-game="guessNum" style="animation-delay:.45s">
-          <span class="gsc-num">15</span>
-          <div class="gsc-emoji">🎯</div>
-          <div class="gsc-title">GUESS THE NUMBER</div>
-          <div class="gsc-tag">1 TO 100</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="emojiRain" style="animation-delay:.29s">
+        <span class="gsc-num">14</span>
+        <div class="gsc-emoji">🌟</div>
+        <div class="gsc-title">Emoji Rain</div>
+        <div class="gsc-tag">Click to catch</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-orange" data-game="speedmath" style="animation-delay:.48s">
-          <span class="gsc-num">16</span>
-          <div class="gsc-emoji">➕</div>
-          <div class="gsc-title">SPEED MATH</div>
-          <div class="gsc-tag">TYPE THE ANSWER</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="guessNum" style="animation-delay:.31s">
+        <span class="gsc-num">15</span>
+        <div class="gsc-emoji">🎯</div>
+        <div class="gsc-title">Guess the Number</div>
+        <div class="gsc-tag">1 to 100</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-purple" data-game="pattern" style="animation-delay:.51s">
-          <span class="gsc-num">17</span>
-          <div class="gsc-emoji">🔮</div>
-          <div class="gsc-title">PATTERN COPY</div>
-          <div class="gsc-tag">COPY THE GRID</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="speedmath" style="animation-delay:.33s">
+        <span class="gsc-num">16</span>
+        <div class="gsc-emoji">➕</div>
+        <div class="gsc-title">Speed Math</div>
+        <div class="gsc-tag">Type the answer</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-pink" data-game="trivia" style="animation-delay:.54s">
-          <span class="gsc-num">18</span>
-          <div class="gsc-emoji">❓</div>
-          <div class="gsc-title">RANDOM TRIVIA</div>
-          <div class="gsc-tag">TRUE OR FALSE</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="pattern" style="animation-delay:.35s">
+        <span class="gsc-num">17</span>
+        <div class="gsc-emoji">🔮</div>
+        <div class="gsc-title">Pattern Copy</div>
+        <div class="gsc-tag">Copy the grid</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-green" data-game="bricks" style="animation-delay:.57s">
-          <span class="gsc-num">19</span>
-          <div class="gsc-emoji">🧱</div>
-          <div class="gsc-title">BRICK BREAKER</div>
-          <div class="gsc-tag">MOUSE TO AIM</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="trivia" style="animation-delay:.37s">
+        <span class="gsc-num">18</span>
+        <div class="gsc-emoji">❓</div>
+        <div class="gsc-title">Random Trivia</div>
+        <div class="gsc-tag">True or false</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <div class="game-select-card gsc-yellow" data-game="shooter" style="animation-delay:.60s">
-          <span class="gsc-num">20</span>
-          <div class="gsc-emoji">🎃</div>
-          <div class="gsc-title">EMOJI SHOOTER</div>
-          <div class="gsc-tag">CLICK TO SHOOT</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="bricks" style="animation-delay:.39s">
+        <span class="gsc-num">19</span>
+        <div class="gsc-emoji">🧱</div>
+        <div class="gsc-title">Brick Breaker</div>
+        <div class="gsc-tag">Mouse to aim</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <a href="Wilapple-command.html" class="game-select-card gsc-pink" style="animation-delay:.70s;text-decoration:none">
-          <span class="gsc-num">22</span>
-          <div class="gsc-emoji">⚔️</div>
-          <div class="gsc-title">WILAPPLE COMMAND</div>
-          <div class="gsc-tag">REAL-TIME STRATEGY</div>
-          <div class="gsc-play" style="color:var(--pink)">▶ PLAY</div>
-        </a>
-        <a href="wilapple-run.html" class="game-select-card gsc-green" style="animation-delay:.73s;text-decoration:none">
-          <span class="gsc-num">23</span>
-          <div class="gsc-emoji">⚡</div>
-          <div class="gsc-title">WILAPPLE RUN</div>
-          <div class="gsc-tag">PLATFORMER</div>
-          <div class="gsc-play" style="color:var(--green)">▶ PLAY</div>
-        </a>
-        <div class="game-select-card gsc-cyan" data-game="neon-cobra" style="animation-delay:.63s">
-          <span class="gsc-num">21</span>
-          <div class="gsc-emoji">🐍</div>
-          <div class="gsc-title">NEON COBRA</div>
-          <div class="gsc-tag">FAST-PACED REMIX</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="shooter" style="animation-delay:.41s">
+        <span class="gsc-num">20</span>
+        <div class="gsc-emoji">🎃</div>
+        <div class="gsc-title">Emoji Shooter</div>
+        <div class="gsc-tag">Click to shoot</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
 
-        <!-- ── THIRD-PARTY GAMES (GameDistribution) ── -->
-        <div class="game-select-card gsc-green" data-game="gd-worms" style="animation-delay:.76s">
-          <span class="gsc-num">24</span>
-          <div class="gsc-emoji">🪱</div>
-          <div class="gsc-title">WORMS ZONE</div>
-          <div class="gsc-tag">SLITHERY SNAKE</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+      <div class="game-select-card" data-game="neon-cobra" style="animation-delay:.43s">
+        <span class="gsc-num">21</span>
+        <div class="gsc-emoji">🐍</div>
+        <div class="gsc-title">Neon Cobra</div>
+        <div class="gsc-tag">Fast-paced remix</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
+    </div>
 
-        <div class="game-select-card gsc-orange" data-game="gd-dan" style="animation-delay:.79s">
-          <span class="gsc-num">25</span>
-          <div class="gsc-emoji">🦸</div>
-          <div class="gsc-title">DAN THE MAN</div>
-          <div class="gsc-tag">ACTION PLATFORMER</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
+    <div class="section-divider">Full games</div>
+    <div class="card-grid">
+      <a href="Wilapple-command.html" class="game-select-card" style="animation-delay:.45s;text-decoration:none">
+        <span class="gsc-num">22</span>
+        <div class="gsc-emoji">⚔️</div>
+        <div class="gsc-title">Wilapple Command</div>
+        <div class="gsc-tag">Real-time strategy</div>
+        <div class="gsc-play">▶ Play</div>
+      </a>
+      <a href="wilapple-run.html" class="game-select-card" style="animation-delay:.47s;text-decoration:none">
+        <span class="gsc-num">23</span>
+        <div class="gsc-emoji">⚡</div>
+        <div class="gsc-title">Wilapple Run</div>
+        <div class="gsc-tag">Platformer</div>
+        <div class="gsc-play">▶ Play</div>
+      </a>
+    </div>
 
-        <div class="game-select-card gsc-yellow" data-game="gd-clicker" style="animation-delay:.82s">
-          <span class="gsc-num">26</span>
-          <div class="gsc-emoji">⚔️</div>
-          <div class="gsc-title">CLICKER HERO</div>
-          <div class="gsc-tag">IDLE RPG</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
-
-        <div class="game-select-card gsc-purple" data-game="gd-ten" style="animation-delay:.85s">
-          <span class="gsc-num">27</span>
-          <div class="gsc-emoji">🔟</div>
-          <div class="gsc-title">TEN</div>
-          <div class="gsc-tag">PUZZLE</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
-
-        <div class="game-select-card gsc-pink" data-game="gd-homepin" style="animation-delay:.88s">
-          <span class="gsc-num">28</span>
-          <div class="gsc-emoji">📌</div>
-          <div class="gsc-title">HOME PIN 2</div>
-          <div class="gsc-tag">PULL THE PIN</div>
-          <div class="gsc-play">▶ PLAY</div>
-        </div>
-
+    <div class="section-divider">Featured third-party</div>
+    <div class="card-grid">
+      <div class="game-select-card" data-game="gd-worms" style="animation-delay:.49s">
+        <span class="gsc-num">24</span>
+        <div class="gsc-emoji">🪱</div>
+        <div class="gsc-title">Worms Zone</div>
+        <div class="gsc-tag">Slithery snake</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
+      <div class="game-select-card" data-game="gd-dan" style="animation-delay:.51s">
+        <span class="gsc-num">25</span>
+        <div class="gsc-emoji">🦸</div>
+        <div class="gsc-title">Dan the Man</div>
+        <div class="gsc-tag">Action platformer</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
+      <div class="game-select-card" data-game="gd-clicker" style="animation-delay:.53s">
+        <span class="gsc-num">26</span>
+        <div class="gsc-emoji">⚔️</div>
+        <div class="gsc-title">Clicker Hero</div>
+        <div class="gsc-tag">Idle RPG</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
+      <div class="game-select-card" data-game="gd-ten" style="animation-delay:.55s">
+        <span class="gsc-num">27</span>
+        <div class="gsc-emoji">🔟</div>
+        <div class="gsc-title">Ten</div>
+        <div class="gsc-tag">Puzzle</div>
+        <div class="gsc-play">▶ Play</div>
+      </div>
+      <div class="game-select-card" data-game="gd-homepin" style="animation-delay:.57s">
+        <span class="gsc-num">28</span>
+        <div class="gsc-emoji">📌</div>
+        <div class="gsc-title">Home Pin 2</div>
+        <div class="gsc-tag">Pull the pin</div>
+        <div class="gsc-play">▶ Play</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════ MODAL ══════════════════ -->
+  <!-- ── Game Modal ── -->
   <div id="game-modal">
-    <button id="modal-close">✕ BACK TO GAMES</button>
+    <button id="modal-close">← Back to games</button>
     <div id="modal-inner"></div>
   </div>
 
-  <!-- ══════════════════ HIDDEN GAME POOL ══════════════════ -->
-  <section class="games-section" id="game-pool">
+  <!-- ── Hidden Game Pool ── -->
+  <section class="games-section" id="game-pool" style="display:none !important">
 
-    <div id="clicker" class="game-card card-yellow">
-      <div class="game-header"><span class="game-num">01</span><h2>MANIC CLICKER</h2><span class="game-tag">TAP TAP TAP</span></div>
+    <div id="clicker" class="game-card">
+      <div class="game-header"><span class="game-num">01</span><h2>Manic Clicker</h2><span class="game-tag">Tap tap tap</span></div>
       <div class="game-body"><div class="clicker-area">
         <button class="clicker-btn" id="clickerBtn"><span class="click-inner">💥</span></button>
         <div class="row-stats">
-          <div class="stat-box"><div class="stat-val" id="clickCount">0</div><div class="stat-label">CLICKS</div></div>
-          <div class="stat-box"><div class="stat-val" id="clickCPS">0</div><div class="stat-label">PER SEC</div></div>
-          <div class="stat-box"><div class="stat-val" id="clickBest">0</div><div class="stat-label">BEST CPS</div></div>
+          <div class="stat-box"><div class="stat-val" id="clickCount">0</div><div class="stat-label">Clicks</div></div>
+          <div class="stat-box"><div class="stat-val" id="clickCPS">0</div><div class="stat-label">Per sec</div></div>
+          <div class="stat-box"><div class="stat-val" id="clickBest">0</div><div class="stat-label">Best CPS</div></div>
         </div>
         <div class="clicker-bar-wrap"><div class="clicker-bar" id="clickerBar"></div></div>
-        <div class="clicker-timer" id="clickerTimer">CLICK TO START — 10 SEC CHALLENGE</div>
-        <button class="reset-btn" id="clickerReset">RESET</button>
+        <div class="clicker-timer" id="clickerTimer">Click to start — 10 sec challenge</div>
+        <button class="reset-btn" id="clickerReset">Reset</button>
       </div></div>
     </div>
 
-    <div id="snake" class="game-card card-pink">
-      <div class="game-header"><span class="game-num">02</span><h2>NEON SNAKE</h2><span class="game-tag">ARROW KEYS</span></div>
+    <div id="snake" class="game-card">
+      <div class="game-header"><span class="game-num">02</span><h2>Neon Snake</h2><span class="game-tag">Arrow keys</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="snakeScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="snakeHigh">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="snakeScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="snakeHigh">0</div><div class="stat-label">Best</div></div>
         </div>
         <canvas id="snakeCanvas" width="400" height="400"></canvas>
         <div class="canvas-controls">
-          <button class="ctrl-btn pink" id="snakeStart">▶ START</button>
+          <button class="ctrl-btn" id="snakeStart">▶ Start</button>
           <div class="dpad">
             <button class="dpad-btn" data-dir="up">▲</button>
             <button class="dpad-btn" data-dir="left">◀</button>
@@ -450,26 +452,26 @@
       </div></div>
     </div>
 
-    <div id="memory" class="game-card card-cyan">
-      <div class="game-header"><span class="game-num">03</span><h2>EMOJI MEMORY</h2><span class="game-tag">MATCH 'EM ALL</span></div>
+    <div id="memory" class="game-card">
+      <div class="game-header"><span class="game-num">03</span><h2>Emoji Memory</h2><span class="game-tag">Match 'em all</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="memoryMoves">0</div><div class="stat-label">MOVES</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="memoryMatches">0</div><div class="stat-label">MATCHES</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="memoryBest">—</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="memoryMoves">0</div><div class="stat-label">Moves</div></div>
+          <div class="stat-box"><div class="stat-val" id="memoryMatches">0</div><div class="stat-label">Matches</div></div>
+          <div class="stat-box"><div class="stat-val" id="memoryBest">—</div><div class="stat-label">Best</div></div>
         </div>
         <div class="memory-grid" id="memoryGrid"></div>
-        <button class="reset-btn cyan" id="memoryReset">NEW GAME</button>
+        <button class="reset-btn" id="memoryReset">New game</button>
       </div></div>
     </div>
 
-    <div id="whack" class="game-card card-green">
-      <div class="game-header"><span class="game-num">04</span><h2>WHACK-A-MOLE</h2><span class="game-tag">SMASH 'EM</span></div>
+    <div id="whack" class="game-card">
+      <div class="game-header"><span class="game-num">04</span><h2>Whack-a-Mole</h2><span class="game-tag">Smash 'em</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="whackScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="whackTimer">30</div><div class="stat-label">SECS</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="whackBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="whackScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="whackTimer">30</div><div class="stat-label">Secs</div></div>
+          <div class="stat-box"><div class="stat-val" id="whackBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div class="whack-grid" id="whackGrid">
           <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
@@ -478,32 +480,32 @@
           <div class="hole"><div class="mole">🐹</div></div><div class="hole"><div class="mole">🐹</div></div>
           <div class="hole"><div class="mole">🐹</div></div>
         </div>
-        <button class="reset-btn green" id="whackStart">▶ START</button>
+        <button class="reset-btn" id="whackStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="typer" class="game-card card-orange">
-      <div class="game-header"><span class="game-num">05</span><h2>TYPE RACER</h2><span class="game-tag">HOW FAST?</span></div>
+    <div id="typer" class="game-card">
+      <div class="game-header"><span class="game-num">05</span><h2>Type Racer</h2><span class="game-tag">How fast?</span></div>
       <div class="game-body"><div class="typer-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="typerWPM">0</div><div class="stat-label">WPM</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="typerAcc">100</div><div class="stat-label">ACC %</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="typerBest">0</div><div class="stat-label">BEST WPM</div></div>
+          <div class="stat-box"><div class="stat-val" id="typerWPM">0</div><div class="stat-label">WPM</div></div>
+          <div class="stat-box"><div class="stat-val" id="typerAcc">100</div><div class="stat-label">Acc %</div></div>
+          <div class="stat-box"><div class="stat-val" id="typerBest">0</div><div class="stat-label">Best WPM</div></div>
         </div>
         <div class="typer-prompt" id="typerPrompt"></div>
-        <input class="game-input" id="typerInput" placeholder="START TYPING..." autocomplete="off" spellcheck="false" />
+        <input class="game-input" id="typerInput" placeholder="Start typing..." autocomplete="off" spellcheck="false" />
         <div class="bar-wrap"><div class="bar orange-bar" id="typerTimerBar"></div></div>
-        <button class="reset-btn orange" id="typerReset">NEW PHRASE</button>
+        <button class="reset-btn" id="typerReset">New phrase</button>
       </div></div>
     </div>
 
-    <div id="color" class="game-card card-purple">
-      <div class="game-header"><span class="game-num">06</span><h2>COLOR GUESS</h2><span class="game-tag">KNOW YOUR HEX?</span></div>
+    <div id="color" class="game-card">
+      <div class="game-header"><span class="game-num">06</span><h2>Color Guess</h2><span class="game-tag">Know your hex?</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="colorScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="colorStreak">0</div><div class="stat-label">STREAK</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="colorBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="colorScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="colorStreak">0</div><div class="stat-label">Streak</div></div>
+          <div class="stat-box"><div class="stat-val" id="colorBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div class="color-swatch" id="colorSwatch"></div>
         <div class="color-choices" id="colorChoices"></div>
@@ -511,228 +513,227 @@
       </div></div>
     </div>
 
-    <div id="reaction" class="game-card card-yellow">
-      <div class="game-header"><span class="game-num">07</span><h2>REACTION TIME</h2><span class="game-tag">CLICK ON GREEN</span></div>
+    <div id="reaction" class="game-card">
+      <div class="game-header"><span class="game-num">07</span><h2>Reaction Time</h2><span class="game-tag">Click on green</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="reactionLast">—</div><div class="stat-label">LAST ms</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="reactionBest">—</div><div class="stat-label">BEST ms</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="reactionAvg">—</div><div class="stat-label">AVG ms</div></div>
+          <div class="stat-box"><div class="stat-val" id="reactionLast">—</div><div class="stat-label">Last ms</div></div>
+          <div class="stat-box"><div class="stat-val" id="reactionBest">—</div><div class="stat-label">Best ms</div></div>
+          <div class="stat-box"><div class="stat-val" id="reactionAvg">—</div><div class="stat-label">Avg ms</div></div>
         </div>
-        <div class="reaction-pad" id="reactionPad">
-          <div class="reaction-msg" id="reactionMsg">CLICK TO START</div>
-        </div>
+        <div class="reaction-pad" id="reactionPad"><div class="reaction-msg" id="reactionMsg">Click to start</div></div>
       </div></div>
     </div>
 
-    <div id="pong" class="game-card card-pink">
-      <div class="game-header"><span class="game-num">08</span><h2>NEON PONG</h2><span class="game-tag">W/S OR ↑↓</span></div>
+    <div id="pong" class="game-card">
+      <div class="game-header"><span class="game-num">08</span><h2>Neon Pong</h2><span class="game-tag">W/S or ↑↓</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="pongPlayer">0</div><div class="stat-label">YOU</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="pongAI">0</div><div class="stat-label">CPU</div></div>
+          <div class="stat-box"><div class="stat-val" id="pongPlayer">0</div><div class="stat-label">You</div></div>
+          <div class="stat-box"><div class="stat-val" id="pongAI">0</div><div class="stat-label">CPU</div></div>
         </div>
         <canvas id="pongCanvas" width="500" height="280"></canvas>
-        <button class="ctrl-btn pink" id="pongStart">▶ START</button>
+        <button class="ctrl-btn" id="pongStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="math" class="game-card card-cyan">
-      <div class="game-header"><span class="game-num">09</span><h2>MATH BLITZ</h2><span class="game-tag">PICK THE ANSWER</span></div>
+    <div id="math" class="game-card">
+      <div class="game-header"><span class="game-num">09</span><h2>Math Blitz</h2><span class="game-tag">Pick the answer</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="mathScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="mathTimer">30</div><div class="stat-label">SECS</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="mathStreak">0</div><div class="stat-label">STREAK</div></div>
+          <div class="stat-box"><div class="stat-val" id="mathScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="mathTimer">30</div><div class="stat-label">Secs</div></div>
+          <div class="stat-box"><div class="stat-val" id="mathBest">0</div><div class="stat-label">Best</div></div>
         </div>
-        <div class="big-question" id="mathQuestion">PRESS START!</div>
-        <div class="choice-grid" id="mathChoices"></div>
-        <button class="reset-btn cyan" id="mathStart">▶ START</button>
+        <div class="big-question" id="mathQuestion">Press start!</div>
+        <div class="math-opts" id="mathOpts"></div>
+        <button class="reset-btn" id="mathStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="scramble" class="game-card card-green">
-      <div class="game-header"><span class="game-num">10</span><h2>WORD SCRAMBLE</h2><span class="game-tag">UNSCRAMBLE IT</span></div>
+    <div id="scramble" class="game-card">
+      <div class="game-header"><span class="game-num">10</span><h2>Word Scramble</h2><span class="game-tag">Unscramble it</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="scrambleScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="scrambleStreak">0</div><div class="stat-label">STREAK</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="scrambleBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="scrambleScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="scrambleStreak">0</div><div class="stat-label">Streak</div></div>
+          <div class="stat-box"><div class="stat-val" id="scrambleBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div class="scramble-word" id="scrambleWord">?????</div>
         <div class="feedback-text dim" id="scrambleHint"></div>
-        <input class="game-input green-inp" id="scrambleInput" placeholder="TYPE YOUR ANSWER..." autocomplete="off" spellcheck="false" />
+        <input class="game-input" id="scrambleInput" placeholder="Type your answer..." autocomplete="off" spellcheck="false" />
         <div class="btn-row">
-          <button class="reset-btn green" id="scrambleCheck">✓ CHECK</button>
-          <button class="reset-btn" id="scrambleSkip">SKIP →</button>
+          <button class="reset-btn" id="scrambleCheck">✓ Check</button>
+          <button class="reset-btn" id="scrambleSkip">Skip →</button>
         </div>
         <div class="feedback-text" id="scrambleFeedback"></div>
       </div></div>
     </div>
 
-    <div id="simon" class="game-card card-purple">
-      <div class="game-header"><span class="game-num">11</span><h2>SIMON SAYS</h2><span class="game-tag">REPEAT THE PATTERN</span></div>
+    <div id="simon" class="game-card">
+      <div class="game-header"><span class="game-num">11</span><h2>Simon Says</h2><span class="game-tag">Repeat the pattern</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="simonRound">0</div><div class="stat-label">ROUND</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="simonBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="simonRound">0</div><div class="stat-label">Round</div></div>
+          <div class="stat-box"><div class="stat-val" id="simonBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div class="simon-grid">
-          <button class="simon-btn" data-color="red"    style="--sc:#ff4444;--sd:#aa1111"></button>
-          <button class="simon-btn" data-color="blue"   style="--sc:#4488ff;--sd:#1144aa"></button>
-          <button class="simon-btn" data-color="green"  style="--sc:#44ff88;--sd:#11aa44"></button>
-          <button class="simon-btn" data-color="yellow" style="--sc:#ffee44;--sd:#aaaa11"></button>
+          <button class="simon-btn" data-color="red"    style="--sc:#e74c3c;--sd:#c0392b"></button>
+          <button class="simon-btn" data-color="blue"   style="--sc:#2980b9;--sd:#1a5276"></button>
+          <button class="simon-btn" data-color="green"  style="--sc:#27ae60;--sd:#1e8449"></button>
+          <button class="simon-btn" data-color="yellow" style="--sc:#f39c12;--sd:#d68910"></button>
         </div>
-        <div class="feedback-text" id="simonMsg">PRESS START TO PLAY</div>
-        <button class="reset-btn purple" id="simonStart">▶ START</button>
+        <div class="feedback-text" id="simonMsg">Press start to play</div>
+        <button class="reset-btn" id="simonStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="dodge" class="game-card card-orange">
-      <div class="game-header"><span class="game-num">12</span><h2>ASTEROID DODGE</h2><span class="game-tag">MOVE MOUSE TO DODGE</span></div>
+    <div id="dodge" class="game-card">
+      <div class="game-header"><span class="game-num">12</span><h2>Asteroid Dodge</h2><span class="game-tag">Move mouse to dodge</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="dodgeScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="dodgeBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="dodgeScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="dodgeBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <canvas id="dodgeCanvas" width="500" height="300"></canvas>
-        <button class="ctrl-btn orange" id="dodgeStart">▶ START — MOVE MOUSE TO DODGE</button>
+        <button class="ctrl-btn" id="dodgeStart">▶ Start — move mouse to dodge</button>
       </div></div>
     </div>
 
-    <div id="numMemory" class="game-card card-cyan">
-      <div class="game-header"><span class="game-num">13</span><h2>NUMBER MEMORY</h2><span class="game-tag">REMEMBER IT</span></div>
+    <div id="numMemory" class="game-card">
+      <div class="game-header"><span class="game-num">13</span><h2>Number Memory</h2><span class="game-tag">Remember it</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="nummemLevel">1</div><div class="stat-label">DIGITS</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="nummemBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="nummemLevel">1</div><div class="stat-label">Digits</div></div>
+          <div class="stat-box"><div class="stat-val" id="nummemBest">0</div><div class="stat-label">Best</div></div>
         </div>
-        <div class="big-question" id="nummemDisplay">PRESS START</div>
-        <input class="game-input" id="nummemInput" placeholder="TYPE THE NUMBER..." type="number" style="display:none" />
+        <div class="big-question" id="nummemDisplay">Press start</div>
+        <input class="game-input" id="nummemInput" placeholder="Type the number..." type="number" style="display:none" />
         <div class="feedback-text" id="nummemFeedback"></div>
-        <button class="reset-btn cyan" id="nummemStart">▶ START</button>
+        <button class="reset-btn" id="nummemStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="emojiRain" class="game-card card-yellow">
-      <div class="game-header"><span class="game-num">14</span><h2>EMOJI RAIN</h2><span class="game-tag">CLICK TO CATCH</span></div>
+    <div id="emojiRain" class="game-card">
+      <div class="game-header"><span class="game-num">14</span><h2>Emoji Rain</h2><span class="game-tag">Click to catch</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="rainScore">0</div><div class="stat-label">CAUGHT</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="rainMissed">0</div><div class="stat-label">MISSED</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="rainBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="rainScore">0</div><div class="stat-label">Caught</div></div>
+          <div class="stat-box"><div class="stat-val" id="rainMissed">0</div><div class="stat-label">Missed</div></div>
+          <div class="stat-box"><div class="stat-val" id="rainBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <canvas id="rainCanvas" width="500" height="300"></canvas>
-        <button class="ctrl-btn" id="rainStart">▶ START — CLICK STARS TO CATCH THEM</button>
+        <button class="ctrl-btn" id="rainStart">▶ Start — click stars to catch them</button>
       </div></div>
     </div>
 
-    <div id="guessNum" class="game-card card-green">
-      <div class="game-header"><span class="game-num">15</span><h2>GUESS THE NUMBER</h2><span class="game-tag">1 TO 100</span></div>
+    <div id="guessNum" class="game-card">
+      <div class="game-header"><span class="game-num">15</span><h2>Guess the Number</h2><span class="game-tag">1 to 100</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="guessAttempts">0</div><div class="stat-label">ATTEMPTS</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="guessBest">—</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="guessAttempts">0</div><div class="stat-label">Attempts</div></div>
+          <div class="stat-box"><div class="stat-val" id="guessBest">—</div><div class="stat-label">Best</div></div>
         </div>
         <div class="big-question" id="guessHint">I'm thinking of a number between 1 and 100...</div>
         <div class="btn-row">
-          <input class="game-input green-inp" id="guessInput" type="number" min="1" max="100" placeholder="YOUR GUESS..." style="flex:1" />
-          <button class="reset-btn green" id="guessSubmit">GO!</button>
+          <input class="game-input" id="guessInput" type="number" min="1" max="100" placeholder="Your guess..." style="flex:1;max-width:200px" />
+          <button class="action-btn" id="guessSubmit">Go!</button>
         </div>
         <div class="guess-history" id="guessHistory"></div>
-        <button class="reset-btn" id="guessReset">NEW GAME</button>
+        <button class="reset-btn" id="guessReset">New game</button>
       </div></div>
     </div>
 
-    <div id="speedmath" class="game-card card-orange">
-      <div class="game-header"><span class="game-num">16</span><h2>SPEED MATH</h2><span class="game-tag">TYPE THE ANSWER</span></div>
+    <div id="speedmath" class="game-card">
+      <div class="game-header"><span class="game-num">16</span><h2>Speed Math</h2><span class="game-tag">Type the answer</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="speedmathScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="speedmathTimer">60</div><div class="stat-label">SECS</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="speedmathBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="speedmathScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="speedmathTimer">60</div><div class="stat-label">Secs</div></div>
+          <div class="stat-box"><div class="stat-val" id="speedmathBest">0</div><div class="stat-label">Best</div></div>
         </div>
-        <div class="big-question" id="speedmathQ">PRESS START!</div>
-        <input class="game-input orange-inp" id="speedmathInput" type="number" placeholder="ANSWER..." style="display:none;text-align:center;font-size:28px" autocomplete="off" />
-        <button class="reset-btn orange" id="speedmathStart">▶ START</button>
+        <div class="big-question" id="speedmathQ">Press start!</div>
+        <input class="game-input" id="speedmathInput" type="number" placeholder="Answer..." style="display:none;text-align:center;font-size:24px;max-width:200px" autocomplete="off" />
+        <button class="reset-btn" id="speedmathStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="pattern" class="game-card card-purple">
-      <div class="game-header"><span class="game-num">17</span><h2>PATTERN COPY</h2><span class="game-tag">COPY THE GRID</span></div>
+    <div id="pattern" class="game-card">
+      <div class="game-header"><span class="game-num">17</span><h2>Pattern Copy</h2><span class="game-tag">Copy the grid</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="patternLevel">1</div><div class="stat-label">LEVEL</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="patternBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="patternLevel">1</div><div class="stat-label">Level</div></div>
+          <div class="stat-box"><div class="stat-val" id="patternBest">0</div><div class="stat-label">Best</div></div>
         </div>
-        <div class="feedback-text dim" id="patternMsg">Memorise the pattern then click CHECK to submit!</div>
+        <div class="feedback-text dim" id="patternMsg">Memorise the pattern then click Check to submit!</div>
         <div class="pattern-grids">
-          <div><div class="pattern-label">MEMORISE</div><div class="pattern-grid" id="patternShow"></div></div>
-          <div><div class="pattern-label">YOUR COPY</div><div class="pattern-grid" id="patternDraw"></div></div>
+          <div><div class="pattern-label">Memorise</div><div class="pattern-grid" id="patternShow"></div></div>
+          <div><div class="pattern-label">Your copy</div><div class="pattern-grid" id="patternDraw"></div></div>
         </div>
         <div class="btn-row">
-          <button class="reset-btn purple" id="patternCheck">✓ CHECK</button>
-          <button class="reset-btn purple" id="patternStart">▶ NEW ROUND</button>
+          <button class="reset-btn" id="patternCheck">✓ Check</button>
+          <button class="reset-btn" id="patternStart">▶ New round</button>
         </div>
       </div></div>
     </div>
 
-    <div id="trivia" class="game-card card-pink">
-      <div class="game-header"><span class="game-num">18</span><h2>RANDOM TRIVIA</h2><span class="game-tag">TRUE OR FALSE</span></div>
+    <div id="trivia" class="game-card">
+      <div class="game-header"><span class="game-num">18</span><h2>Random Trivia</h2><span class="game-tag">True or false</span></div>
       <div class="game-body"><div class="center-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="triviaScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="triviaStreak">0</div><div class="stat-label">STREAK</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="triviaBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="triviaScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="triviaStreak">0</div><div class="stat-label">Streak</div></div>
+          <div class="stat-box"><div class="stat-val" id="triviaBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div class="trivia-question" id="triviaQuestion">Hit a button to begin!</div>
         <div class="btn-row">
-          <button class="trivia-btn true-btn" id="triviaTrue">✅ TRUE</button>
-          <button class="trivia-btn false-btn" id="triviaFalse">❌ FALSE</button>
+          <button class="trivia-btn true-btn" id="triviaTrue">✓ True</button>
+          <button class="trivia-btn false-btn" id="triviaFalse">✕ False</button>
         </div>
         <div class="feedback-text" id="triviaFeedback"></div>
       </div></div>
     </div>
 
-    <div id="bricks" class="game-card card-green">
-      <div class="game-header"><span class="game-num">19</span><h2>BRICK BREAKER</h2><span class="game-tag">MOUSE TO AIM PADDLE</span></div>
+    <div id="bricks" class="game-card">
+      <div class="game-header"><span class="game-num">19</span><h2>Brick Breaker</h2><span class="game-tag">Mouse to aim paddle</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="bricksScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="bricksLives">3</div><div class="stat-label">LIVES</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="bricksBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="bricksScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="bricksLives">3</div><div class="stat-label">Lives</div></div>
+          <div class="stat-box"><div class="stat-val" id="bricksBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <canvas id="bricksCanvas" width="500" height="340"></canvas>
-        <button class="ctrl-btn green" id="bricksStart">▶ START</button>
+        <button class="ctrl-btn" id="bricksStart">▶ Start</button>
       </div></div>
     </div>
 
-    <div id="shooter" class="game-card card-yellow">
-      <div class="game-header"><span class="game-num">20</span><h2>EMOJI SHOOTER</h2><span class="game-tag">CLICK TO SHOOT</span></div>
+    <div id="shooter" class="game-card">
+      <div class="game-header"><span class="game-num">20</span><h2>Emoji Shooter</h2><span class="game-tag">Click to shoot</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="shooterScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="shooterLives">5</div><div class="stat-label">LIVES</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="shooterBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="shooterScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="shooterLives">5</div><div class="stat-label">Lives</div></div>
+          <div class="stat-box"><div class="stat-val" id="shooterBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <canvas id="shooterCanvas" width="500" height="320"></canvas>
-        <button class="ctrl-btn" id="shooterStart">▶ START — CLICK TO SHOOT</button>
+        <button class="ctrl-btn" id="shooterStart">▶ Start — click to shoot</button>
       </div></div>
     </div>
-    <div id="neon-cobra" class="game-card card-cyan">
-      <div class="game-header"><span class="game-num">21</span><h2>NEON COBRA</h2><span class="game-tag">FAST-PACED REMIX</span></div>
+
+    <div id="neon-cobra" class="game-card">
+      <div class="game-header"><span class="game-num">21</span><h2>Neon Cobra</h2><span class="game-tag">Fast-paced remix</span></div>
       <div class="game-body"><div class="canvas-area">
         <div class="row-stats">
-          <div class="stat-box dark"><div class="stat-val" id="cobraScore">0</div><div class="stat-label">SCORE</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="cobraCombo">1.0</div><div class="stat-label">COMBO</div></div>
-          <div class="stat-box dark"><div class="stat-val" id="cobraBest">0</div><div class="stat-label">BEST</div></div>
+          <div class="stat-box"><div class="stat-val" id="cobraScore">0</div><div class="stat-label">Score</div></div>
+          <div class="stat-box"><div class="stat-val" id="cobraCombo">1.0</div><div class="stat-label">Combo</div></div>
+          <div class="stat-box"><div class="stat-val" id="cobraBest">0</div><div class="stat-label">Best</div></div>
         </div>
         <div style="position:relative">
           <canvas id="cobraCanvas" width="600" height="400" style="display:block;max-width:100%"></canvas>
           <div id="cobraFlash" style="position:absolute;inset:0;pointer-events:none;background:white;opacity:0;transition:opacity 0.1s;"></div>
         </div>
         <div class="canvas-controls">
-          <button class="ctrl-btn cyan" id="cobraStart">▶ START MISSION</button>
+          <button class="ctrl-btn" id="cobraStart">▶ Start mission</button>
           <div class="dpad" id="cobraDpad">
             <button class="dpad-btn" data-dir="up">▲</button>
             <button class="dpad-btn" data-dir="left">◀</button>
@@ -743,44 +744,35 @@
       </div></div>
     </div>
 
-    <!-- ── THIRD-PARTY GAMES ── -->
-    <div id="gd-worms" class="game-card card-green">
-      <div class="game-header"><span class="game-num">24</span><h2>WORMS ZONE</h2><span class="game-tag">SLITHERY SNAKE</span></div>
+    <!-- Third-party games -->
+    <div id="gd-worms" class="game-card">
+      <div class="game-header"><span class="game-num">24</span><h2>Worms Zone</h2><span class="game-tag">Slithery snake</span></div>
       <div class="game-body" style="padding:0">
-        <iframe src="https://html5.gamedistribution.com/5dd0b18fb81d49da82ff459f08737390/?gd_sdk_referrer_url=https://wilapple.com/games.html"
-          style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
+        <iframe src="https://html5.gamedistribution.com/5dd0b18fb81d49da82ff459f08737390/?gd_sdk_referrer_url=https://wilapple.com/games.html" style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
       </div>
     </div>
-
-    <div id="gd-dan" class="game-card card-orange">
-      <div class="game-header"><span class="game-num">25</span><h2>DAN THE MAN</h2><span class="game-tag">ACTION PLATFORMER</span></div>
+    <div id="gd-dan" class="game-card">
+      <div class="game-header"><span class="game-num">25</span><h2>Dan the Man</h2><span class="game-tag">Action platformer</span></div>
       <div class="game-body" style="padding:0">
-        <iframe src="https://html5.gamedistribution.com/3d11dfed72a04e00ae9a43ab3fd49bd6/?gd_sdk_referrer_url=https://wilapple.com/games.html"
-          style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
+        <iframe src="https://html5.gamedistribution.com/3d11dfed72a04e00ae9a43ab3fd49bd6/?gd_sdk_referrer_url=https://wilapple.com/games.html" style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
       </div>
     </div>
-
-    <div id="gd-clicker" class="game-card card-yellow">
-      <div class="game-header"><span class="game-num">26</span><h2>CLICKER HERO</h2><span class="game-tag">IDLE RPG</span></div>
+    <div id="gd-clicker" class="game-card">
+      <div class="game-header"><span class="game-num">26</span><h2>Clicker Hero</h2><span class="game-tag">Idle RPG</span></div>
       <div class="game-body" style="padding:0">
-        <iframe src="https://html5.gamedistribution.com/8f137bff27e24f159677fcba28b2d2f4/?gd_sdk_referrer_url=https://wilapple.com/games.html"
-          style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
+        <iframe src="https://html5.gamedistribution.com/8f137bff27e24f159677fcba28b2d2f4/?gd_sdk_referrer_url=https://wilapple.com/games.html" style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
       </div>
     </div>
-
-    <div id="gd-ten" class="game-card card-purple">
-      <div class="game-header"><span class="game-num">27</span><h2>TEN</h2><span class="game-tag">PUZZLE</span></div>
+    <div id="gd-ten" class="game-card">
+      <div class="game-header"><span class="game-num">27</span><h2>Ten</h2><span class="game-tag">Puzzle</span></div>
       <div class="game-body" style="padding:0">
-        <iframe src="https://html5.gamedistribution.com/e979de806c4c485ea9e81138e01a2775/?gd_sdk_referrer_url=https://wilapple.com/games.html"
-          style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
+        <iframe src="https://html5.gamedistribution.com/e979de806c4c485ea9e81138e01a2775/?gd_sdk_referrer_url=https://wilapple.com/games.html" style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
       </div>
     </div>
-
-    <div id="gd-homepin" class="game-card card-pink">
-      <div class="game-header"><span class="game-num">28</span><h2>HOME PIN 2</h2><span class="game-tag">PULL THE PIN</span></div>
+    <div id="gd-homepin" class="game-card">
+      <div class="game-header"><span class="game-num">28</span><h2>Home Pin 2</h2><span class="game-tag">Pull the pin</span></div>
       <div class="game-body" style="padding:0">
-        <iframe src="https://html5.gamedistribution.com/f5ddfe5f7abc4632911a687d668b3b95/?gd_sdk_referrer_url=https://wilapple.com/games.html"
-          style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
+        <iframe src="https://html5.gamedistribution.com/f5ddfe5f7abc4632911a687d668b3b95/?gd_sdk_referrer_url=https://wilapple.com/games.html" style="width:100%;height:500px;border:none;display:block" scrolling="none" allowfullscreen></iframe>
       </div>
     </div>
 
@@ -788,22 +780,23 @@
 
   <footer>
     <div class="footer-inner">
-      <span>🎪 WILAPPLE<span id="hub-dot" onclick="window.location='index.html'" style="cursor:default;color:inherit;font-size:inherit;user-select:none;" title="">.COM</span></span>
-      <span>MADE WITH 💥 AND LOTS OF JS</span>
-      <span>TOTAL PTS: <strong id="footerScore">0</strong></span>
+      <span class="footer-logo">Wilapple<span class="logo-dot">.</span></span>
+      <span>28 games · made with care</span>
+      <span style="font-family:var(--font-m)">★ <strong id="footerScore">0</strong> pts total</span>
     </div>
   </footer>
 
   <div class="popup" id="popup">
-    <span class="popup-icon" id="popupIcon">🏆</span>
-    <span class="popup-text" id="popupText">NICE!</span>
+    <span class="popup-icon" id="popupIcon">★</span>
+    <span class="popup-text" id="popupText">Nice!</span>
   </div>
 
   <script>
-    const modal    = document.getElementById('game-modal');
-    const inner    = document.getElementById('modal-inner');
-    const closeBtn = document.getElementById('modal-close');
-    const pool     = document.getElementById('game-pool');
+    // Modal logic
+    const modal   = document.getElementById('game-modal');
+    const inner   = document.getElementById('modal-inner');
+    const closeBtn= document.getElementById('modal-close');
+    const pool    = document.getElementById('game-pool');
 
     document.querySelectorAll('.game-select-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -824,12 +817,24 @@
       modal.classList.remove('open');
       document.body.style.overflow = '';
     }
-
     closeBtn.addEventListener('click', closeModal);
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
     });
-  </script>
 
+    // Restyle reaction pad states
+    const origReactionPad = document.getElementById;
+    document.addEventListener('DOMContentLoaded', () => {
+      // Map old state classes to new ones for reaction game
+      const obs = new MutationObserver(() => {
+        const pad = document.getElementById('reactionPad');
+        if (!pad) return;
+        if (pad.style.background && pad.style.background.includes('ff')) {
+          pad.classList.add('wait-state');
+          pad.classList.remove('go-state');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
